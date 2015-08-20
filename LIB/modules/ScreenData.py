@@ -10,19 +10,14 @@ class MainScreen():
                           'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                           'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
         self.pics = {'background'       : Globals.PICS['background']}
-        self.create_cursor()
-    def create_cursor(self):
-        keys = ['new_game', 'settings', 'stats', 'exit']
-        rects = [self.menuitems[key].text.rect for key in keys]
-        self.cursor = Cursor(keys, rects)
+        self.cursor = Cursor(self.menuitems)
     def mainloop(self):
         while True:
-            key = self.check_mouse_pos(pygame.mouse.get_pos())
-            self.render(key)
+            self.render(self.check_mouse_pos(pygame.mouse.get_pos()))
             self.events()
     def check_mouse_pos(self, mp):
         key = self.find_hovering_menuitem(mp)
-        if key in self.cursor.keys:
+        if key != self.cursor.keys[self.cursor.active] and key in self.cursor.keys:
             self.cursor.change_pos(key)
         return key
     def find_hovering_menuitem(self, mp):
