@@ -27,7 +27,7 @@ class MainScreen():
         return key
     def find_hovering_menuitem(self, mp):
         for key in self.menuitems.keys():
-            if self.menuitems[key].text.rect.collidepoint(mp):
+            if self.menuitems[key].active_zone.collidepoint(mp):
                 return key
         return None
     def render(self, highlighted_menuitem):

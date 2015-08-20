@@ -9,6 +9,8 @@ class MenuItem():
         self.init_for_group(group)
     def init_for_group(self, group):
         self.tooltip = None
+        if group[:4] == 'main':
+            self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 0)
     def render(self, highlighted_menuitem):
         self.text.render()
 class Cursor():
