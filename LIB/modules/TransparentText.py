@@ -13,8 +13,9 @@ class AlphaText():
             self.AV = True
             self.font = Globals.FONTS['ubuntu_big']
             self.color = Color('white')
-            self.x = Globals.RESOLUTION[0]/4
-            self.y = Globals.RESOLUTION[1]/3+50*number
+            self.x = 'center'
+            self.x_offset = -Globals.RESOLUTION[0]/4
+            self.y = Globals.RESOLUTION[1]*0.45+35*number
     def update_text(self, text):
         size = self.font.size(text)
         xpos = self.find_xpos(size)
@@ -22,7 +23,7 @@ class AlphaText():
         self.text = self.font.render(text, True, self.color)
     def find_xpos(self, size):
         if self.x == 'center':
-            return Globals.RESOLUTION[0]/2 - size[0]/2
+            return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2
         elif self.x == 'right':
             return Globals.RESOLUTION[0] - size[0] - self.x_offset
         else:

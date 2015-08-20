@@ -14,7 +14,6 @@ def write_to_file(file, data, method='w'):
     list = open(file, method)
     list.writelines(map(lambda x: x.encode('UTF'), data))
     list.close()
-
 #--- Hardware related
 def check_user_monitor():
     MAX_RESOLUTION = (display.Info().current_w-70, display.Info().current_h-60)
@@ -25,7 +24,6 @@ def check_user_monitor():
     else:
         print("Your monitor has too small resolution! We can't provide a good interface for it :(")
         SYSEXIT()
-
 #--- Statistics, settings and translations
 def check_files():
     DB = listdir(Globals.DIRS['settings'])

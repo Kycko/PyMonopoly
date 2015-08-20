@@ -7,12 +7,10 @@ from Sprite import Sprite
 #--- Initialize python modules
 pygame.display.init()
 pygame.font.init()
-
 #--- Game version and resolution
 VERSION = '0.1-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0])
-
 #--- Directories, files, fonts, pictures and languages
 DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}
@@ -25,19 +23,17 @@ FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
 
-FONTS = {'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 32)}
+FONTS = {'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg')}
 
 LANGUAGES = (('en', u'English'),
              ('ru', u'Русский'))
-
 #--- Restore files, read settings and translation
 check_files()
 SETTINGS = read_settings()
 TRANSLATION = read_translation(SETTINGS['language'])
-
 #--- Create main window
 pygame.display.set_icon(pygame.image.load(PICS['appicon']))
 window = pygame.display.set_mode(RESOLUTION)
