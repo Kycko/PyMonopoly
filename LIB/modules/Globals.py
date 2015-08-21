@@ -11,7 +11,12 @@ pygame.font.init()
 VERSION = '0.1-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0])
-#--- Directories, files, fonts, pictures and languages
+#--- Colors, directories, files, fonts, pictures and languages
+COLORS = {'black'               : pygame.Color('black'),
+          'green200'            : pygame.Color(0, 200, 0),
+          'red'                 : pygame.Color('red'),
+          'yellow'              : pygame.Color('yellow')}
+
 DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}
 DIRS['fonts'] = DIRS['LIB'] + 'fonts/'
