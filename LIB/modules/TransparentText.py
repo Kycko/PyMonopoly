@@ -4,7 +4,7 @@ from pygame import Color, Rect, Surface
 
 class AlphaText():
     def __init__(self, text, group, number=None):
-        self.alpha = 0
+        self.alpha = 5
         self.init_for_group(text, group, number)
         self.anticolor = Color('white') - self.color
         self.update_text(text)
@@ -30,7 +30,7 @@ class AlphaText():
             return self.x
     def set_alpha(self):
         if self.alpha != 255:
-            self.alpha += 5
+            self.alpha += 10
         if self.alpha != 255:
             surf = Surface(self.rect.size)
             surf.fill(self.anticolor)

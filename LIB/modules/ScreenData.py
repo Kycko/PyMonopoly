@@ -4,13 +4,14 @@ from MenuItems import Cursor, MenuItem
 from sys import exit as SYSEXIT
 
 class MainScreen():
-    def __init__(self):
-        self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
-                          'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
-                          'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
-                          'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-        self.pics = {'background'       : Globals.PICS['background']}
-        self.cursor = Cursor(self.menuitems)
+    def __init__(self, type):
+        if type == 'main_main':
+            self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
+                              'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
+                              'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
+                              'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
+            self.pics = {'background'       : Globals.PICS['background']}
+            self.cursor = Cursor(self.menuitems)
     def mainloop(self):
         while True:
             self.render(self.check_mouse_pos(pygame.mouse.get_pos()))
