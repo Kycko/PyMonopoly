@@ -14,9 +14,9 @@ class MainScreen():
         self.cursor = Cursor(self.menuitems, type)
     def mainloop(self):
         while True:
-            key = self.check_mouse_pos(pygame.mouse.get_pos())
-            self.render(key)
-            self.events(key)
+            cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
+            self.render(cur_key)
+            self.events(cur_key)
     def check_mouse_pos(self, mp):
         key = self.find_hovering_menuitem(mp)
         if key != self.cursor.active_key and key in self.cursor.keys:
@@ -36,21 +36,21 @@ class MainScreen():
             item.render(highlighted_menuitem)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
-    def events(self, key):
+    def events(self, cur_key):
         for e in pygame.event.get():
-            if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1 and key:
-                self.action_call()
+            if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1 and cur_key:
+                self.action_call(cur_key)
             elif e.type == pygame.KEYDOWN:
                 if e.key in (pygame.K_UP, pygame.K_DOWN):
                     if self.cursor:
                         self.cursor.keypress(e.key)
                 elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                    self.action_call()
+                    self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.menuitems['exit'].action()
             elif e.type == pygame.QUIT:
                 SYSEXIT()
-    def action_call(self):
-        type = self.menuitems[self.cursor.active_key].action()
+    def action_call(self, key):
+        type = self.menuitems[key].action()
         if type:
             print(type)
