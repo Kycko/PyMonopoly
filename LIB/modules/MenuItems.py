@@ -41,6 +41,7 @@ class Cursor():
         else:
             self.change_pos(self.keys[self.active - 1])
     def change_pos(self, key):
+        self.active_key = key
         self.active = self.keys.index(key)
         self.y = self.y_cords[self.active]
         self.u_length = -13
