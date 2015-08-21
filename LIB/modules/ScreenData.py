@@ -43,5 +43,9 @@ class MainScreen():
                 if e.key in (pygame.K_UP, pygame.K_DOWN):
                     if self.cursor:
                         self.cursor.keypress(e.key)
+                elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                    type = self.menuitems[self.cursor.keys[self.cursor.active]].action()
+                    if type:
+                        print(type)
                 elif e.key == pygame.K_ESCAPE:
                     self.menuitems['exit'].action()

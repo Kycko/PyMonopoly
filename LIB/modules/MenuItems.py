@@ -19,6 +19,8 @@ class MenuItem():
     def action(self):
         if self.type == 'main_sysexit':
             SYSEXIT()
+        else:
+            return self.type
 class Cursor():
     def __init__(self, menuitems, type):
         self.surf_color = change_color_alpha(Globals.COLORS['black'], 0)
