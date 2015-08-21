@@ -9,13 +9,19 @@ class AlphaText():
         self.anticolor = Color('white') - self.color
         self.update_text(text)
     def init_for_group(self, text, group, number):
+        self.AV = True
         if group == 'main_main':
-            self.AV = True
             self.font = Globals.FONTS['ubuntu_big']
             self.color = Color('white')
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]*0.45+35*number
+        elif group == 'somegroup':
+            self.font = 'somefont'
+            self.color = 'somecolor'
+            self.x = 0
+            self.x_offset = 0
+            self.y = 0
     def update_text(self, text):
         size = self.font.size(text)
         xpos = self.find_xpos(size)
