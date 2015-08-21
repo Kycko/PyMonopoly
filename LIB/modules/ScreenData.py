@@ -11,7 +11,7 @@ class MainScreen():
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
             self.pics = {'background'       : Globals.PICS['background']}
-            self.cursor = Cursor(self.menuitems)
+        self.cursor = Cursor(self.menuitems, type)
     def mainloop(self):
         while True:
             self.render(self.check_mouse_pos(pygame.mouse.get_pos()))
@@ -31,8 +31,7 @@ class MainScreen():
             pic.render()
         self.cursor.render()
         for item in self.menuitems.values():
-            if item.text.AV:
-                item.render(highlighted_menuitem)
+            item.render(highlighted_menuitem)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self):

@@ -5,6 +5,10 @@ from os import listdir
 from sys import exit as SYSEXIT
 
 #--- Common
+def change_color_alpha(color, alpha):
+    color -= Globals.COLORS['black']
+    color.a = alpha
+    return color
 def read_file(file):
     list = open(file, 'r')
     array = list.readlines()
