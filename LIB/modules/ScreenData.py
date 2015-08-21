@@ -29,12 +29,19 @@ class MainScreen():
     def render(self, highlighted_menuitem):
         for pic in self.pics.values():
             pic.render()
-        self.cursor.render()
+        if self.cursor:
+            self.cursor.render()
         for item in self.menuitems.values():
             item.render(highlighted_menuitem)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self):
         for e in pygame.event.get():
-            if e.type == pygame.QUIT or e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+            if e.type == pygame.QUIT:
                 SYSEXIT()
+            elif e.type == pygame.KEYDOWN:
+                if e.key in (pygame.K_UP, pygame.K_DOWN):
+                    if self.cursor:
+                        self.cursor.keypress(e.key)
+                elif e.key == pygame.K_ESCAPE:
+                    self.menuitems['exit'].action()
