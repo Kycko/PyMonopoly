@@ -17,7 +17,7 @@ class MenuItem():
             self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
         elif self.group == 'somegroup':
             self.active_zone = self.text.rect.inflate(50, 6)
-            self.cursor = OwnCursor(self.group, self.active_zone)
+            self.cursor = OwnCursor('black', self.active_zone)
             self.HOTKEY = 'somehotkey'
     def render(self, state):
         if self.text.AV:
@@ -32,36 +32,24 @@ class MenuItem():
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
-        self.x = rect.x
-        self.size = rect.size
-        self.surf = pygame.Surface(self.size, pygame.SRCALPHA)
+        self.rect = rect.copy()
+        self.surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.surf_color = change_color_alpha(Globals.COLORS['black'], alpha)
-        self.count_u_length()
-    def count_u_length(self):
-        self.init_u_length = self.size[0]/2-3
-        while self.init_u_length > 0:
-            self.init_u_length -= self.u_growth
+    def draw_rect(self):
+        pygame.draw.rect(self.surf, self.surf_color, ((0, 0), self.rect.size), 0)
     def render(self):
-        if self.u_length != self.size[0]/2-3:
-            self.u_length += self.u_growth
-            if self.surf_color.a != 104:
-                self.surf_color.a += 8
-            pygame.draw.rect(self.surf, self.surf_color, pygame.Rect((0, 0), self.size), 0)
-            pygame.draw.line(self.surf, Globals.COLORS[self.u_color], (self.size[0]/2-self.u_length, self.size[1]-1), (self.size[0]/2+self.u_length, self.size[1]-1), 1)
-        Globals.screen.blit(self.surf, (self.x, self.y))
+        Globals.screen.blit(self.surf, self.rect.topleft)
 #--- Cursors
 class MainCursor(Cursor):
     def __init__(self, menuitems, type):
-        self.init_for_type(type)
-        self.u_growth = 20
+        self.make_keys(type)
         rects = [menuitems[key].active_zone for key in self.keys]
-        Cursor.__init__(self, 0, rects[0])
         self.y_cords = [rect.y for rect in rects]
         self.change_pos(self.keys[0])
-    def init_for_type(self, type):
+        Cursor.__init__(self, 0, rects[0])
+    def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
-            self.u_colors = ['green200', 'yellow', 'yellow', 'red']
     def keypress(self, KEY):
         if KEY == pygame.K_DOWN:
             self.change_pos(self.keys[-len(self.keys) + self.active_num + 1])
@@ -70,19 +58,30 @@ class MainCursor(Cursor):
     def change_pos(self, key):
         self.active_key = key
         self.active_num = self.keys.index(key)
-        self.y = self.y_cords[self.active_num]
-        self.u_color = self.u_colors[self.active_num]
-        self.u_length = self.init_u_length
+        self.new_y = self.y_cords[self.active_num]
+    def move_cur(self):
+        diff = (self.new_y - self.rect.y)/3
+        if abs(diff) < 0.1:
+            diff = 1
+        self.rect.y += diff
+    def render(self):
+        if self.new_y != self.rect.y:
+            self.move_cur()
+        if self.surf_color.a != 104:
+            self.surf_color.a += 8
+            self.draw_rect()
+        Cursor.render(self)
 class OwnCursor(Cursor):
-    def __init__(self, type, rect):
-        if type == 'a':
-            self.u_color = 'yellow'
-            self.y = rect.y
-            self.u_growth = 5
+    def __init__(self, color, rect):
+        self.u_color = Globals.COLORS[color]
+        self.u_length = 0
         Cursor.__init__(self, 104, rect)
-        self.u_length = self.init_u_length
     def render(self, state):
         if state:
+            if self.u_length < self.rect.w/2-25:
+                self.u_length += 1
+                self.draw_rect()
+                pygame.draw.line(self.surf, self.u_color, (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
             Cursor.render(self)
-        elif self.u_length != self.init_u_length:
-            self.u_length = self.init_u_length
+        elif self.u_length:
+            self.u_length = 0
