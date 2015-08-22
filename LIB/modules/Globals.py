@@ -12,10 +12,7 @@ VERSION = '0.1-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0])
 #--- Colors, directories, files, fonts, pictures and languages
-COLORS = {'black'               : pygame.Color('black'),
-          'green200'            : pygame.Color(0, 200, 0),
-          'red'                 : pygame.Color('red'),
-          'yellow'              : pygame.Color('yellow')}
+COLORS = {'black'               : pygame.Color('black')}
 
 DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}
@@ -44,4 +41,6 @@ pygame.display.set_icon(pygame.image.load(PICS['appicon']))
 window = pygame.display.set_mode(RESOLUTION)
 pygame.display.set_caption('PyMonopoly. Version: ' + VERSION)
 screen = pygame.Surface(RESOLUTION)
+pygame.event.set_allowed(None)
+pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN])
 main_scr = MainScreen('main_main')

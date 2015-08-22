@@ -4,53 +4,84 @@ from GlobalFuncs import change_color_alpha
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
+#--- Menuitems
 class MenuItem():
     def __init__(self, text, type, group, number=None):
         self.type = type
+        self.group = group
         self.text = AlphaText(text, group, number)
-        self.init_for_group(group)
-    def init_for_group(self, group):
+        self.init_for_group()
+    def init_for_group(self):
         self.tooltip = None
-        if group[:4] == 'main':
-            self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 0)
-    def render(self, highlighted_menuitem):
+        if self.group[:4] == 'main':
+            self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+        elif self.group == 'somegroup':
+            self.active_zone = self.text.rect.inflate(50, 6)
+            self.cursor = OwnCursor('black', self.active_zone)
+            self.HOTKEY = 'somehotkey'
+    def render(self, state):
         if self.text.AV:
+            if self.group[:4] != 'main':
+                self.cursor.render(state)
             self.text.render()
     def action(self):
         if self.type == 'main_sysexit':
             SYSEXIT()
         else:
             return self.type
+#--- Cursor TEMPLATE
 class Cursor():
+    def __init__(self, alpha, rect):
+        self.rect = rect.copy()
+        self.surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+        self.surf_color = change_color_alpha(Globals.COLORS['black'], alpha)
+    def draw_rect(self):
+        pygame.draw.rect(self.surf, self.surf_color, ((0, 0), self.rect.size), 0)
+    def render(self):
+        Globals.screen.blit(self.surf, self.rect.topleft)
+#--- Cursors
+class MainCursor(Cursor):
     def __init__(self, menuitems, type):
-        self.surf_color = change_color_alpha(Globals.COLORS['black'], 0)
-        self.init_for_type(type)
-        rects = [menuitems[key].text.rect for key in self.keys]
-        self.y_cords = [rect.y-3 for rect in rects]
-        self.size = (500, rects[0].h+6)
-        self.x = rects[0].x-(self.size[0]-rects[0].w)/2
+        self.make_keys(type)
+        rects = [menuitems[key].active_zone for key in self.keys]
+        self.y_cords = [rect.y for rect in rects]
         self.change_pos(self.keys[0])
-        self.surf = pygame.Surface(self.size, pygame.SRCALPHA)
-    def init_for_type(self, type):
+        Cursor.__init__(self, 0, rects[0])
+    def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
-            self.u_colors = ['green200', 'yellow', 'yellow', 'red']
     def keypress(self, KEY):
         if KEY == pygame.K_DOWN:
-            self.change_pos(self.keys[-len(self.keys) + self.active + 1])
+            self.change_pos(self.keys[-len(self.keys) + self.active_num + 1])
         else:
-            self.change_pos(self.keys[self.active - 1])
+            self.change_pos(self.keys[self.active_num - 1])
     def change_pos(self, key):
-        self.active = self.keys.index(key)
-        self.y = self.y_cords[self.active]
-        self.u_length = -13
+        self.active_key = key
+        self.active_num = self.keys.index(key)
+        self.new_y = self.y_cords[self.active_num]
+    def move_cur(self):
+        diff = (self.new_y - self.rect.y)/3
+        if abs(diff) < 0.1:
+            diff = 1
+        self.rect.y += diff
     def render(self):
-        self.render_objects()
-        Globals.screen.blit(self.surf, (self.x, self.y))
-    def render_objects(self):
-        if self.u_length != self.size[0]/2-3:
-            self.u_length += 20
-            if self.surf_color.a != 104:
-                self.surf_color.a += 8
-            pygame.draw.rect(self.surf, self.surf_color, pygame.Rect((0, 0), self.size), 0)
-            pygame.draw.line(self.surf, Globals.COLORS[self.u_colors[self.active]], (self.size[0]/2-self.u_length, self.size[1]-1), (self.size[0]/2+self.u_length, self.size[1]-1), 1)
+        if self.new_y != self.rect.y:
+            self.move_cur()
+        if self.surf_color.a != 104:
+            self.surf_color.a += 8
+            self.draw_rect()
+        Cursor.render(self)
+class OwnCursor(Cursor):
+    def __init__(self, color, rect):
+        self.u_color = Globals.COLORS[color]
+        self.u_length = 0
+        Cursor.__init__(self, 104, rect)
+    def render(self, state):
+        if state:
+            if self.u_length < self.rect.w/2-25:
+                self.u_length += 1
+                self.draw_rect()
+                pygame.draw.line(self.surf, self.u_color, (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
+            Cursor.render(self)
+        elif self.u_length:
+            self.u_length = 0
