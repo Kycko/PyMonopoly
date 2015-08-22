@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from pygame import Color, display
+from pygame import display
 from os import listdir
 from sys import exit as SYSEXIT
 
@@ -46,7 +46,7 @@ def create_init_file(type):
         data = ['0\n' if x<3 else 'None 0 01.01.01 black\n' for x in range(10)]
         data = ['0\n'] + data + ['1\n'] + data
     elif type == 'settings':
-        data = ('0\n', 'Player 1\n', '215\n', '0\n', '0\n', '6\n', '1\n', '1\n', '1.0\n', '1\n')
+        data = ('0\n', 'Player 1\n', 'red\n', '6\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("3\n", "2\n")
     write_to_file(Globals.FILES[type], data)
@@ -54,11 +54,11 @@ def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
     return {'language'          : int(SETTINGS[0]),
             'player_name'       : SETTINGS[1],
-            'player_color'      : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
-            'favourite_game'    : int(SETTINGS[5]),
-            'music'             : bool(SETTINGS[6]),
-            'sound_effects'     : bool(SETTINGS[7]),
-            'volume'            : float(SETTINGS[8]),
-            'game_block'        : bool(SETTINGS[9])}
+            'player_color'      : Globals.COLORS[SETTINGS[2]],
+            'favourite_game'    : int(SETTINGS[3]),
+            'music'             : bool(SETTINGS[4]),
+            'sound_effects'     : bool(SETTINGS[5]),
+            'volume'            : float(SETTINGS[6]),
+            'game_block'        : bool(SETTINGS[7])}
 def read_translation(lang):
     return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[lang][0] + '/main')

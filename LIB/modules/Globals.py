@@ -12,7 +12,9 @@ VERSION = '0.1-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0])
 #--- Colors, directories, files, fonts, pictures and languages
-COLORS = {'black'               : pygame.Color('black')}
+COLORS = {'black'               : pygame.Color('black'),
+          'red'                 : pygame.Color('red'),
+          'white'               : pygame.Color('white')}
 
 DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}

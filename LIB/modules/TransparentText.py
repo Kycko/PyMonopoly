@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 import Globals
 from GlobalFuncs import slight_animation_count_pos
-from pygame import Color, Rect, Surface
+from pygame import Rect, Surface
 
 class AlphaText():
     def __init__(self, text, group, number=None):
         self.alpha = 5
         self.init_for_group(text, group, number)
-        self.anticolor = Color('white') - self.color
+        self.anticolor = Globals.COLORS['white'] - self.color
         self.update_text(text)
     def init_for_group(self, text, group, number):
         self.AV = True
         if group == 'main_main':
             self.font = Globals.FONTS['ubuntu_big']
-            self.color = Color('white')
+            self.color = Globals.COLORS['white']
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
