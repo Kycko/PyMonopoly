@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha
+from GlobalFuncs import change_color_alpha, slight_animation_count_pos
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -10,15 +10,21 @@ class MenuItem():
         self.type = type
         self.group = group
         self.text = AlphaText(text, group, number)
+        self.make_active_zone()
         self.init_for_group()
     def init_for_group(self):
         self.tooltip = None
+        if self.group == 'somegroup':
+            self.cursor = OwnCursor('black', self.active_zone)
+            self.HOTKEY = 'somehotkey'
+    def update_text(self, text):
+        self.text.update_text(text)
+        self.make_active_zone()
+    def make_active_zone(self):
         if self.group[:4] == 'main':
             self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
         elif self.group == 'somegroup':
             self.active_zone = self.text.rect.inflate(50, 6)
-            self.cursor = OwnCursor('black', self.active_zone)
-            self.HOTKEY = 'somehotkey'
     def render(self, state):
         if self.text.AV:
             if self.group[:4] != 'main':
@@ -59,14 +65,8 @@ class MainCursor(Cursor):
         self.active_key = key
         self.active_num = self.keys.index(key)
         self.new_y = self.y_cords[self.active_num]
-    def move_cur(self):
-        diff = (self.new_y - self.rect.y)/3
-        if abs(diff) < 0.1:
-            diff = 1
-        self.rect.y += diff
     def render(self):
-        if self.new_y != self.rect.y:
-            self.move_cur()
+        self.rect.y = slight_animation_count_pos(self.new_y, self.rect.y)
         if self.surf_color.a != 104:
             self.surf_color.a += 8
             self.draw_rect()
