@@ -31,7 +31,7 @@ class MainScreen():
         for pic in self.pics.values():
             pic.render()
         if self.cursor:
-            self.cursor.render()
+            self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():
             self.menuitems[key].render(cur_key == key)
         Globals.window.blit(Globals.screen, (0, 0))
@@ -47,6 +47,8 @@ class MainScreen():
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.menuitems['exit'].action()
+                elif e.key == pygame.K_BACKSPACE:
+                    self.__init__('main_main')
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:

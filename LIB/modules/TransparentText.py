@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
+from GlobalFuncs import slight_animation_count_pos
 from pygame import Color, Rect, Surface
 
 class AlphaText():
@@ -15,13 +16,13 @@ class AlphaText():
             self.color = Color('white')
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
-            self.y = Globals.RESOLUTION[1]*0.45+35*number
-        elif group == 'somegroup':
-            self.font = 'somefont'
-            self.color = 'somecolor'
-            self.x = 0
-            self.x_offset = 0
-            self.y = 0
+            self.y = Globals.RESOLUTION[1]/2+50+35*number
+        if group[:4] == 'main':
+            self.new_y = self.y - 100
+    def move_text(self):
+        if self.new_y != self.y:
+            self.y = slight_animation_count_pos(self.new_y, self.y, 10)
+            self.rect = Rect((self.rect.x, self.y), self.rect.size)
     def update_text(self, text):
         size = self.font.size(text)
         xpos = self.find_xpos(size)

@@ -9,9 +9,9 @@ def change_color_alpha(color, alpha):
     color -= Globals.COLORS['black']
     color.a = alpha
     return color
-def slight_animation_count_pos(new, current):
+def slight_animation_count_pos(new, current, speed):
     if new != current:
-        diff = (new - current)/3
+        diff = (new - current)/speed
         if abs(diff) < 0.1:
             diff = 1
         current += diff
