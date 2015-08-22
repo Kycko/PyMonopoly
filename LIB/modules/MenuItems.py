@@ -10,15 +10,21 @@ class MenuItem():
         self.type = type
         self.group = group
         self.text = AlphaText(text, group, number)
+        self.make_active_zone()
         self.init_for_group()
     def init_for_group(self):
         self.tooltip = None
+        if self.group == 'somegroup':
+            self.cursor = OwnCursor('black', self.active_zone)
+            self.HOTKEY = 'somehotkey'
+    def update_text(self, text):
+        self.text.update_text(text)
+        self.make_active_zone()
+    def make_active_zone(self):
         if self.group[:4] == 'main':
             self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
         elif self.group == 'somegroup':
             self.active_zone = self.text.rect.inflate(50, 6)
-            self.cursor = OwnCursor('black', self.active_zone)
-            self.HOTKEY = 'somehotkey'
     def render(self, state):
         if self.text.AV:
             if self.group[:4] != 'main':
