@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha
+from GlobalFuncs import change_color_alpha, slight_animation_count_pos
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -59,14 +59,8 @@ class MainCursor(Cursor):
         self.active_key = key
         self.active_num = self.keys.index(key)
         self.new_y = self.y_cords[self.active_num]
-    def move_cur(self):
-        diff = (self.new_y - self.rect.y)/3
-        if abs(diff) < 0.1:
-            diff = 1
-        self.rect.y += diff
     def render(self):
-        if self.new_y != self.rect.y:
-            self.move_cur()
+        self.rect.y = slight_animation_count_pos(self.new_y, self.rect.y)
         if self.surf_color.a != 104:
             self.surf_color.a += 8
             self.draw_rect()

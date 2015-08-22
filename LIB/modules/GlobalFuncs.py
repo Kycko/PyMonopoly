@@ -9,6 +9,13 @@ def change_color_alpha(color, alpha):
     color -= Globals.COLORS['black']
     color.a = alpha
     return color
+def slight_animation_count_pos(new, current):
+    if new != current:
+        diff = (new - current)/3
+        if abs(diff) < 0.1:
+            diff = 1
+        current += diff
+    return current
 def read_file(file):
     list = open(file, 'r')
     array = list.readlines()
