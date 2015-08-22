@@ -4,14 +4,16 @@ from MenuItems import MainCursor, MenuItem
 from sys import exit as SYSEXIT
 
 class MainScreen():
-    def __init__(self, type):
+    def __init__(self):
+        self.switch_screen('main_main')
+        self.cursor = MainCursor(self.menuitems, 'main_main')
+    def switch_screen(self, type):
         if type == 'main_main':
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
             self.pics = {'background'       : Globals.PICS['background']}
-        self.cursor = MainCursor(self.menuitems, type)
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -47,8 +49,6 @@ class MainScreen():
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.menuitems['exit'].action()
-                elif e.key == pygame.K_BACKSPACE:
-                    self.__init__('main_main')
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:
@@ -58,4 +58,5 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action()
         if type:
-            print(type)
+            self.switch_screen(type)
+            self.cursor.screen_switched(self.menuitems, type)

@@ -56,10 +56,13 @@ class Cursor():
 #--- Cursors
 class MainCursor(Cursor):
     def __init__(self, menuitems, type):
+        first_rect = self.screen_switched(menuitems, type)
+        Cursor.__init__(self, 0, first_rect)
+    def screen_switched(self, menuitems, type):
         self.make_keys(type)
         first_rect = self.update_y_cords(menuitems)
         self.change_pos(self.keys[0])
-        Cursor.__init__(self, 0, first_rect)
+        return first_rect
     def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
