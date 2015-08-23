@@ -67,6 +67,8 @@ class MainCursor(Cursor):
     def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
+        elif type == 'main_stats':
+            self.keys = ['exit']
     def update_y_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.y_cords = [rect.y for rect in rects]

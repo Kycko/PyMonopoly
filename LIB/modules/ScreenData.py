@@ -22,6 +22,8 @@ class MainScreen():
                            'resources'      : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
                            'authors'        : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)
                            }
+        elif type == 'main_stats':
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[12], 'main_main', 'main_stats', 3)}
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -58,7 +60,7 @@ class MainScreen():
                 elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and self.cursor:
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
-                    self.menuitems['exit'].action()
+                    self.action_call('exit')
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:

@@ -13,13 +13,12 @@ class AlphaText():
         self.AV = True
         if group in ('APPVERSION', 'authors'):
             self.font = Globals.FONTS['ubuntu_small']
-        if group in ('APPNAME', 'APPVERSION', 'main_main'):
+        if group in ('APPNAME', 'APPVERSION', 'main_main', 'main_stats'):
             self.color = Globals.COLORS['white']
         if group == 'main_main':
-            self.font = Globals.FONTS['ubuntu_big']
-            self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'main_stats':
+            self.y = Globals.RESOLUTION[1]+50
         elif group == 'authors':
             self.color = Globals.COLORS['grey']
             self.x = 'right'
@@ -33,6 +32,9 @@ class AlphaText():
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 60
         if group[:4] == 'main':
+            self.font = Globals.FONTS['ubuntu_big']
+            self.x = 'center'
+            self.x_offset = -Globals.RESOLUTION[0]/4
             self.new_y = self.y - 100
     def move_text(self):
         if self.new_y != self.y:
