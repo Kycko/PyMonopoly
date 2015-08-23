@@ -11,30 +11,39 @@ class AlphaText():
         self.update_text(text)
     def init_for_group(self, text, group, number):
         self.AV = True
-        if group in ('APPVERSION', 'authors'):
+        #--- Fonts
+        if group[:4] == 'main' or group == 'stats_game_name':
+            self.font = Globals.FONTS['ubuntu_big']
+        elif group in ('APPVERSION', 'authors'):
             self.font = Globals.FONTS['ubuntu_small']
-        if group in ('APPNAME', 'APPVERSION', 'main_main', 'main_stats'):
+        else:
+            self.font = Globals.FONTS['ubuntu_bigger']
+        #--- Colors
+        if group == 'authors':
+            self.color = Globals.COLORS['grey']
+        else:
             self.color = Globals.COLORS['white']
+        #--- Position
         if group == 'main_main':
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
         elif group == 'main_stats':
             self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
+        elif group == 'stats_game_name':
+            self.x_offset = -Globals.RESOLUTION[0]/6
+            self.y = 300
         elif group == 'authors':
-            self.color = Globals.COLORS['grey']
             self.x = 'right'
             self.x_offset = 10
             self.y = Globals.RESOLUTION[1]-26-20*number
         elif group == 'APPNAME':
-            self.font = Globals.FONTS['ubuntu_bigger']
             self.x = Globals.PICS['logo'].x + 110
             self.y = Globals.PICS['logo'].y + 10
         elif group == 'APPVERSION':
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 50
-        if group[:4] == 'main':
-            self.font = Globals.FONTS['ubuntu_big']
+        if group[:5] in ('main_', 'stats'):
             self.x = 'center'
             self.new_y = self.y - 100
         else:
