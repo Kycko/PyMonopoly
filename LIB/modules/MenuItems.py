@@ -61,7 +61,7 @@ class MainCursor(Cursor):
         Cursor.__init__(self, 0, first_rect)
     def screen_switched(self, menuitems, type):
         self.make_keys(type)
-        first_rect = self.update_y_cords(menuitems)
+        first_rect = self.update_cords(menuitems)
         self.change_pos(self.keys[0])
         return first_rect
     def make_keys(self, type):
@@ -69,9 +69,9 @@ class MainCursor(Cursor):
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'main_stats':
             self.keys = ['exit']
-    def update_y_cords(self, menuitems):
+    def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
-        self.y_cords = [rect.y for rect in rects]
+        self.cords = [rect.topleft for rect in rects]
         return rects[0]
     def keypress(self, KEY):
         if KEY == pygame.K_DOWN:
@@ -81,14 +81,14 @@ class MainCursor(Cursor):
     def change_pos(self, key):
         self.active_key = key
         self.active_num = self.keys.index(key)
-        self.change_new_y()
-    def change_new_y(self):
-        self.new_y = self.y_cords[self.active_num]
+        self.change_new_cords()
+    def change_new_cords(self):
+        self.new_cords = self.cords[self.active_num]
     def render(self, menuitems):
-        if menuitems[self.keys[0]].active_zone.y != self.y_cords[0]:
-            self.update_y_cords(menuitems)
-            self.change_new_y()
-        self.rect.y = slight_animation_count_pos(self.new_y, self.rect.y, 5)
+        if menuitems[self.keys[0]].active_zone.topleft != self.cords[0]:
+            self.update_cords(menuitems)
+            self.change_new_cords()
+        self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5)
         if self.surf_color.a != 104:
             self.surf_color.a += 8
             self.draw_rect()

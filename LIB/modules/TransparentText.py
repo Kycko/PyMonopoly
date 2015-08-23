@@ -16,8 +16,10 @@ class AlphaText():
         if group in ('APPNAME', 'APPVERSION', 'main_main', 'main_stats'):
             self.color = Globals.COLORS['white']
         if group == 'main_main':
+            self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
         elif group == 'main_stats':
+            self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
         elif group == 'authors':
             self.color = Globals.COLORS['grey']
@@ -34,11 +36,10 @@ class AlphaText():
         if group[:4] == 'main':
             self.font = Globals.FONTS['ubuntu_big']
             self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/4
             self.new_y = self.y - 100
     def move_text(self):
         if self.new_y != self.y:
-            self.y = slight_animation_count_pos(self.new_y, self.y, 10)
+            self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
             self.rect = Rect((self.rect.x, self.y), self.rect.size)
     def update_text(self, text):
         size = self.font.size(text)

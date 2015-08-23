@@ -29,11 +29,14 @@ def play_click_sound():
         Globals.SOUNDS['button-pressed'].play()
 def slight_animation_count_pos(new, current, speed):
     if new != current:
-        diff = (new - current)/speed
-        if abs(diff) < 0.1:
-            diff = 1
-        current += diff
-    return current
+        current = list(current)
+        for axis in range(2):
+            if new[axis] != current[axis]:
+                diff = (new[axis] - current[axis])/speed
+                if abs(diff) < 0.1:
+                    diff = 1
+                current[axis] += diff
+    return tuple(current)
 def read_file(file):
     list = open(file, 'r')
     array = list.readlines()
