@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
 from MenuItems import MainCursor, MenuItem
+from TransparentText import AlphaText
 from sys import exit as SYSEXIT
 
 class MainScreen():
-    def __init__(self, type):
+    def __init__(self):
+        self.switch_screen('main_main')
+        self.cursor = MainCursor(self.menuitems, 'main_main')
+    def switch_screen(self, type):
         if type == 'main_main':
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.pics = {'background'       : Globals.PICS['background']}
-        self.cursor = MainCursor(self.menuitems, type)
+            self.pics = {'background'       : Globals.PICS['background'],
+                         'logo'             : Globals.PICS['logo'],
+                         'order'            : ('background', 'logo')}
+            self.labels = {'name'           : AlphaText('PyMonopoly', 'APPNAME'),
+                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION')}
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -28,10 +35,12 @@ class MainScreen():
                 return key
         return None
     def render(self, cur_key):
-        for pic in self.pics.values():
-            pic.render()
+        for key in self.pics['order']:
+            self.pics[key].render()
+        for label in self.labels.values():
+            label.render()
         if self.cursor:
-            self.cursor.render()
+            self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():
             self.menuitems[key].render(cur_key == key)
         Globals.window.blit(Globals.screen, (0, 0))
@@ -56,4 +65,5 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action()
         if type:
-            print(type)
+            self.switch_screen(type)
+            self.cursor.screen_switched(self.menuitems, type)

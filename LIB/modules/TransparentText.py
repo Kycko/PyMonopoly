@@ -1,27 +1,38 @@
 # -*- coding: utf-8 -*-
 import Globals
-from pygame import Color, Rect, Surface
+from GlobalFuncs import slight_animation_count_pos
+from pygame import Rect, Surface
 
 class AlphaText():
     def __init__(self, text, group, number=None):
         self.alpha = 5
         self.init_for_group(text, group, number)
-        self.anticolor = Color('white') - self.color
+        self.anticolor = Globals.COLORS['white'] - self.color
         self.update_text(text)
     def init_for_group(self, text, group, number):
         self.AV = True
         if group == 'main_main':
             self.font = Globals.FONTS['ubuntu_big']
-            self.color = Color('white')
+            self.color = Globals.COLORS['white']
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
-            self.y = Globals.RESOLUTION[1]*0.45+35*number
-        elif group == 'somegroup':
-            self.font = 'somefont'
-            self.color = 'somecolor'
-            self.x = 0
-            self.x_offset = 0
-            self.y = 0
+            self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'APPNAME':
+            self.font = Globals.FONTS['ubuntu_bigger']
+            self.color = Globals.COLORS['white']
+            self.x = Globals.PICS['logo'].x + 110
+            self.y = Globals.PICS['logo'].y + 20
+        elif group == 'APPVERSION':
+            self.font = Globals.FONTS['ubuntu_small']
+            self.color = Globals.COLORS['white']
+            self.x = Globals.PICS['logo'].x + 112
+            self.y = Globals.PICS['logo'].y + 60
+        if group[:4] == 'main':
+            self.new_y = self.y - 100
+    def move_text(self):
+        if self.new_y != self.y:
+            self.y = slight_animation_count_pos(self.new_y, self.y, 10)
+            self.rect = Rect((self.rect.x, self.y), self.rect.size)
     def update_text(self, text):
         size = self.font.size(text)
         xpos = self.find_xpos(size)
