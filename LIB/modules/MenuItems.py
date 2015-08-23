@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha, slight_animation_count_pos
+from GlobalFuncs import change_color_alpha, play_click_sound, slight_animation_count_pos
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -39,6 +39,7 @@ class MenuItem():
             self.group_checkings(state)
             self.text.render()
     def action(self):
+        play_click_sound()
         if self.type == 'main_sysexit':
             SYSEXIT()
         else:

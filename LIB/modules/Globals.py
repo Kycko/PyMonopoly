@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import pygame
-from GlobalFuncs import check_files, check_user_monitor, read_settings, read_translation
+from GlobalFuncs import change_volume, check_files, check_user_monitor, read_settings, read_translation, switch_sound_state
 from ScreenData import MainScreen
 from Sprite import Sprite
 
 #--- Initialize python modules
 pygame.display.init()
 pygame.font.init()
+pygame.mixer.init()
 #--- Game version and resolution
 VERSION = '0.1-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
@@ -20,6 +21,7 @@ DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}
 DIRS['fonts'] = DIRS['LIB'] + 'fonts/'
 DIRS['images'] = DIRS['LIB'] + 'images/'
+DIRS['sounds'] = DIRS['LIB'] + 'sounds/'
 DIRS['translations'] = DIRS['LIB'] + 'translations/'
 
 FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
@@ -32,6 +34,9 @@ FONTS = {'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24)}
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg')}
 
+SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
+          'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
+
 LANGUAGES = (('en', u'English'),
              ('ru', u'Русский'))
 #--- Restore files, read settings and translation
@@ -43,6 +48,10 @@ pygame.display.set_icon(pygame.image.load(PICS['appicon']))
 window = pygame.display.set_mode(RESOLUTION)
 pygame.display.set_caption('PyMonopoly. Version: ' + VERSION)
 screen = pygame.Surface(RESOLUTION)
+#--- Various important settings
 pygame.event.set_allowed(None)
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN])
+change_volume(SETTINGS['volume'])
+switch_sound_state('music', not SETTINGS['music'])
+#--- Create MainScreen object
 main_scr = MainScreen()
