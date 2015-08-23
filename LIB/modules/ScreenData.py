@@ -17,9 +17,9 @@ class MainScreen():
             if appstart:
                 self.pics = {'background'   : Globals.PICS['background'],
                              'logo'         : Globals.PICS['logo'],
-                             'order'        : ('background', 'logo')}
-                self.labels = {'name'       : AlphaText('PyMonopoly', 'APPNAME'),
-                               'version'    : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
+                             'order'        : ['background', 'logo']}
+                self.labels = {'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
+                               'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
             else:
@@ -77,5 +77,5 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def move_APPINFO(self, offset):
         self.pics['logo'].new_y += offset
-        for key in ('name', 'version'):
+        for key in ('APPNAME', 'APPVERSION'):
             self.labels[key].new_y += offset

@@ -25,7 +25,7 @@ def switch_sound_state(object, current, write_to_file=False):
     if write_to_file:
         save_settings()
 def play_click_sound():
-    if Globals.SETTINGS['sound_effects']:
+    if Globals.SETTINGS['sounds']:
         Globals.SOUNDS['button-pressed'].play()
 def slight_animation_count_pos(new, current, speed):
     if new != current:
@@ -74,24 +74,24 @@ def create_init_file(type):
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
     return {'language'          : int(SETTINGS[0]),
-            'player_name'       : SETTINGS[1],
-            'player_color'      : (int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
-            'favourite_game'    : int(SETTINGS[5]),
+            'pl_name'       : SETTINGS[1],
+            'pl_color'      : (int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
+            'fav_game'    : int(SETTINGS[5]),
             'music'             : bool(SETTINGS[6]),
-            'sound_effects'     : bool(SETTINGS[7]),
+            'sounds'     : bool(SETTINGS[7]),
             'volume'            : float(SETTINGS[8]),
-            'game_block'        : bool(SETTINGS[9])}
+            'block'        : bool(SETTINGS[9])}
 def save_settings():
     array = [str(Globals.SETTINGS['language']) + '\n',
-             Globals.SETTINGS['player_name'] + '\n',
-             str(Globals.SETTINGS['player_color'][0]) + '\n',
-             str(Globals.SETTINGS['player_color'][1]) + '\n',
-             str(Globals.SETTINGS['player_color'][2]) + '\n',
-             str(Globals.SETTINGS['favourite_game']) + '\n',
+             Globals.SETTINGS['pl_name'] + '\n',
+             str(Globals.SETTINGS['pl_color'][0]) + '\n',
+             str(Globals.SETTINGS['pl_color'][1]) + '\n',
+             str(Globals.SETTINGS['pl_color'][2]) + '\n',
+             str(Globals.SETTINGS['fav_game']) + '\n',
              str(int(Globals.SETTINGS['music'])) + '\n',
-             str(int(Globals.SETTINGS['sound_effects'])) + '\n',
+             str(int(Globals.SETTINGS['sounds'])) + '\n',
              str(Globals.SETTINGS['volume']) + '\n',
-             str(int(Globals.SETTINGS['game_block'])) + '\n']
+             str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
 def read_translation(lang):
     return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[lang][0] + '/main')
