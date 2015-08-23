@@ -11,20 +11,25 @@ class AlphaText():
         self.update_text(text)
     def init_for_group(self, text, group, number):
         self.AV = True
+        if group in ('APPVERSION', 'authors'):
+            self.font = Globals.FONTS['ubuntu_small']
+        if group in ('APPNAME', 'APPVERSION', 'main_main'):
+            self.color = Globals.COLORS['white']
         if group == 'main_main':
             self.font = Globals.FONTS['ubuntu_big']
-            self.color = Globals.COLORS['white']
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'authors':
+            self.color = Globals.COLORS['grey']
+            self.x = 'right'
+            self.x_offset = 10
+            self.y = Globals.RESOLUTION[1]-26-20*number
         elif group == 'APPNAME':
             self.font = Globals.FONTS['ubuntu_bigger']
-            self.color = Globals.COLORS['white']
             self.x = Globals.PICS['logo'].x + 110
             self.y = Globals.PICS['logo'].y + 20
         elif group == 'APPVERSION':
-            self.font = Globals.FONTS['ubuntu_small']
-            self.color = Globals.COLORS['white']
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 60
         if group[:4] == 'main':

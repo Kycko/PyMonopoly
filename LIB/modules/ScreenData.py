@@ -18,7 +18,10 @@ class MainScreen():
                          'logo'             : Globals.PICS['logo'],
                          'order'            : ('background', 'logo')}
             self.labels = {'name'           : AlphaText('PyMonopoly', 'APPNAME'),
-                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION')}
+                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
+                           'resources'      : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
+                           'authors'        : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)
+                           }
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
