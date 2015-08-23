@@ -17,6 +17,16 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'APPNAME':
+            self.font = Globals.FONTS['ubuntu_bigger']
+            self.color = Globals.COLORS['white']
+            self.x = Globals.PICS['logo'].x + 110
+            self.y = Globals.PICS['logo'].y + 20
+        elif group == 'APPVERSION':
+            self.font = Globals.FONTS['ubuntu_small']
+            self.color = Globals.COLORS['white']
+            self.x = Globals.PICS['logo'].x + 112
+            self.y = Globals.PICS['logo'].y + 60
         if group[:4] == 'main':
             self.new_y = self.y - 100
     def move_text(self):

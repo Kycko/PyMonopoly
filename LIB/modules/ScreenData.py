@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
 from MenuItems import MainCursor, MenuItem
+from TransparentText import AlphaText
 from sys import exit as SYSEXIT
 
 class MainScreen():
@@ -13,7 +14,11 @@ class MainScreen():
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.pics = {'background'       : Globals.PICS['background']}
+            self.pics = {'background'       : Globals.PICS['background'],
+                         'logo'             : Globals.PICS['logo'],
+                         'order'            : ('background', 'logo')}
+            self.labels = {'name'           : AlphaText('PyMonopoly', 'APPNAME'),
+                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION')}
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -30,8 +35,10 @@ class MainScreen():
                 return key
         return None
     def render(self, cur_key):
-        for pic in self.pics.values():
-            pic.render()
+        for key in self.pics['order']:
+            self.pics[key].render()
+        for label in self.labels.values():
+            label.render()
         if self.cursor:
             self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():

@@ -21,6 +21,7 @@ DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}
 DIRS['fonts'] = DIRS['LIB'] + 'fonts/'
 DIRS['images'] = DIRS['LIB'] + 'images/'
+DIRS['images_etc'] = DIRS['images'] + 'etc/'
 DIRS['sounds'] = DIRS['LIB'] + 'sounds/'
 DIRS['translations'] = DIRS['LIB'] + 'translations/'
 
@@ -29,10 +30,13 @@ FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
 
-FONTS = {'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24)}
+FONTS = {'ubuntu_bigger'        : pygame.font.Font(FILES['font_ubuntu'], 32),
+         'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24),
+         'ubuntu_small'         : pygame.font.Font(FILES['font_ubuntu'], 16)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
-        'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg')}
+        'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg'),
+        'logo'                  : Sprite((RESOLUTION[0]/3, 100), DIRS['images_etc'] + 'logo.png')}
 
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
           'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
