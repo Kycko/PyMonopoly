@@ -29,14 +29,16 @@ class AlphaText():
         elif group == 'APPNAME':
             self.font = Globals.FONTS['ubuntu_bigger']
             self.x = Globals.PICS['logo'].x + 110
-            self.y = Globals.PICS['logo'].y + 20
+            self.y = Globals.PICS['logo'].y + 10
         elif group == 'APPVERSION':
             self.x = Globals.PICS['logo'].x + 112
-            self.y = Globals.PICS['logo'].y + 60
+            self.y = Globals.PICS['logo'].y + 50
         if group[:4] == 'main':
             self.font = Globals.FONTS['ubuntu_big']
             self.x = 'center'
             self.new_y = self.y - 100
+        else:
+            self.new_y = self.y
     def move_text(self):
         if self.new_y != self.y:
             self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
@@ -66,4 +68,5 @@ class AlphaText():
         else:
             return self.text
     def render(self):
+        self.move_text()
         Globals.screen.blit(self.set_alpha(), self.rect.topleft)

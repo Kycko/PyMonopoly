@@ -6,24 +6,27 @@ from sys import exit as SYSEXIT
 
 class MainScreen():
     def __init__(self):
-        self.switch_screen('main_main')
+        self.switch_screen('main_main', True)
         self.cursor = MainCursor(self.menuitems, 'main_main')
-    def switch_screen(self, type):
+    def switch_screen(self, type, appstart=False):
         if type == 'main_main':
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.pics = {'background'       : Globals.PICS['background'],
-                         'logo'             : Globals.PICS['logo'],
-                         'order'            : ('background', 'logo')}
-            self.labels = {'name'           : AlphaText('PyMonopoly', 'APPNAME'),
-                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
-                           'resources'      : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
-                           'authors'        : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)
-                           }
+            if appstart:
+                self.pics = {'background'   : Globals.PICS['background'],
+                             'logo'         : Globals.PICS['logo'],
+                             'order'        : ('background', 'logo')}
+                self.labels = {'name'       : AlphaText('PyMonopoly', 'APPNAME'),
+                               'version'    : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
+                               'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
+                               'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
+            else:
+                self.move_APPINFO(50)
         elif type == 'main_stats':
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[12], 'main_main', 'main_stats', 3)}
+            self.move_APPINFO(-50)
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -72,3 +75,7 @@ class MainScreen():
         if type:
             self.switch_screen(type)
             self.cursor.screen_switched(self.menuitems, type)
+    def move_APPINFO(self, offset):
+        self.pics['logo'].new_y += offset
+        for key in ('name', 'version'):
+            self.labels[key].new_y += offset

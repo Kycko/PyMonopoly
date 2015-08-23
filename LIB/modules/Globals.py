@@ -38,7 +38,7 @@ FONTS = {'ubuntu_bigger'        : pygame.font.Font(FILES['font_ubuntu'], 32),
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg'),
-        'logo'                  : Sprite((RESOLUTION[0]/3, 100), DIRS['images_etc'] + 'logo.png')}
+        'logo'                  : Sprite((RESOLUTION[0]/3, 120), DIRS['images_etc'] + 'logo.png')}
 
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
           'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
