@@ -1,24 +1,39 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
 from MenuItems import MainCursor, MenuItem
+from Sprite import Line
 from TransparentText import AlphaText
 from sys import exit as SYSEXIT
 
 class MainScreen():
     def __init__(self):
-        self.switch_screen('main_main')
+        self.switch_screen('main_main', None)
         self.cursor = MainCursor(self.menuitems, 'main_main')
-    def switch_screen(self, type):
+    def switch_screen(self, type, key):
         if type == 'main_main':
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.pics = {'background'       : Globals.PICS['background'],
-                         'logo'             : Globals.PICS['logo'],
-                         'order'            : ('background', 'logo')}
-            self.labels = {'name'           : AlphaText('PyMonopoly', 'APPNAME'),
-                           'version'        : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION')}
+            self.objects = {}
+            if key != 'exit':
+                self.pics = {'background'   : Globals.PICS['background'],
+                             'logo'         : Globals.PICS['logo'],
+                             'order'        : ['background', 'logo']}
+                self.labels = {'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
+                               'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
+                               'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
+                               'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
+            else:
+                self.move_APPINFO(50)
+                for key in self.labels.keys():
+                    if key not in ('APPNAME', 'APPVERSION', 'resources', 'authors'):
+                        self.labels.pop(key)
+        elif type == 'main_stats':
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[12], 'main_main', 'main_stats')}
+            self.move_APPINFO(-50)
+            self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[Globals.SETTINGS['fav_game']], 'stats_game_name')})
+            self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2)}
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -39,6 +54,8 @@ class MainScreen():
             self.pics[key].render()
         for label in self.labels.values():
             label.render()
+        for obj in self.objects.values():
+            obj.render()
         if self.cursor:
             self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():
@@ -55,7 +72,7 @@ class MainScreen():
                 elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and self.cursor:
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
-                    self.menuitems['exit'].action()
+                    self.action_call('exit')
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:
@@ -65,5 +82,9 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action()
         if type:
-            self.switch_screen(type)
+            self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
+    def move_APPINFO(self, offset):
+        self.pics['logo'].new_y += offset
+        for key in ('APPNAME', 'APPVERSION'):
+            self.labels[key].new_y += offset

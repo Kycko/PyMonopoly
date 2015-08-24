@@ -11,27 +11,46 @@ class AlphaText():
         self.update_text(text)
     def init_for_group(self, text, group, number):
         self.AV = True
-        if group == 'main_main':
+        #--- Fonts
+        if group[:4] == 'main' or group == 'stats_game_name':
             self.font = Globals.FONTS['ubuntu_big']
+        elif group in ('APPVERSION', 'authors'):
+            self.font = Globals.FONTS['ubuntu_small']
+        else:
+            self.font = Globals.FONTS['ubuntu_bigger']
+        #--- Colors
+        if group == 'authors':
+            self.color = Globals.COLORS['grey']
+        else:
             self.color = Globals.COLORS['white']
-            self.x = 'center'
+        #--- Position
+        if group == 'main_main':
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'main_stats':
+            self.x_offset = -Globals.RESOLUTION[0]/6
+            self.y = Globals.RESOLUTION[1]+50
+        elif group == 'stats_game_name':
+            self.x_offset = -Globals.RESOLUTION[0]/6
+            self.y = 300
+        elif group == 'authors':
+            self.x = 'right'
+            self.x_offset = 10
+            self.y = Globals.RESOLUTION[1]-26-20*number
         elif group == 'APPNAME':
-            self.font = Globals.FONTS['ubuntu_bigger']
-            self.color = Globals.COLORS['white']
             self.x = Globals.PICS['logo'].x + 110
-            self.y = Globals.PICS['logo'].y + 20
+            self.y = Globals.PICS['logo'].y + 10
         elif group == 'APPVERSION':
-            self.font = Globals.FONTS['ubuntu_small']
-            self.color = Globals.COLORS['white']
             self.x = Globals.PICS['logo'].x + 112
-            self.y = Globals.PICS['logo'].y + 60
-        if group[:4] == 'main':
+            self.y = Globals.PICS['logo'].y + 50
+        if group[:5] in ('main_', 'stats'):
+            self.x = 'center'
             self.new_y = self.y - 100
+        else:
+            self.new_y = self.y
     def move_text(self):
         if self.new_y != self.y:
-            self.y = slight_animation_count_pos(self.new_y, self.y, 10)
+            self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
             self.rect = Rect((self.rect.x, self.y), self.rect.size)
     def update_text(self, text):
         size = self.font.size(text)
@@ -58,4 +77,5 @@ class AlphaText():
         else:
             return self.text
     def render(self):
+        self.move_text()
         Globals.screen.blit(self.set_alpha(), self.rect.topleft)

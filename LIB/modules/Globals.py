@@ -9,11 +9,13 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
-VERSION = '0.1-dev'
+VERSION = '0.4-dev'
 AVAIL_RESOLUTIONS = check_user_monitor()
-RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0])
+#RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0]) --- commented out just for debugging
+RESOLUTION = (1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
+          'grey'                : pygame.Color('grey'),
           'red'                 : pygame.Color('red'),
           'white'               : pygame.Color('white')}
 
@@ -36,7 +38,7 @@ FONTS = {'ubuntu_bigger'        : pygame.font.Font(FILES['font_ubuntu'], 32),
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg'),
-        'logo'                  : Sprite((RESOLUTION[0]/3, 100), DIRS['images_etc'] + 'logo.png')}
+        'logo'                  : Sprite((RESOLUTION[0]/3, 120), DIRS['images_etc'] + 'logo.png')}
 
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
           'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
