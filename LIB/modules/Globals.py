@@ -34,6 +34,7 @@ FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
 
 FONTS = {'ubuntu_bigger'        : pygame.font.Font(FILES['font_ubuntu'], 32),
          'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24),
+         'ubuntu_medium'        : pygame.font.Font(FILES['font_ubuntu'], 20),
          'ubuntu_small'         : pygame.font.Font(FILES['font_ubuntu'], 16)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',

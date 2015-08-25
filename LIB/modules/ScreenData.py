@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
+from GlobalFuncs import read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import Line
 from TransparentText import AlphaText
@@ -30,9 +31,15 @@ class MainScreen():
                     if key not in ('APPNAME', 'APPVERSION', 'resources', 'authors'):
                         self.labels.pop(key)
         elif type == 'main_stats':
-            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[12], 'main_main', 'main_stats')}
+            data = read_stats(Globals.SETTINGS['fav_game'])
+            if data[1]:
+                data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
             self.move_APPINFO(-50)
-            self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[Globals.SETTINGS['fav_game']], 'stats_game_name')})
+            self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']], 'stats_game_name'),
+                                'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
+                                'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
+                                'profit'    : AlphaText(Globals.TRANSLATION[10] + str(data[2]), 'stats_common', 2)})
             self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2)}
     def mainloop(self):
         while True:
