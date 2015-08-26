@@ -14,6 +14,8 @@ class AlphaText():
         #--- Fonts
         if group[:4] == 'main' or group == 'stats_game_name':
             self.font = Globals.FONTS['ubuntu_big']
+        elif group == 'stats_common':
+            self.font = Globals.FONTS['ubuntu_medium']
         elif group in ('APPVERSION', 'authors'):
             self.font = Globals.FONTS['ubuntu_small']
         else:
@@ -25,14 +27,20 @@ class AlphaText():
             self.color = Globals.COLORS['white']
         #--- Position
         if group == 'main_main':
+            self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.y = Globals.RESOLUTION[1]/2+50+35*number
+        elif group == 'stats_common':
+            self.x = Globals.RESOLUTION[0]/7
+            self.y = 320 + 25 * number
         elif group == 'main_stats':
+            self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
         elif group == 'stats_game_name':
-            self.x_offset = -Globals.RESOLUTION[0]/6
-            self.y = 300
+            self.x = 'center'
+            self.x_offset = -Globals.RESOLUTION[0]/3
+            self.y = 280
         elif group == 'authors':
             self.x = 'right'
             self.x_offset = 10
@@ -44,7 +52,6 @@ class AlphaText():
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 50
         if group[:5] in ('main_', 'stats'):
-            self.x = 'center'
             self.new_y = self.y - 100
         else:
             self.new_y = self.y
