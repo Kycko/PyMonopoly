@@ -27,15 +27,17 @@ class MainScreen():
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
             else:
                 self.move_APPINFO(50)
-                for key in self.labels.keys():
-                    if key not in ('APPNAME', 'APPVERSION', 'resources', 'authors'):
-                        self.labels.pop(key)
+                self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         elif type == 'main_stats':
             self.move_APPINFO(-50)
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
             if not Globals.SETTINGS['block']:
                 self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
             self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
+    def clear_labels(self, exception):
+        for key in self.labels.keys():
+            if key not in exception:
+                self.labels.pop(key)
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -93,6 +95,7 @@ class MainScreen():
         for key in ('APPNAME', 'APPVERSION'):
             self.labels[key].new_y += offset
     def make_stats_screen(self, current):
+        self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         new = not(6-Globals.TRANSLATION.index(current))
         data = read_stats(new)
         if data[1]:
@@ -102,4 +105,12 @@ class MainScreen():
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
                             'profit'    : AlphaText(Globals.TRANSLATION[10] + '$' + str(data[2]), 'stats_common', 2),
                             'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
-        self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'game_name_UL', 2)}
+        for i in range(3, len(data)):
+            if data[i]['score']:
+                self.labels.update({'bestname'+str(i-2)     : AlphaText(str(i-2)+'. '+data[i]['name'], 'stats_table_0', i)})
+                self.labels.update({'bestscore'+str(i-2)    : AlphaText('  '*(10-len(str(data[i]['score'])))+str(data[i]['score']), 'stats_table_1', i)})
+                self.labels.update({'bestdate'+str(i-2)     : AlphaText(data[i]['date'], 'stats_table_2', i)})
+                if data[i]['recent']:
+                    self.labels.update({'bestrecent'        : AlphaText('latest', 'stats_latest', i)})
+        self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
+                        'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}

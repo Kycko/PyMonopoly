@@ -110,5 +110,5 @@ def read_stats(game):
             array[i] = {'name'      : temp[0],
                         'score'     : int(temp[1]),
                         'date'      : temp[2],
-                        'recent'    : bool(temp[3])}
+                        'recent'    : bool(int(temp[3]))}
     return array[line:line+10]
