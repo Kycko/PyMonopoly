@@ -33,6 +33,8 @@ class MainScreen():
         elif type == 'main_stats':
             self.move_APPINFO(-50)
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
+            if not Globals.SETTINGS['block']:
+                self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
             self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
     def mainloop(self):
         while True:
@@ -95,8 +97,6 @@ class MainScreen():
         data = read_stats(new)
         if data[1]:
             data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
-        if not Globals.SETTINGS['block']:
-            self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
         self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-new], 'stats_game_name'),
                             'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
