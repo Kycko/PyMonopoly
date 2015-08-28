@@ -44,7 +44,7 @@ class AlphaText():
             self.y = 280
         elif group == 'stats_switch':
             self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/3+100
+            self.x_offset = -Globals.RESOLUTION[0]/3+85
             self.y = 280
         elif group == 'stats_bests':
             self.x = 'center'
