@@ -77,7 +77,7 @@ class MainScreen():
                     self.action_call('exit')
                 else:
                     for key in self.menuitems.keys():
-                        if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:
+                        if self.menuitems[key].group[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
                             self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
