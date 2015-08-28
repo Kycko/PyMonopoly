@@ -13,7 +13,7 @@ class Sprite():
 class Line():
     def __init__(self, obj, type, width):
         self.color = change_color_alpha(obj.color, 5)
-        if type == 'bottom':
+        if type == 'game_name_UL':
             self.pos = obj.rect.bottomleft
             self.new_y = obj.new_y + obj.rect.h
         self.rect = pygame.Rect((0, 0), (obj.rect.w, width))

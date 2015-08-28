@@ -77,10 +77,10 @@ def read_settings():
             'pl_name'   : SETTINGS[1],
             'pl_color'  : (int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
             'fav_game'  : int(SETTINGS[5]),
-            'music'     : bool(SETTINGS[6]),
-            'sounds'    : bool(SETTINGS[7]),
+            'music'     : bool(int(SETTINGS[6])),
+            'sounds'    : bool(int(SETTINGS[7])),
             'volume'    : float(SETTINGS[8]),
-            'block'     : bool(SETTINGS[9])}
+            'block'     : bool(int(SETTINGS[9]))}
 def save_settings():
     array = [str(Globals.SETTINGS['language']) + '\n',
              Globals.SETTINGS['pl_name'] + '\n',

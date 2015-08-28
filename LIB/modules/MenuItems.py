@@ -14,30 +14,31 @@ class MenuItem():
         self.init_for_group()
     def init_for_group(self):
         self.tooltip = None
-        if self.group == 'somegroup':
-            self.cursor = OwnCursor('black', self.active_zone)
+        if self.group == 'stats_switch':
+            self.cursor = OwnCursor('light_green', self.active_zone)
             self.HOTKEY = 'somehotkey'
     def move_text(self):
         self.text.move_text()
         self.make_active_zone()
+        if self.group[:4] != 'main':
+            self.cursor.rect = self.active_zone.copy()
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
     def make_active_zone(self):
         if self.group[:4] == 'main':
             self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
-        elif self.group == 'somegroup':
-            self.active_zone = self.text.rect.inflate(50, 6)
-    def group_checkings(self, state):
-        if self.group[:4] == 'main':
-            if self.text.new_y != self.text.y:
-                self.move_text()
         else:
+            self.active_zone = self.text.rect.inflate(6, 6)
+    def group_checkings(self, state):
+        if self.text.new_y != self.text.y:
+            self.move_text()
+        if self.group[:4] != 'main':
             self.cursor.render(state)
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-            self.text.render()
+            self.text.render(True)
     def action(self):
         play_click_sound()
         if self.type == 'main_sysexit':
