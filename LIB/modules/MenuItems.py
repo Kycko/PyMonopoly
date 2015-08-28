@@ -13,37 +13,55 @@ class MenuItem():
         self.make_active_zone()
         self.init_for_group()
     def init_for_group(self):
-        self.tooltip = None
-        if self.group == 'somegroup':
-            self.cursor = OwnCursor('black', self.active_zone)
-            self.HOTKEY = 'somehotkey'
+        if self.group == 'stats_switch':
+            self.cursor = OwnCursor('light_green', self.active_zone)
+            self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
+            self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
+        else:
+            self.tooltip = None
     def move_text(self):
         self.text.move_text()
         self.make_active_zone()
+        if self.group[:4] != 'main':
+            self.cursor.rect = self.active_zone.copy()
+            self.tooltip.move_text(self.text.rect)
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
     def make_active_zone(self):
         if self.group[:4] == 'main':
             self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
-        elif self.group == 'somegroup':
-            self.active_zone = self.text.rect.inflate(50, 6)
-    def group_checkings(self, state):
-        if self.group[:4] == 'main':
-            if self.text.new_y != self.text.y:
-                self.move_text()
         else:
+            self.active_zone = self.text.rect.inflate(6, 6)
+    def group_checkings(self, state):
+        if self.text.new_y != self.text.y:
+            self.move_text()
+        if self.group[:4] != 'main':
             self.cursor.render(state)
+            self.tooltip.render(state)
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-            self.text.render()
+            self.text.render(True)
     def action(self):
         play_click_sound()
         if self.type == 'main_sysexit':
             SYSEXIT()
         else:
             return self.type
+class Tooltip():
+    def __init__(self, text, type, obj):
+        self.type = type
+        self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_smaller'].size(text))
+        self.move_text(obj.rect)
+        self.text = Globals.FONTS['ume_smaller'].render(text, True, Globals.COLORS['grey'])
+    def move_text(self, rect):
+        x = rect.x + (rect.w - self.rect.w)/2 - 15
+        y = rect.y - self.rect.h - 5
+        self.rect.topleft = (x, y)
+    def render(self, state):
+        if state:
+            Globals.screen.blit(self.text, self.rect.topleft)
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):

@@ -31,16 +31,11 @@ class MainScreen():
                     if key not in ('APPNAME', 'APPVERSION', 'resources', 'authors'):
                         self.labels.pop(key)
         elif type == 'main_stats':
-            data = read_stats(Globals.SETTINGS['fav_game'])
-            if data[1]:
-                data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
-            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
             self.move_APPINFO(-50)
-            self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']], 'stats_game_name'),
-                                'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
-                                'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
-                                'profit'    : AlphaText(Globals.TRANSLATION[10] + str(data[2]), 'stats_common', 2)})
-            self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2)}
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
+            if not Globals.SETTINGS['block']:
+                self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
+            self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
@@ -82,16 +77,29 @@ class MainScreen():
                     self.action_call('exit')
                 else:
                     for key in self.menuitems.keys():
-                        if self.menuitems[key].group[:4] != 'main' and e.key == self.menuitems[key].HOTKEY:
+                        if self.menuitems[key].group[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
                             self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
     def action_call(self, key):
         type = self.menuitems[key].action()
-        if type:
+        if type == 'stats_switch':
+            self.make_stats_screen(self.labels['game_name'].symbols)
+        elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
     def move_APPINFO(self, offset):
         self.pics['logo'].new_y += offset
         for key in ('APPNAME', 'APPVERSION'):
             self.labels[key].new_y += offset
+    def make_stats_screen(self, current):
+        new = not(6-Globals.TRANSLATION.index(current))
+        data = read_stats(new)
+        if data[1]:
+            data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
+        self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-new], 'stats_game_name'),
+                            'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
+                            'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
+                            'profit'    : AlphaText(Globals.TRANSLATION[10] + '$' + str(data[2]), 'stats_common', 2),
+                            'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
+        self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'game_name_UL', 2)}

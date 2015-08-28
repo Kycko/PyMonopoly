@@ -15,6 +15,7 @@ AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
+          'light_green'               : pygame.Color(126, 231, 85),
           'grey'                : pygame.Color('grey'),
           'red'                 : pygame.Color('red'),
           'white'               : pygame.Color('white')}
@@ -28,6 +29,7 @@ DIRS['sounds'] = DIRS['LIB'] + 'sounds/'
 DIRS['translations'] = DIRS['LIB'] + 'translations/'
 
 FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
+         'font_ume'             : DIRS['fonts'] + 'ume-ugo5.ttf',
          'last_game_settings'   : DIRS['settings'] + 'last_game_settings',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
@@ -35,7 +37,9 @@ FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
 FONTS = {'ubuntu_bigger'        : pygame.font.Font(FILES['font_ubuntu'], 32),
          'ubuntu_big'           : pygame.font.Font(FILES['font_ubuntu'], 24),
          'ubuntu_medium'        : pygame.font.Font(FILES['font_ubuntu'], 20),
-         'ubuntu_small'         : pygame.font.Font(FILES['font_ubuntu'], 16)}
+         'ubuntu_small'         : pygame.font.Font(FILES['font_ubuntu'], 16),
+         'ubuntu_smaller'       : pygame.font.Font(FILES['font_ubuntu'], 12),
+         'ume_smaller'          : pygame.font.Font(FILES['font_ume'], 12)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg'),
