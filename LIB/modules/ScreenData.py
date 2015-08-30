@@ -34,6 +34,11 @@ class MainScreen():
             if not Globals.SETTINGS['block']:
                 self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
             self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
+        elif type == 'main_settings':
+            self.move_APPINFO(-50)
+            self.menuitems = {'language'    : MenuItem(Globals.LANGUAGES[Globals.SETTINGS['language']][1], 'main_settings_language', 'main_settings_left_MI', 0),
+                              'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
+            self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0)})
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:

@@ -13,11 +13,11 @@ class AlphaText():
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
-        if group[:4] == 'main' or group == 'stats_game_name':
+        if group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
             self.font = Globals.FONTS['ubuntu_big']
-        elif group in ('stats_common'):
+        elif group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_medium']
-        elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests') or 'stats_table' in group:
+        elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in group:
             self.font = Globals.FONTS['ubuntu_small']
         elif group == 'stats_latest':
             self.font = Globals.FONTS['ume_smaller']
@@ -36,7 +36,7 @@ class AlphaText():
         elif group == 'stats_common':
             self.x = Globals.RESOLUTION[0]/7
             self.y = 320 + 25 * number
-        elif group == 'main_stats':
+        elif group in ('main_stats', 'main_settings_exit'):
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
@@ -51,6 +51,14 @@ class AlphaText():
         elif 'stats_table' in group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.y = 365 + 20*number
+        elif group == 'settings_left':
+            self.x = 'center'
+            self.x_offset = -Globals.RESOLUTION[0]/4
+            self.y = 330
+        elif group == 'main_settings_left_MI':
+            self.x = 'center'
+            self.x_offset = -Globals.RESOLUTION[0]/5
+            self.y = 350
         elif group == 'stats_latest':
             self.x = Globals.RESOLUTION[0]/7 + 365
             self.y = 365 + 20*number
@@ -67,7 +75,7 @@ class AlphaText():
         elif group == 'APPVERSION':
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 50
-        if group[:5] in ('main_', 'stats'):
+        if group[:5] in ('main_', 'stats', 'setti'):
             self.new_y = self.y - 100
         else:
             self.new_y = self.y
