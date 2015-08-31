@@ -36,9 +36,7 @@ class MainScreen():
             self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
         elif type == 'main_settings':
             self.move_APPINFO(-50)
-            self.menuitems = {'language'    : MenuItem(Globals.LANGUAGES[Globals.SETTINGS['language']][1], 'main_settings_language', 'main_settings_left_MI', 0),
-                              'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
-            self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0)})
+            self.make_settings_screen()
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
@@ -92,6 +90,10 @@ class MainScreen():
         type = self.menuitems[key].action()
         if type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
+        elif type == 'main_settings_language':
+            self.labels['APPVERSION'] = AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION')
+            self.make_settings_screen()
+
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
@@ -119,3 +121,7 @@ class MainScreen():
                     self.labels.update({'bestrecent'        : AlphaText('latest', 'stats_latest', i)})
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
+    def make_settings_screen(self):
+        self.menuitems = {'language'    : MenuItem(Globals.LANGUAGES[Globals.SETTINGS['language']][1], 'main_settings_language', 'main_settings_left_MI', 0),
+                          'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
+        self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0)})

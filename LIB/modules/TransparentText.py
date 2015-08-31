@@ -52,12 +52,10 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.y = 365 + 20*number
         elif group == 'settings_left':
-            self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/4
-            self.y = 330
+            self.x = Globals.RESOLUTION[0]/5 - 80
+            self.y = 320
         elif group == 'main_settings_left_MI':
-            self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/5
+            self.x = Globals.RESOLUTION[0]/4 - 50
             self.y = 350
         elif group == 'stats_latest':
             self.x = Globals.RESOLUTION[0]/7 + 365

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha, play_click_sound, slight_animation_count_pos
+from GlobalFuncs import change_color_alpha, play_click_sound, read_translation, slight_animation_count_pos
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -47,8 +47,10 @@ class MenuItem():
         play_click_sound()
         if self.type == 'main_sysexit':
             SYSEXIT()
-        else:
-            return self.type
+        elif self.type == 'main_settings_language':
+            Globals.SETTINGS['language'] = int(not(Globals.SETTINGS['language']))
+            Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
+        return self.type
 class Tooltip():
     def __init__(self, text, type, obj):
         self.type = type
