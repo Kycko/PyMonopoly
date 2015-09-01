@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha, play_click_sound, read_translation, slight_animation_count_pos
+from GlobalFuncs import change_color_alpha, play_click_sound, read_translation, slight_animation_count_pos, switch_sound_state
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -51,6 +51,8 @@ class MenuItem():
         play_click_sound()
         if self.type == 'main_sysexit':
             SYSEXIT()
+        elif self.type in ('main_settings_music', 'main_settings_sounds'):
+            switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
         elif self.type == 'main_settings_language':
             Globals.SETTINGS['language'] = int(not(Globals.SETTINGS['language']))
             Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])

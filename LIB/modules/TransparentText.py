@@ -5,11 +5,9 @@ from pygame import Rect, Surface
 
 class AlphaText():
     def __init__(self, text, group, number=None):
-        self.alpha = 5
-        self.symbols = text
         self.init_for_group(group, number)
         self.anticolor = Globals.COLORS['white'] - self.color
-        self.update_text()
+        self.update_text(text)
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
@@ -81,11 +79,13 @@ class AlphaText():
         if self.new_y != self.y:
             self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
             self.rect = Rect((self.rect.x, self.y), self.rect.size)
-    def update_text(self):
-        size = self.font.size(self.symbols)
+    def update_text(self, text):
+        self.symbols = text
+        size = self.font.size(text)
         xpos = self.find_xpos(size)
         self.rect = Rect((xpos, self.y), size)
-        self.text = self.font.render(self.symbols, True, self.color)
+        self.text = self.font.render(text, True, self.color)
+        self.alpha = 5
     def find_xpos(self, size):
         if self.x == 'center':
             return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2
