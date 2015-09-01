@@ -21,7 +21,7 @@ def switch_sound_state(object, current, write_to_file=False):
             mixer.music.fadeout(2000)
         else:
             mixer.music.play(-1)
-    Globals.SETTINGS[object] = not Globals.SETTINGS[object]
+    Globals.SETTINGS[object] = not current
     if write_to_file:
         save_settings()
 def play_click_sound():
