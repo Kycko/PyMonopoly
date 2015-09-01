@@ -30,7 +30,11 @@ class MenuItem():
         self.make_active_zone()
     def make_active_zone(self):
         if self.group[:4] == 'main':
-            self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+            if self.text.x == 'center':
+                self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+            else:
+                self.active_zone = self.text.rect.move(-150, -3)
+                self.active_zone.size = (500, self.text.rect.h+6)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
@@ -90,7 +94,7 @@ class MainCursor(Cursor):
         elif type == 'main_stats':
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'exit']
+            self.keys = ['language', 'music', 'sounds', 'exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]

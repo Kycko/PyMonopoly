@@ -123,5 +123,9 @@ class MainScreen():
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
         self.menuitems = {'language'    : MenuItem(Globals.LANGUAGES[Globals.SETTINGS['language']][1], 'main_settings_language', 'main_settings_left_MI', 0),
+                          'music'       : MenuItem(Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])], 'main_settings_music', 'main_settings_left_MI', 1),
+                          'sounds'      : MenuItem(Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])], 'main_settings_sounds', 'main_settings_left_MI', 2),
                           'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
-        self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0)})
+        self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0),
+                            'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 1),
+                            'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 2)})
