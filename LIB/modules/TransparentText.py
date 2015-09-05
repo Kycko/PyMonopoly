@@ -49,12 +49,15 @@ class AlphaText():
         elif 'stats_table' in group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.y = 365 + 20*number
+        elif group == 'main_settings_volume_SELECTOR':
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 30*number
+            self.y = 505
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
-            self.y = 320 + 65*number
+            self.y = 320 + 55*number
         elif group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
-            self.y = 350 + 65*number
+            self.y = 342 + 55*number
         elif group == 'stats_latest':
             self.x = Globals.RESOLUTION[0]/7 + 365
             self.y = 365 + 20*number

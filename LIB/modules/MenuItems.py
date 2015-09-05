@@ -12,6 +12,7 @@ class MenuItem():
         self.text = AlphaText(text, group, number)
         self.make_active_zone()
         self.init_for_group()
+        self.init_for_type()
     def init_for_group(self):
         if self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
@@ -19,8 +20,13 @@ class MenuItem():
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         else:
             self.tooltip = None
+    def init_for_type(self):
+        if 'SELECTOR' in self.type:
+            self.selector = MenuSelector(self.type)
     def move_text(self):
         self.text.move_text()
+        if 'SELECTOR' in self.type:
+            self.selector.move_text()
         self.make_active_zone()
         if self.group[:4] != 'main':
             self.cursor.rect = self.active_zone.copy()
@@ -46,7 +52,10 @@ class MenuItem():
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-            self.text.render(True)
+            if 'SELECTOR' in self.type:
+                self.selector.render()
+            else:
+                self.text.render(True)
     def action(self):
         play_click_sound()
         if self.group == 'main_settings_exit':
@@ -72,6 +81,16 @@ class Tooltip():
     def render(self, state):
         if state:
             Globals.screen.blit(self.text, self.rect.topleft)
+class MenuSelector():
+    def __init__(self, type):
+        if type == 'main_settings_volume_SELECTOR':
+            self.items = [AlphaText(u'•', type, i) for i in range(10)]
+    def move_text(self):
+        for item in self.items:
+            item.move_text()
+    def render(self):
+        for item in self.items:
+            item.render(True)
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
@@ -98,7 +117,7 @@ class MainCursor(Cursor):
         elif type == 'main_stats':
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'music', 'sounds', 'exit']
+            self.keys = ['language', 'music', 'sounds', 'volume', 'exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
