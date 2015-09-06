@@ -80,6 +80,8 @@ class MainScreen():
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.action_call('exit')
+                elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
+                    self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].group[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
