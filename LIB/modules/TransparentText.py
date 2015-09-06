@@ -5,20 +5,20 @@ from pygame import Rect, Surface
 
 class AlphaText():
     def __init__(self, text, group, number=None):
-        self.alpha = 5
-        self.symbols = text
         self.init_for_group(group, number)
         self.anticolor = Globals.COLORS['white'] - self.color
-        self.update_text()
+        self.update_text(text)
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
-        if group[:4] == 'main' or group == 'stats_game_name':
+        if group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
             self.font = Globals.FONTS['ubuntu_big']
-        elif group in ('stats_common', 'stats_bests'):
+        elif group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_medium']
-        elif group in ('APPVERSION', 'authors', 'stats_switch'):
+        elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in group:
             self.font = Globals.FONTS['ubuntu_small']
+        elif group == 'stats_latest':
+            self.font = Globals.FONTS['ume_smaller']
         else:
             self.font = Globals.FONTS['ubuntu_bigger']
         #--- Colors
@@ -34,7 +34,7 @@ class AlphaText():
         elif group == 'stats_common':
             self.x = Globals.RESOLUTION[0]/7
             self.y = 320 + 25 * number
-        elif group == 'main_stats':
+        elif group in ('main_stats', 'main_settings_exit'):
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
@@ -46,10 +46,24 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/3+85
             self.y = 280
+        elif 'stats_table' in group:
+            self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
+            self.y = 365 + 20*number
+        elif group == 'main_settings_volume_SELECTOR':
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 30*number
+            self.y = 505
+        elif group == 'settings_left':
+            self.x = Globals.RESOLUTION[0]/5 - 80
+            self.y = 320 + 55*number
+        elif group == 'main_settings_left_MI':
+            self.x = Globals.RESOLUTION[0]/4 - 50
+            self.y = 342 + 55*number
+        elif group == 'stats_latest':
+            self.x = Globals.RESOLUTION[0]/7 + 365
+            self.y = 365 + 20*number
         elif group == 'stats_bests':
-            self.x = 'center'
-            self.x_offset = -Globals.RESOLUTION[0]/3-20
-            self.y = 450
+            self.x = Globals.RESOLUTION[0]/7 - 20
+            self.y = 400
         elif group == 'authors':
             self.x = 'right'
             self.x_offset = 10
@@ -60,7 +74,7 @@ class AlphaText():
         elif group == 'APPVERSION':
             self.x = Globals.PICS['logo'].x + 112
             self.y = Globals.PICS['logo'].y + 50
-        if group[:5] in ('main_', 'stats'):
+        if group[:5] in ('main_', 'stats', 'setti'):
             self.new_y = self.y - 100
         else:
             self.new_y = self.y
@@ -68,11 +82,13 @@ class AlphaText():
         if self.new_y != self.y:
             self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
             self.rect = Rect((self.rect.x, self.y), self.rect.size)
-    def update_text(self):
-        size = self.font.size(self.symbols)
+    def update_text(self, text):
+        self.symbols = text
+        size = self.font.size(text)
         xpos = self.find_xpos(size)
         self.rect = Rect((xpos, self.y), size)
-        self.text = self.font.render(self.symbols, True, self.color)
+        self.text = self.font.render(text, True, self.color)
+        self.alpha = 5
     def find_xpos(self, size):
         if self.x == 'center':
             return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2

@@ -21,7 +21,7 @@ def switch_sound_state(object, current, write_to_file=False):
             mixer.music.fadeout(2000)
         else:
             mixer.music.play(-1)
-    Globals.SETTINGS[object] = not Globals.SETTINGS[object]
+    Globals.SETTINGS[object] = not current
     if write_to_file:
         save_settings()
 def play_click_sound():
@@ -110,5 +110,5 @@ def read_stats(game):
             array[i] = {'name'      : temp[0],
                         'score'     : int(temp[1]),
                         'date'      : temp[2],
-                        'recent'    : bool(temp[3])}
+                        'recent'    : bool(int(temp[3]))}
     return array[line:line+10]

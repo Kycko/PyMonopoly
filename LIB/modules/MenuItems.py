@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha, play_click_sound, slight_animation_count_pos
+from GlobalFuncs import *
 from sys import exit as SYSEXIT
 from TransparentText import AlphaText
 
@@ -12,6 +12,7 @@ class MenuItem():
         self.text = AlphaText(text, group, number)
         self.make_active_zone()
         self.init_for_group()
+        self.init_for_type()
     def init_for_group(self):
         if self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
@@ -19,8 +20,13 @@ class MenuItem():
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         else:
             self.tooltip = None
+    def init_for_type(self):
+        if 'SELECTOR' in self.type:
+            self.selector = MenuSelector(self.type)
     def move_text(self):
         self.text.move_text()
+        if 'SELECTOR' in self.type:
+            self.selector.move_text()
         self.make_active_zone()
         if self.group[:4] != 'main':
             self.cursor.rect = self.active_zone.copy()
@@ -30,7 +36,11 @@ class MenuItem():
         self.make_active_zone()
     def make_active_zone(self):
         if self.group[:4] == 'main':
-            self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+            if self.text.x == 'center':
+                self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+            else:
+                self.active_zone = self.text.rect.move(-150, -3)
+                self.active_zone.size = (500, self.text.rect.h+6)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
@@ -42,13 +52,22 @@ class MenuItem():
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-            self.text.render(True)
+            if 'SELECTOR' in self.type:
+                self.selector.render()
+            else:
+                self.text.render(True)
     def action(self):
         play_click_sound()
+        if self.group == 'main_settings_exit':
+            save_settings()
         if self.type == 'main_sysexit':
             SYSEXIT()
-        else:
-            return self.type
+        elif self.type in ('main_settings_music', 'main_settings_sounds'):
+            switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+        elif self.type == 'main_settings_language':
+            Globals.SETTINGS['language'] = int(not(Globals.SETTINGS['language']))
+            Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
+        return self.type
 class Tooltip():
     def __init__(self, text, type, obj):
         self.type = type
@@ -62,6 +81,16 @@ class Tooltip():
     def render(self, state):
         if state:
             Globals.screen.blit(self.text, self.rect.topleft)
+class MenuSelector():
+    def __init__(self, type):
+        if type == 'main_settings_volume_SELECTOR':
+            self.items = [AlphaText(u'•', type, i) for i in range(10)]
+    def move_text(self):
+        for item in self.items:
+            item.move_text()
+    def render(self):
+        for item in self.items:
+            item.render(True)
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
@@ -87,6 +116,8 @@ class MainCursor(Cursor):
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'main_stats':
             self.keys = ['exit']
+        elif type == 'main_settings':
+            self.keys = ['language', 'music', 'sounds', 'volume', 'exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
