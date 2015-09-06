@@ -107,7 +107,7 @@ class AlphaText():
             surf.set_colorkey(self.anticolor)
             surf.blit(self.text, (0, 0))
             surf.set_alpha(self.alpha)
-            return self.text
+            return surf
         else:
             return self.text
     def render(self, MENU=False):
