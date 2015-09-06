@@ -71,9 +71,9 @@ class MenuItem():
 class Tooltip():
     def __init__(self, text, type, obj):
         self.type = type
-        self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_smaller'].size(text))
+        self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
         self.move_text(obj.rect)
-        self.text = Globals.FONTS['ume_smaller'].render(text, True, Globals.COLORS['grey'])
+        self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
     def move_text(self, rect):
         x = rect.x + (rect.w - self.rect.w)/2 - 15
         y = rect.y - self.rect.h - 5

@@ -12,17 +12,17 @@ class AlphaText():
         self.AV = True
         #--- Fonts
         if group == 'main_settings_volume_SELECTOR':
-            self.font = Globals.FONTS['ume_smaller']
+            self.font = Globals.FONTS['ume_12']
         elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
-            self.font = Globals.FONTS['ubuntu_big']
+            self.font = Globals.FONTS['ubuntu_24']
         elif group == 'stats_common':
-            self.font = Globals.FONTS['ubuntu_medium']
+            self.font = Globals.FONTS['ubuntu_20']
         elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in group:
-            self.font = Globals.FONTS['ubuntu_small']
+            self.font = Globals.FONTS['ubuntu_16']
         elif group == 'stats_latest':
-            self.font = Globals.FONTS['ume_smaller']
+            self.font = Globals.FONTS['ume_12']
         else:
-            self.font = Globals.FONTS['ubuntu_bigger']
+            self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
         if group in ('authors', 'stats_switch'):
             self.color = Globals.COLORS['grey']
