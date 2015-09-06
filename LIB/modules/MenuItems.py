@@ -65,7 +65,10 @@ class MenuItem():
         play_click_sound()
         if self.group == 'main_settings_exit':
             save_settings()
-        if self.type == 'main_sysexit':
+        if 'SELECTOR' in self.type:
+            self.selector.action()
+            return None
+        elif self.type == 'main_sysexit':
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds'):
             switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
@@ -88,6 +91,7 @@ class Tooltip():
             Globals.screen.blit(self.text, self.rect.topleft)
 class MenuSelector():
     def __init__(self, type):
+        self.type = type
         if type == 'main_settings_volume_SELECTOR':
             self.items = [AlphaText(u'●', type, i) for i in range(10)]
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
@@ -111,6 +115,9 @@ class MenuSelector():
         self.cursor.render()
         for item in self.items:
             item.render(True)
+    def action(self):
+        if self.type == 'main_settings_volume_SELECTOR':
+            change_volume(float(self.active+1)/10)
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
