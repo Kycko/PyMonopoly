@@ -84,8 +84,11 @@ class MainScreen():
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 else:
                     for key in self.menuitems.keys():
-                        if self.menuitems[key].group[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
-                            self.action_call(key)
+                        if e.key in self.menuitems[key].HOTKEYS:
+                            if self.menuitems[key].group[:4] == 'main':
+                                self.action_call(self.cursor.active_key)
+                            else:
+                                self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
     def action_call(self, key):
@@ -93,7 +96,7 @@ class MainScreen():
         if type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type in ('main_settings_music', 'main_settings_sounds'):
-            self.menuitems[type[14:]].update_text(Globals.TRANSLATION[18-int(Globals.SETTINGS[type[14:]])])
+            self.menuitems[type[14:]].update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[type[14:]])]+u' ›')
         elif type == 'main_settings_language':
             self.labels['APPVERSION'].update_text(Globals.TRANSLATION[4]+Globals.VERSION)
             self.make_settings_screen()
@@ -125,9 +128,9 @@ class MainScreen():
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
-        self.menuitems = {'language'    : MenuItem(Globals.LANGUAGES[Globals.SETTINGS['language']][1], 'main_settings_language', 'main_settings_left_MI', 0),
-                          'music'       : MenuItem(Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])], 'main_settings_music', 'main_settings_left_MI', 1),
-                          'sounds'      : MenuItem(Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])], 'main_settings_sounds', 'main_settings_left_MI', 2),
+        self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.LANGUAGES[Globals.SETTINGS['language']][1]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
+                          'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 1),
+                          'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 2),
                           'volume'      : MenuItem('', 'main_settings_volume_SELECTOR', 'main_settings_left_MI', 3),
                           'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
         self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0),

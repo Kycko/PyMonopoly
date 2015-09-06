@@ -16,11 +16,16 @@ class MenuItem():
     def init_for_group(self):
         if self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
-            self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         else:
             self.tooltip = None
     def init_for_type(self):
+        #--- Hotkeys
+        if self.type in ('main_settings_language', 'main_settings_music', 'main_settings_sounds', 'stats_switch'):
+            self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
+        else:
+            self.HOTKEYS = ()
+        #--- Selector
         if 'SELECTOR' in self.type:
             self.selector = MenuSelector(self.type)
     def move_text(self):
