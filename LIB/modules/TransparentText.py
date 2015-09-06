@@ -12,7 +12,7 @@ class AlphaText():
         self.AV = True
         #--- Fonts
         if group == 'main_settings_volume_SELECTOR':
-            self.font = Globals.FONTS['ume_12']
+            self.font = Globals.FONTS['ume_16']
         elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
             self.font = Globals.FONTS['ubuntu_24']
         elif group == 'stats_common':
@@ -52,8 +52,8 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.y = 365 + 20*number
         elif group == 'main_settings_volume_SELECTOR':
-            self.x = Globals.RESOLUTION[0]/4 - 50 + 30*number
-            self.y = 505
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
+            self.y = 513
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.y = 320 + 55*number

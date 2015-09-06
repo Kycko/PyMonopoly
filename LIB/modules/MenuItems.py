@@ -85,10 +85,15 @@ class MenuSelector():
     def __init__(self, type):
         if type == 'main_settings_volume_SELECTOR':
             self.items = [AlphaText(u'●', type, i) for i in range(10)]
+            self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
+            cursor_offset = (-5, -8)
+        self.cursor = SelectorCursor(self.items[self.active].rect, cursor_offset)
     def move_text(self):
         for item in self.items:
             item.move_text()
+        self.cursor.move(self.items[self.active].rect)
     def render(self):
+        self.cursor.render()
         for item in self.items:
             item.render(True)
 #--- Cursor TEMPLATE
@@ -102,6 +107,14 @@ class Cursor():
     def render(self):
         Globals.screen.blit(self.surf, self.rect.topleft)
 #--- Cursors
+class SelectorCursor(Cursor):
+    def __init__(self, rect, offset):
+        self.offset = offset
+        Cursor.__init__(self, 104, rect.inflate((-offset[0]*2, -offset[1]*2)))
+        self.draw_rect()
+    def move(self, rect):
+        self.rect.topleft = rect.move(self.offset).topleft
+        print(self.rect)
 class MainCursor(Cursor):
     def __init__(self, menuitems, type):
         first_rect = self.screen_switched(menuitems, type)
