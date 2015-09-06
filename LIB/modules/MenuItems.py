@@ -84,7 +84,7 @@ class Tooltip():
 class MenuSelector():
     def __init__(self, type):
         if type == 'main_settings_volume_SELECTOR':
-            self.items = [AlphaText(u'•', type, i) for i in range(10)]
+            self.items = [AlphaText(u'●', type, i) for i in range(10)]
     def move_text(self):
         for item in self.items:
             item.move_text()

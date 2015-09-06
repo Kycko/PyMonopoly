@@ -11,7 +11,9 @@ class AlphaText():
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
-        if group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
+        if group == 'main_settings_volume_SELECTOR':
+            self.font = Globals.FONTS['ume_smaller']
+        elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
             self.font = Globals.FONTS['ubuntu_big']
         elif group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_medium']
@@ -105,7 +107,7 @@ class AlphaText():
             surf.set_colorkey(self.anticolor)
             surf.blit(self.text, (0, 0))
             surf.set_alpha(self.alpha)
-            return surf
+            return self.text
         else:
             return self.text
     def render(self, MENU=False):
