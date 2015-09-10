@@ -54,6 +54,10 @@ class MainScreen():
     def find_hovering_menuitem(self, mp):
         for key in self.menuitems.keys():
             if self.menuitems[key].active_zone.collidepoint(mp):
+                if 'SELECTOR' in self.menuitems[key].type:
+                    for i in range(len(self.menuitems[key].selector.items)):
+                        if self.menuitems[key].selector.items[i].rect.collidepoint(mp):
+                            self.menuitems[key].selector.apply_new_active(i)
                 return key
         return None
     def render(self, cur_key):

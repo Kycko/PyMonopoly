@@ -99,14 +99,17 @@ class MenuSelector():
         self.cursor = SelectorCursor(self.items[self.active].rect, cursor_offset)
     def keypress(self, KEY):
         if KEY == pygame.K_LEFT:
-            self.active -= 1
-            if self.active == -1:
-                self.active = len(self.items) - 1
+            temp -= 1
+            if temp == -1:
+                temp = len(self.items) - 1
         else:
-            self.active += 1
-            if self.active == 10:
-                self.active = 0
-        self.cursor.apply_new_cords(self.items[self.active].rect)
+            temp += 1
+            if temp == len(self.items):
+                temp = 0
+        self.apply_new_active(temp)
+    def apply_new_active(self, active):
+        self.active = active
+        self.cursor.apply_new_cords(self.items[active].rect)
     def move_text(self):
         for item in self.items:
             item.move_text()
