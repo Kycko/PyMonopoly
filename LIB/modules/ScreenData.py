@@ -56,7 +56,7 @@ class MainScreen():
             if self.menuitems[key].active_zone.collidepoint(mp):
                 if 'SELECTOR' in self.menuitems[key].type:
                     for i in range(len(self.menuitems[key].selector.items)):
-                        if self.menuitems[key].selector.items[i].rect.collidepoint(mp):
+                        if self.menuitems[key].selector.rects[i].collidepoint(mp):
                             self.menuitems[key].selector.apply_new_active(i)
                 return key
         return None
