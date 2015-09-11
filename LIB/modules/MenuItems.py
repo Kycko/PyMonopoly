@@ -95,25 +95,27 @@ class MenuSelector():
         if type == 'main_settings_volume_SELECTOR':
             self.items = [AlphaText(u'●', type, i) for i in range(10)]
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
-            cursor_offset = (-5, -8)
-        self.cursor = SelectorCursor(self.items[self.active].rect, cursor_offset)
+            self.cursor_inflate = (10, 16)
+        self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
+        self.cursor = SelectorCursor(self.rects[self.active])
     def keypress(self, KEY):
         if KEY == pygame.K_LEFT:
-            temp -= 1
-            if temp == -1:
-                temp = len(self.items) - 1
+            self.active -= 1
+            if self.active == -1:
+                self.active = len(self.items) - 1
         else:
-            temp += 1
-            if temp == len(self.items):
-                temp = 0
-        self.apply_new_active(temp)
+            self.active += 1
+            if self.active == len(self.items):
+                self.active = 0
+        self.apply_new_active(self.active)
     def apply_new_active(self, active):
         self.active = active
-        self.cursor.apply_new_cords(self.items[active].rect)
+        self.cursor.new_cords = self.rects[active].topleft
     def move_text(self):
-        for item in self.items:
-            item.move_text()
-        self.cursor.apply_new_cords(self.items[self.active].rect)
+        for i in range(len(self.items)):
+            self.items[i].move_text()
+            self.rects[i] = self.items[i].rect.inflate(self.cursor_inflate)
+        self.cursor.new_cords = self.rects[self.active].topleft
     def render(self):
         self.cursor.render()
         for item in self.items:
@@ -133,12 +135,9 @@ class Cursor():
         Globals.screen.blit(self.surf, self.rect.topleft)
 #--- Cursors
 class SelectorCursor(Cursor):
-    def __init__(self, rect, offset):
-        self.offset = offset
-        Cursor.__init__(self, 104, rect.inflate((-offset[0]*2, -offset[1]*2)))
+    def __init__(self, rect):
+        Cursor.__init__(self, 104, rect)
         self.draw_rect()
-    def apply_new_cords(self, rect):
-        self.new_cords = rect.move(self.offset).topleft
     def move(self):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5)
     def render(self):
