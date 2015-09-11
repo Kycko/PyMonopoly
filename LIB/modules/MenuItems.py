@@ -54,13 +54,13 @@ class MenuItem():
         if self.group[:4] != 'main':
             self.cursor.render(state)
             self.tooltip.render(state)
+        if 'SELECTOR' in self.type:
+            self.selector.render(state)
+        else:
+            self.text.render(True)
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-            if 'SELECTOR' in self.type:
-                self.selector.render()
-            else:
-                self.text.render(True)
     def action(self):
         play_click_sound()
         if self.group == 'main_settings_exit':
@@ -116,8 +116,9 @@ class MenuSelector():
             self.items[i].move_text()
             self.rects[i] = self.items[i].rect.inflate(self.cursor_inflate)
         self.cursor.new_cords = self.rects[self.active].topleft
-    def render(self):
-        self.cursor.render()
+    def render(self, state):
+        if state:
+            self.cursor.render()
         for item in self.items:
             item.render(True)
     def action(self):

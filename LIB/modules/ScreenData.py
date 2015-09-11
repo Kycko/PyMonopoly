@@ -70,7 +70,7 @@ class MainScreen():
         if self.cursor:
             self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():
-            self.menuitems[key].render(cur_key == key)
+            self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
