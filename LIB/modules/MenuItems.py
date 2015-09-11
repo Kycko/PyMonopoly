@@ -119,6 +119,8 @@ class MenuSelector():
     def render(self, state):
         if state:
             self.cursor.render()
+        else:
+            self.cursor.reset_alpha()
         for item in self.items:
             item.render(True)
     def action(self):
@@ -137,13 +139,18 @@ class Cursor():
 #--- Cursors
 class SelectorCursor(Cursor):
     def __init__(self, rect):
-        Cursor.__init__(self, 104, rect)
+        Cursor.__init__(self, 0, rect)
         self.draw_rect()
+    def reset_alpha(self):
+        self.surf_color.a = 0
     def move(self):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5)
     def render(self):
         if self.new_cords != self.rect.topleft:
             self.move()
+        if self.surf_color.a != 104:
+            self.surf_color.a += 4
+            self.draw_rect()
         Cursor.render(self)
 class MainCursor(Cursor):
     def __init__(self, menuitems, type):
