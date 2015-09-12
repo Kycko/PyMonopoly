@@ -26,6 +26,8 @@ class AlphaText():
         #--- Colors
         if group in ('authors', 'stats_switch'):
             self.color = Globals.COLORS['grey']
+        elif group == 'main_settings_volume_SELECTOR':
+            self.choose_vol_color(number)
         else:
             self.color = Globals.COLORS['white']
         #--- Position
@@ -80,6 +82,13 @@ class AlphaText():
             self.new_y = self.y - 100
         else:
             self.new_y = self.y
+    def choose_vol_color(self, num):
+        if num > Globals.SETTINGS['volume']*10-1:
+            self.color = Globals.COLORS['grey63']
+        else:
+            self.color = Globals.COLORS['white']
+    def RErender(self):
+        self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):
         if self.new_y != self.y:
             self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
@@ -89,7 +98,7 @@ class AlphaText():
         size = self.font.size(text)
         xpos = self.find_xpos(size)
         self.rect = Rect((xpos, self.y), size)
-        self.text = self.font.render(text, True, self.color)
+        self.RErender()
         self.alpha = 5
     def find_xpos(self, size):
         if self.x == 'center':

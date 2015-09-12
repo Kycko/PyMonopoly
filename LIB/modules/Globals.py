@@ -15,8 +15,9 @@ AVAIL_RESOLUTIONS = check_user_monitor()
 RESOLUTION = (1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
-          'light_green'               : pygame.Color(126, 231, 85),
+          'light_green'         : pygame.Color(126, 231, 85),
           'grey'                : pygame.Color('grey'),
+          'grey63'              : pygame.Color(95, 95, 95),
           'red'                 : pygame.Color('red'),
           'white'               : pygame.Color('white')}
 

@@ -126,6 +126,9 @@ class MenuSelector():
     def action(self):
         if self.type == 'main_settings_volume_SELECTOR':
             change_volume(float(self.active+1)/10)
+        for i in range(len(self.items)):
+            self.items[i].choose_vol_color(i)
+            self.items[i].RErender()
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
@@ -148,7 +151,7 @@ class SelectorCursor(Cursor):
     def render(self):
         if self.new_cords != self.rect.topleft:
             self.move()
-        if self.surf_color.a != 104:
+        if self.surf_color.a != 208:
             self.surf_color.a += 4
             self.draw_rect()
         Cursor.render(self)
