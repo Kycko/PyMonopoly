@@ -99,8 +99,6 @@ class MainScreen():
         type = self.menuitems[key].action()
         if type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
-        elif type in ('main_settings_music', 'main_settings_sounds'):
-            self.menuitems[type[14:]].update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[type[14:]])]+u' ›')
         elif type == 'main_settings_language':
             self.labels['APPVERSION'].update_text(Globals.TRANSLATION[4]+Globals.VERSION)
             self.make_settings_screen()

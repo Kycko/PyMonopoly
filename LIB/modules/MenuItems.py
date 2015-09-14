@@ -72,6 +72,8 @@ class MenuItem():
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds'):
             switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+            self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
+            return None
         elif self.type == 'main_settings_language':
             Globals.SETTINGS['language'] = int(not(Globals.SETTINGS['language']))
             Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
