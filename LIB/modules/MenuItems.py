@@ -65,7 +65,9 @@ class MenuItem():
         play_click_sound()
         if self.group == 'main_settings_exit':
             save_settings()
-        if 'SELECTOR' in self.type:
+        if self.type == 'main_settings_player_color_SELECTOR':
+            return self.type
+        elif 'SELECTOR' in self.type:
             self.selector.action()
             return None
         elif self.type == 'main_sysexit':
