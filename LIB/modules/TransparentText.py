@@ -11,7 +11,7 @@ class AlphaText():
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
-        if group == 'main_settings_volume_SELECTOR':
+        if group in ('main_settings_volume_SELECTOR', 'main_settings_player_color_SELECTOR'):
             self.font = Globals.FONTS['ume_16']
         elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI'):
             self.font = Globals.FONTS['ubuntu_24']
@@ -28,6 +28,10 @@ class AlphaText():
             self.color = Globals.COLORS['grey']
         elif group == 'main_settings_volume_SELECTOR':
             self.choose_vol_color(number)
+        elif group == 'main_settings_player_color_SELECTOR':
+            self.color = Globals.PLAYERS_COLORS[number]
+        elif group == 'main_settings_left_MI' and number == 1:
+            self.color = Globals.SETTINGS['pl_color']
         else:
             self.color = Globals.COLORS['white']
         #--- Position
@@ -38,7 +42,7 @@ class AlphaText():
         elif group == 'stats_common':
             self.x = Globals.RESOLUTION[0]/7
             self.y = 320 + 25 * number
-        elif group in ('main_stats', 'main_settings_exit'):
+        elif 'exit' in group or group == 'main_stats':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
             self.y = Globals.RESOLUTION[1]+50
@@ -55,7 +59,10 @@ class AlphaText():
             self.y = 365 + 20*number
         elif group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.y = 513
+            self.y = 568
+        elif group == 'main_settings_player_color_SELECTOR':
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
+            self.y = 458
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.y = 320 + 55*number

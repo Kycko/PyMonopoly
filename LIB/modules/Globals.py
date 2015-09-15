@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame
-from GlobalFuncs import change_volume, check_files, find_max_avail, read_settings, read_translation, switch_sound_state
+from GlobalFuncs import change_volume, check_files, check_user_monitor, read_settings, read_translation, switch_sound_state
 from ScreenData import MainScreen
 from Sprite import Sprite
 
@@ -10,14 +10,25 @@ pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
 VERSION = '0.4-dev'
-RESOLUTION = (find_max_avail((1250, 1200), pygame.display.Info().current_w-70), find_max_avail((950, 700), pygame.display.Info().current_h-60))
+RESOLUTION = check_user_monitor(1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
+          'light_brown'         : pygame.Color(160, 78, 61),
+          'light_blue'          : pygame.Color(15, 124, 164),
           'light_green'         : pygame.Color(126, 231, 85),
           'grey'                : pygame.Color('grey'),
           'grey63'              : pygame.Color(95, 95, 95),
-          'red'                 : pygame.Color('red'),
-          'white'               : pygame.Color('white')}
+          'magenta'             : pygame.Color('magenta'),
+          'red'                 : pygame.Color(255, 30, 30),
+          'white'               : pygame.Color('white'),
+          'yellow'              : pygame.Color(228, 227, 17)}
+
+PLAYERS_COLORS = (COLORS['light_blue'],
+                  COLORS['magenta'],
+                  COLORS['red'],
+                  COLORS['light_green'],
+                  COLORS['light_brown'],
+                  COLORS['yellow'])
 
 DIRS = {'LIB'                   : 'LIB/',
         'settings'              : 'settings/'}

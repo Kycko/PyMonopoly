@@ -98,6 +98,13 @@ class MenuSelector():
             self.items = [AlphaText(u'●', type, i) for i in range(10)]
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
             self.cursor_inflate = (10, 16)
+        elif type == 'main_settings_player_color_SELECTOR':
+            self.items = [AlphaText(u'●', type, i) for i in range(len(Globals.PLAYERS_COLORS))]
+            if Globals.SETTINGS['pl_color'] in Globals.PLAYERS_COLORS:
+                self.active = Globals.PLAYERS_COLORS.index(Globals.SETTINGS['pl_color'])
+            else:
+                self.active = 0
+            self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
     def keypress(self, KEY):
@@ -172,7 +179,9 @@ class MainCursor(Cursor):
         elif type == 'main_stats':
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'music', 'sounds', 'volume', 'exit']
+            self.keys = ['language', 'player', 'music', 'sounds', 'volume', 'exit']
+        elif type == 'main_settings_player':
+            self.keys = ['name', 'color', 'exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]

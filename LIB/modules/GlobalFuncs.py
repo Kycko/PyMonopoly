@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from pygame import Color, mixer
+from pygame import Color, display, mixer
 from os import listdir
 from sys import exit as SYSEXIT
 
@@ -15,10 +15,6 @@ def change_volume(volume, write_to_file=False):
     Globals.SETTINGS['volume'] = volume
     if write_to_file:
         save_settings()
-def find_max_avail(data, max):
-    for i in data:
-        if i <= max:
-            return i
 def switch_sound_state(object, current, write_to_file=False):
     if object == 'music':
         if current:
@@ -50,6 +46,13 @@ def write_to_file(file, data, method='w'):
     list = open(file, method)
     list.writelines(map(lambda x: x.encode('UTF'), data))
     list.close()
+#--- Hardware related
+def check_user_monitor(x, y):
+    if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
+        print("Your monitor has too small resolution! We can't provide a good interface for it :(")
+        SYSEXIT()
+    else:
+        return (x, y)
 #--- Statistics, settings and translations
 def check_files():
     DB = listdir(Globals.DIRS['settings'])
@@ -61,7 +64,7 @@ def create_init_file(type):
         data = ['0\n' if x<3 else 'None 0 01.01.01 black\n' for x in range(10)]
         data = ['0\n'] + data + ['1\n'] + data
     elif type == 'settings':
-        data = ('0\n', 'Player 1\n', '215\n', '0\n', '0\n', '0\n', '1\n', '1\n', '1.0\n', '1\n')
+        data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '0\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("3\n", "2\n")
     write_to_file(Globals.FILES[type], data)
@@ -69,7 +72,7 @@ def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
     return {'language'  : int(SETTINGS[0]),
             'pl_name'   : SETTINGS[1],
-            'pl_color'  : (int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
+            'pl_color'  : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
             'fav_game'  : int(SETTINGS[5]),
             'music'     : bool(int(SETTINGS[6])),
             'sounds'    : bool(int(SETTINGS[7])),
