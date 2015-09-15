@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from pygame import Color, display, mixer
+from pygame import Color, mixer
 from os import listdir
 from sys import exit as SYSEXIT
 
@@ -15,6 +15,10 @@ def change_volume(volume, write_to_file=False):
     Globals.SETTINGS['volume'] = volume
     if write_to_file:
         save_settings()
+def find_max_avail(data, max):
+    for i in data:
+        if i <= max:
+            return i
 def switch_sound_state(object, current, write_to_file=False):
     if object == 'music':
         if current:
@@ -46,16 +50,6 @@ def write_to_file(file, data, method='w'):
     list = open(file, method)
     list.writelines(map(lambda x: x.encode('UTF'), data))
     list.close()
-#--- Hardware related
-def check_user_monitor():
-    MAX_RESOLUTION = (display.Info().current_w-70, display.Info().current_h-60)
-    avail_x = [i for i in (1820, 1250, 1200) if i < MAX_RESOLUTION[0]]
-    avail_y = [i for i in (1000, 950, 700) if i < MAX_RESOLUTION[1]]
-    if avail_x and avail_y:
-        return (avail_x, avail_y)
-    else:
-        print("Your monitor has too small resolution! We can't provide a good interface for it :(")
-        SYSEXIT()
 #--- Statistics, settings and translations
 def check_files():
     DB = listdir(Globals.DIRS['settings'])

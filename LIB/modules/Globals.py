@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame
-from GlobalFuncs import change_volume, check_files, check_user_monitor, read_settings, read_translation, switch_sound_state
+from GlobalFuncs import change_volume, check_files, find_max_avail, read_settings, read_translation, switch_sound_state
 from ScreenData import MainScreen
 from Sprite import Sprite
 
@@ -10,9 +10,7 @@ pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
 VERSION = '0.4-dev'
-AVAIL_RESOLUTIONS = check_user_monitor()
-#RESOLUTION = (AVAIL_RESOLUTIONS[0][0], AVAIL_RESOLUTIONS[1][0]) --- commented out just for debugging
-RESOLUTION = (1200, 700)
+RESOLUTION = (find_max_avail((1250, 1200), pygame.display.Info().current_w-70), find_max_avail((950, 700), pygame.display.Info().current_h-60))
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
           'light_green'         : pygame.Color(126, 231, 85),
