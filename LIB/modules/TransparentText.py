@@ -103,13 +103,14 @@ class AlphaText():
         if self.new_y != self.y:
             self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
             self.rect = Rect((self.rect.x, self.y), self.rect.size)
-    def update_text(self, text):
+    def update_text(self, text, reset_alpha=True):
         self.symbols = text
         size = self.font.size(text)
         xpos = self.find_xpos(size)
         self.rect = Rect((xpos, self.y), size)
         self.RErender()
-        self.alpha = 5
+        if reset_alpha:
+            self.alpha = 5
     def find_xpos(self, size):
         if self.x == 'center':
             return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2

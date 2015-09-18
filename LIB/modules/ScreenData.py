@@ -42,6 +42,8 @@ class MainScreen():
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.make_settings_screen()
         elif type == 'main_settings_player':
+            if key == 'exit':
+                self.objects = {}
             self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
                               'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[21], 'main_settings', 'main_settings_player_exit')}
@@ -53,6 +55,7 @@ class MainScreen():
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
+            self.make_obj_for_enter_name()
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
@@ -104,10 +107,10 @@ class MainScreen():
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 elif self.menuitems['exit'].type == 'main_settings_player':
                     if e.key == pygame.K_BACKSPACE:
-                        self.labels['name_MI'].symbols = self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1]
+                        self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
                     else:
-                        self.labels['name_MI'].symbols += e.unicode
-                    self.labels['name_MI'].RErender()
+                        self.labels['name_MI'].update_text(self.labels['name_MI'].symbols + e.unicode, False)
+                    self.make_obj_for_enter_name()
                 else:
                     for key in self.menuitems.keys():
                         if e.key in self.menuitems[key].HOTKEYS:
@@ -166,3 +169,5 @@ class MainScreen():
                             'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 2),
                             'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 3),
                             'volume'    : AlphaText(Globals.TRANSLATION[19], 'settings_left', 4)})
+    def make_obj_for_enter_name(self):
+        self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
