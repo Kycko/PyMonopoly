@@ -102,6 +102,10 @@ class MainScreen():
                     self.action_call('exit')
                 elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
+                elif self.menuitems['exit'].type == 'main_settings_player':
+                    if e.key == pygame.K_BACKSPACE:
+                        self.labels['name_MI'].symbols = self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1]
+                        self.labels['name_MI'].RErender()
                 else:
                     for key in self.menuitems.keys():
                         if e.key in self.menuitems[key].HOTKEYS:
