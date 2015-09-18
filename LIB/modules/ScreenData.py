@@ -105,7 +105,9 @@ class MainScreen():
                 elif self.menuitems['exit'].type == 'main_settings_player':
                     if e.key == pygame.K_BACKSPACE:
                         self.labels['name_MI'].symbols = self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1]
-                        self.labels['name_MI'].RErender()
+                    else:
+                        self.labels['name_MI'].symbols += e.unicode
+                    self.labels['name_MI'].RErender()
                 else:
                     for key in self.menuitems.keys():
                         if e.key in self.menuitems[key].HOTKEYS:
