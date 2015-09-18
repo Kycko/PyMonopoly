@@ -64,6 +64,9 @@ class MenuItem():
     def action(self):
         play_click_sound()
         if self.group == 'main_settings_exit':
+            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0]['name']
+            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0]['color']
+            Globals.TEMP_VARS.pop('edit_player')
             save_settings()
         if 'SELECTOR' in self.type:
             return self.selector.action()
@@ -99,8 +102,8 @@ class MenuSelector():
             self.cursor_inflate = (10, 16)
         elif type == 'main_settings_player_color_SELECTOR':
             self.items = [AlphaText(u'●', type, i) for i in range(len(Globals.PLAYERS_COLORS))]
-            if Globals.SETTINGS['pl_color'] in Globals.PLAYERS_COLORS:
-                self.active = Globals.PLAYERS_COLORS.index(Globals.SETTINGS['pl_color'])
+            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
+                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
             else:
                 self.active = 0
             self.cursor_inflate = (10, 16)
@@ -138,7 +141,7 @@ class MenuSelector():
                 self.items[i].choose_vol_color(i)
                 self.items[i].RErender()
         elif self.type == 'main_settings_player_color_SELECTOR':
-            Globals.SETTINGS['pl_color'] = Globals.PLAYERS_COLORS[self.active]
+            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
             return self.type
 #--- Cursor TEMPLATE
 class Cursor():
