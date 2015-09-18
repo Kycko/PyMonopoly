@@ -108,7 +108,7 @@ class MainScreen():
                 elif self.menuitems['exit'].type == 'main_settings_player':
                     if e.key == pygame.K_BACKSPACE:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
-                    else:
+                    elif len(self.labels['name_MI'].symbols) < 15:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols + e.unicode, False)
                     self.make_obj_for_enter_name()
                 else:
