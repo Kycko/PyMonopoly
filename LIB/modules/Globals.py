@@ -60,10 +60,14 @@ SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'musi
 
 LANGUAGES = (('en', u'English'),
              ('ru', u'Русский'))
-#--- Restore files, read settings and translation
+
+TEMP_VARS = {}
+#--- Restore files, read settings and translation, create players list
 check_files()
 SETTINGS = read_settings()
 TRANSLATION = read_translation(SETTINGS['language'])
+PLAYERS = [{'name'  : SETTINGS['pl_name'],
+            'color' : SETTINGS['pl_color']}]
 #--- Create main window
 pygame.display.set_icon(pygame.image.load(PICS['appicon']))
 window = pygame.display.set_mode(RESOLUTION)

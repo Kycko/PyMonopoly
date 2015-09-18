@@ -64,12 +64,12 @@ class MenuItem():
     def action(self):
         play_click_sound()
         if self.group == 'main_settings_exit':
+            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0]['name']
+            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0]['color']
+            Globals.TEMP_VARS.pop('edit_player')
             save_settings()
-        if self.type == 'main_settings_player_color_SELECTOR':
-            return self.type
-        elif 'SELECTOR' in self.type:
-            self.selector.action()
-            return None
+        if 'SELECTOR' in self.type:
+            return self.selector.action()
         elif self.type == 'main_sysexit':
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds'):
@@ -102,8 +102,8 @@ class MenuSelector():
             self.cursor_inflate = (10, 16)
         elif type == 'main_settings_player_color_SELECTOR':
             self.items = [AlphaText(u'●', type, i) for i in range(len(Globals.PLAYERS_COLORS))]
-            if Globals.SETTINGS['pl_color'] in Globals.PLAYERS_COLORS:
-                self.active = Globals.PLAYERS_COLORS.index(Globals.SETTINGS['pl_color'])
+            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
+                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
             else:
                 self.active = 0
             self.cursor_inflate = (10, 16)
@@ -137,9 +137,12 @@ class MenuSelector():
     def action(self):
         if self.type == 'main_settings_volume_SELECTOR':
             change_volume(float(self.active+1)/10)
-        for i in range(len(self.items)):
-            self.items[i].choose_vol_color(i)
-            self.items[i].RErender()
+            for i in range(len(self.items)):
+                self.items[i].choose_vol_color(i)
+                self.items[i].RErender()
+        elif self.type == 'main_settings_player_color_SELECTOR':
+            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
+            return self.type
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
@@ -178,7 +181,7 @@ class MainCursor(Cursor):
     def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
-        elif type == 'main_stats':
+        elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
             self.keys = ['language', 'player', 'music', 'sounds', 'volume', 'exit']

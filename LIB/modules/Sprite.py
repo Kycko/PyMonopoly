@@ -11,12 +11,19 @@ class Sprite():
         self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
         Globals.screen.blit(self.bitmap, (self.x, self.y))
 class Line():
-    def __init__(self, obj, type, width):
-        self.color = change_color_alpha(obj.color, 5)
+    def __init__(self, obj, type, width, color=None):
+        if color:
+            self.color = change_color_alpha(color, 5)
+        else:
+            self.color = change_color_alpha(obj.color, 5)
         if type == 'bottom':
             self.pos = obj.rect.bottomleft
             self.new_y = obj.new_y + obj.rect.h
-        self.rect = pygame.Rect((0, 0), (obj.rect.w, width))
+            self.rect = pygame.Rect((0, 0), (obj.rect.w, width))
+        elif type == 'right':
+            self.pos = obj.rect.topright
+            self.new_y = obj.new_y
+            self.rect = pygame.Rect((0, 0), (width, obj.rect.h))
         self.surf = pygame.Surface(self.rect.size, pygame.SRCALPHA)
     def render(self):
         if self.color.a != 255:
