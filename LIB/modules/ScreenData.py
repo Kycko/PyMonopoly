@@ -47,6 +47,11 @@ class MainScreen():
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[22], 'settings_left', 1),
                                 'color'     : AlphaText(Globals.TRANSLATION[23], 'settings_left', 2)})
+        elif type == 'main_settings_player_name':
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], 'main_settings_player', 'main_settings_player_exit')}
+            self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+            self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
+                                'name_MI'   : AlphaText(Globals.SETTINGS['pl_name'], 'main_settings_left_MI', 1)})
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:

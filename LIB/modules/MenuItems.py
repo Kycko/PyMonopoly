@@ -178,7 +178,7 @@ class MainCursor(Cursor):
     def make_keys(self, type):
         if type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
-        elif type == 'main_stats':
+        elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
             self.keys = ['language', 'player', 'music', 'sounds', 'volume', 'exit']
