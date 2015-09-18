@@ -136,9 +136,9 @@ class MainScreen():
                             'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
         for i in range(3, len(data)):
             if data[i]['score']:
-                self.labels.update({'bestname'+str(i-2)     : AlphaText(str(i-2)+'. '+data[i]['name'], 'stats_table_0', i)})
-                self.labels.update({'bestscore'+str(i-2)    : AlphaText('  '*(10-len(str(data[i]['score'])))+str(data[i]['score']), 'stats_table_1', i)})
-                self.labels.update({'bestdate'+str(i-2)     : AlphaText(data[i]['date'], 'stats_table_2', i)})
+                self.labels.update({'bestname'+str(i-2)     : AlphaText(str(i-2)+'. '+data[i]['name'], 'stats_table_0', i),
+                                    'bestscore'+str(i-2)    : AlphaText('  '*(10-len(str(data[i]['score'])))+str(data[i]['score']), 'stats_table_1', i),
+                                    'bestdate'+str(i-2)     : AlphaText(data[i]['date'], 'stats_table_2', i)})
                 if data[i]['recent']:
                     self.labels.update({'bestrecent'        : AlphaText('latest', 'stats_latest', i)})
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
