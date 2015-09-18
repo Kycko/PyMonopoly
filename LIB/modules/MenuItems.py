@@ -65,11 +65,8 @@ class MenuItem():
         play_click_sound()
         if self.group == 'main_settings_exit':
             save_settings()
-        if self.type == 'main_settings_player_color_SELECTOR':
-            return self.type
-        elif 'SELECTOR' in self.type:
-            self.selector.action()
-            return None
+        if 'SELECTOR' in self.type:
+            return self.selector.action()
         elif self.type == 'main_sysexit':
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds'):
@@ -137,9 +134,12 @@ class MenuSelector():
     def action(self):
         if self.type == 'main_settings_volume_SELECTOR':
             change_volume(float(self.active+1)/10)
-        for i in range(len(self.items)):
-            self.items[i].choose_vol_color(i)
-            self.items[i].RErender()
+            for i in range(len(self.items)):
+                self.items[i].choose_vol_color(i)
+                self.items[i].RErender()
+        elif self.type == 'main_settings_player_color_SELECTOR':
+            Globals.SETTINGS['pl_color'] = Globals.PLAYERS_COLORS[self.active]
+            return self.type
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):

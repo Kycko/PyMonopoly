@@ -115,7 +115,6 @@ class MainScreen():
         elif type == 'main_settings_player_color_SELECTOR':
             self.menuitems['name'].text.color = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
             self.menuitems['name'].update_text(self.menuitems['name'].text.symbols)
-            Globals.SETTINGS['pl_color'] = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
