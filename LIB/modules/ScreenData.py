@@ -43,6 +43,7 @@ class MainScreen():
             self.make_settings_screen()
         elif type == 'main_settings_player':
             if key == 'exit':
+                Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'] = self.labels['name_MI'].symbols
                 self.objects = {}
             self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
                               'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2),
