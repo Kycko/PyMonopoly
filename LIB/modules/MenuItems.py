@@ -72,8 +72,11 @@ class MenuItem():
             return self.selector.action()
         elif self.type == 'main_sysexit':
             SYSEXIT()
-        elif self.type in ('main_settings_music', 'main_settings_sounds'):
-            switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+        elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys'):
+            if self.type in ('main_settings_music', 'main_settings_sounds'):
+                switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+            else:
+                Globals.SETTINGS['hotkeys'] = not Globals.SETTINGS['hotkeys']
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
             return None
         elif self.type == 'main_settings_language':
