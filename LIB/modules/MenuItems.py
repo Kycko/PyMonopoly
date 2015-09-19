@@ -21,7 +21,7 @@ class MenuItem():
             self.tooltip = None
     def init_for_type(self):
         #--- Hotkeys
-        if self.type in ('main_settings_language', 'main_settings_music', 'main_settings_sounds', 'stats_switch'):
+        if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch'):
             self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
         else:
             self.HOTKEYS = ()

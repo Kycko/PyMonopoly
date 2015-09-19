@@ -112,13 +112,12 @@ class MainScreen():
                     elif len(self.labels['name_MI'].symbols) < 15:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols + e.unicode, False)
                     self.make_obj_for_enter_name()
+                elif self.cursor and e.key in self.menuitems[self.cursor.active_key].HOTKEYS:
+                        self.action_call(self.cursor.active_key)
                 else:
                     for key in self.menuitems.keys():
-                        if e.key in self.menuitems[key].HOTKEYS:
-                            if self.menuitems[key].group[:4] == 'main':
-                                self.action_call(self.cursor.active_key)
-                            else:
-                                self.action_call(key)
+                        if self.menuitems[key].type[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
+                            self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
     def action_call(self, key):
