@@ -59,7 +59,7 @@ class AlphaText():
             self.y = 365 + 20*number
         elif group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.y = 568
+            self.y = 623
         elif group == 'main_settings_player_color_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.y = 458

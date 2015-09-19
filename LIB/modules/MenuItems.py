@@ -53,7 +53,8 @@ class MenuItem():
             self.move_text()
         if self.group[:4] != 'main':
             self.cursor.render(state)
-            self.tooltip.render(state)
+            if Globals.SETTINGS['hotkeys']:
+                self.tooltip.render(state)
         if 'SELECTOR' in self.type:
             self.selector.render(state)
         else:
@@ -72,8 +73,11 @@ class MenuItem():
             return self.selector.action()
         elif self.type == 'main_sysexit':
             SYSEXIT()
-        elif self.type in ('main_settings_music', 'main_settings_sounds'):
-            switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+        elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys'):
+            if self.type in ('main_settings_music', 'main_settings_sounds'):
+                switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
+            else:
+                Globals.SETTINGS['hotkeys'] = not Globals.SETTINGS['hotkeys']
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
             return None
         elif self.type == 'main_settings_language':
@@ -184,7 +188,7 @@ class MainCursor(Cursor):
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'player', 'music', 'sounds', 'volume', 'exit']
+            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'exit']
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
     def update_cords(self, menuitems):
