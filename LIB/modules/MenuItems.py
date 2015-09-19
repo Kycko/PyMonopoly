@@ -80,9 +80,13 @@ class MenuItem():
                 Globals.SETTINGS['hotkeys'] = not Globals.SETTINGS['hotkeys']
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
             return None
-        elif self.type == 'main_settings_language':
-            Globals.SETTINGS['language'] = int(not(Globals.SETTINGS['language']))
-            Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
+        elif self.type in ('main_settings_language', 'main_settings_fav_game'):
+            Globals.SETTINGS[self.type[14:]] = int(not(Globals.SETTINGS[self.type[14:]]))
+            if self.type == 'main_settings_fav_game':
+                self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›')
+                return None
+            else:
+                Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
         return self.type
 class Tooltip():
     def __init__(self, text, type, obj):
