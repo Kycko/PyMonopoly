@@ -53,7 +53,8 @@ class MenuItem():
             self.move_text()
         if self.group[:4] != 'main':
             self.cursor.render(state)
-            self.tooltip.render(state)
+            if Globals.SETTINGS['hotkeys']:
+                self.tooltip.render(state)
         if 'SELECTOR' in self.type:
             self.selector.render(state)
         else:
