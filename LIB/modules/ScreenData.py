@@ -172,5 +172,8 @@ class MainScreen():
                             'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 3),
                             'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 4),
                             'volume'    : AlphaText(Globals.TRANSLATION[19], 'settings_left', 5)})
+        if not Globals.SETTINGS['block']:
+            self.menuitems.update({'fav_game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_settings_fav_game', 'main_settings_left_MI', 6)})
+            self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 6)})
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}

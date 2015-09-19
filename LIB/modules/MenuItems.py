@@ -188,7 +188,7 @@ class MainCursor(Cursor):
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'exit']
+            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'fav_game', 'exit']
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
     def update_cords(self, menuitems):
