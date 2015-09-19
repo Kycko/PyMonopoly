@@ -64,7 +64,7 @@ def create_init_file(type):
         data = ['0\n' if x<3 else 'None 0 01.01.01 black\n' for x in range(10)]
         data = ['0\n'] + data + ['1\n'] + data
     elif type == 'settings':
-        data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("3\n", "2\n")
     write_to_file(Globals.FILES[type], data)
@@ -74,10 +74,11 @@ def read_settings():
             'pl_name'   : SETTINGS[1],
             'pl_color'  : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
             'fav_game'  : int(SETTINGS[5]),
-            'music'     : bool(int(SETTINGS[6])),
-            'sounds'    : bool(int(SETTINGS[7])),
-            'volume'    : float(SETTINGS[8]),
-            'block'     : bool(int(SETTINGS[9]))}
+            'hotkeys'   : bool(int(SETTINGS[6])),
+            'music'     : bool(int(SETTINGS[7])),
+            'sounds'    : bool(int(SETTINGS[8])),
+            'volume'    : float(SETTINGS[9]),
+            'block'     : bool(int(SETTINGS[10]))}
 def save_settings():
     array = [str(Globals.SETTINGS['language']) + '\n',
              Globals.SETTINGS['pl_name'] + '\n',
@@ -85,6 +86,7 @@ def save_settings():
              str(Globals.SETTINGS['pl_color'][1]) + '\n',
              str(Globals.SETTINGS['pl_color'][2]) + '\n',
              str(Globals.SETTINGS['fav_game']) + '\n',
+             str(int(Globals.SETTINGS['hotkeys'])) + '\n',
              str(int(Globals.SETTINGS['music'])) + '\n',
              str(int(Globals.SETTINGS['sounds'])) + '\n',
              str(Globals.SETTINGS['volume']) + '\n',

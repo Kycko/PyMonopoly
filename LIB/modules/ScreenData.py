@@ -161,14 +161,16 @@ class MainScreen():
     def make_settings_screen(self):
         self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.LANGUAGES[Globals.SETTINGS['language']][1]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
                           'player'      : MenuItem(Globals.PLAYERS[0]['name'], 'main_settings_player', 'main_settings_player', 0),
-                          'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 2),
-                          'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 3),
-                          'volume'      : MenuItem('', 'main_settings_volume_SELECTOR', 'main_settings_left_MI', 4),
+                          'hotkeys'     : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['hotkeys'])]+u' ›', 'main_settings_hotkeys', 'main_settings_left_MI', 2),
+                          'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
+                          'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 4),
+                          'volume'      : MenuItem('', 'main_settings_volume_SELECTOR', 'main_settings_left_MI', 5),
                           'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
         self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0),
                             'player'    : AlphaText(Globals.TRANSLATION[20], 'settings_left', 1),
-                            'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 2),
-                            'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 3),
-                            'volume'    : AlphaText(Globals.TRANSLATION[19], 'settings_left', 4)})
+                            'hotkeys'   : AlphaText(Globals.TRANSLATION[25], 'settings_left', 2),
+                            'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 3),
+                            'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 4),
+                            'volume'    : AlphaText(Globals.TRANSLATION[19], 'settings_left', 5)})
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
