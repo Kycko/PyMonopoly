@@ -196,11 +196,15 @@ class MainCursor(Cursor):
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'fav_game', 'exit']
+            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'exit']
+            if not Globals.SETTINGS['block']:
+                self.keys.insert(6, 'fav_game')
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['game', 'exit']
+            self.keys = ['exit']
+            if not Globals.SETTINGS['block']:
+                self.keys.insert(0, 'game')
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
