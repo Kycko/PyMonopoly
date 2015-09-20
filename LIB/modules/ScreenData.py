@@ -26,17 +26,17 @@ class MainScreen():
                                'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
             else:
-                self.move_APPINFO(50)
+                self.move_APPINFO((0, 50))
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         elif type == 'main_stats':
-            self.move_APPINFO(-50)
+            self.move_APPINFO((0, -50))
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
             if not Globals.SETTINGS['block']:
                 self.menuitems['switch'] = MenuItem(Globals.TRANSLATION[12], 'stats_switch', 'stats_switch')
             self.make_stats_screen(Globals.TRANSLATION[6-Globals.SETTINGS['fav_game']])
         elif type == 'main_settings':
             if key != 'exit':
-                self.move_APPINFO(-50)
+                self.move_APPINFO((0, -50))
                 Globals.TEMP_VARS['edit_player'] = 0
             else:
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -135,7 +135,7 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def move_APPINFO(self, offset):
         for obj in (self.pics['logo'], self.labels['APPNAME'], self.labels['APPVERSION']):
-            obj.new_pos = count_new_pos(obj.new_pos, (0, offset))
+            obj.new_pos = count_new_pos(obj.new_pos, offset)
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         new = not(6-Globals.TRANSLATION.index(current))
