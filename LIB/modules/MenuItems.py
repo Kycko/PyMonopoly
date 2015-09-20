@@ -195,6 +195,8 @@ class MainCursor(Cursor):
             self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'fav_game', 'exit']
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
+        elif type == 'main_new_game':
+            self.keys = ['exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]

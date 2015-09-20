@@ -12,11 +12,6 @@ class MainScreen():
         self.cursor = MainCursor(self.menuitems, 'main_main')
     def switch_screen(self, type, key):
         if type == 'main_main':
-            self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
-                              'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
-                              'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
-                              'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.objects = {}
             if key != 'exit':
                 self.pics = {'background'   : Globals.PICS['background'],
                              'logo'         : Globals.PICS['logo'],
@@ -26,8 +21,16 @@ class MainScreen():
                                'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
             else:
-                self.move_APPINFO((0, 50))
+                if self.menuitems['exit'].group == 'main_settings_player_exit':
+                    self.move_APPINFO((-300, 0))
+                else:
+                    self.move_APPINFO((0, 50))
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+            self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
+                              'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
+                              'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
+                              'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
+            self.objects = {}
         elif type == 'main_stats':
             self.move_APPINFO((0, -50))
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
@@ -57,6 +60,9 @@ class MainScreen():
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
+        elif type == 'main_new_game':
+            self.move_APPINFO((300, 0))
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
