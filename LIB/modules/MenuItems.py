@@ -21,7 +21,7 @@ class MenuItem():
             self.tooltip = None
     def init_for_type(self):
         #--- Hotkeys
-        if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch'):
+        if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
             self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
         else:
             self.HOTKEYS = ()
@@ -79,6 +79,10 @@ class MenuItem():
             else:
                 Globals.SETTINGS['hotkeys'] = not Globals.SETTINGS['hotkeys']
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
+            return None
+        elif self.type == 'main_new_game_switch':
+            Globals.TEMP_VARS['cur_game'] = int(not(Globals.TEMP_VARS['cur_game']))
+            self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›')
             return None
         elif self.type in ('main_settings_language', 'main_settings_fav_game'):
             Globals.SETTINGS[self.type[14:]] = int(not(Globals.SETTINGS[self.type[14:]]))
@@ -196,7 +200,7 @@ class MainCursor(Cursor):
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['exit']
+            self.keys = ['game', 'exit']
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
