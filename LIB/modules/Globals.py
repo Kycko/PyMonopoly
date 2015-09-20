@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame
-from GlobalFuncs import change_volume, check_files, check_user_monitor, read_settings, read_translation, switch_sound_state
+from GlobalFuncs import change_volume, check_files, check_user_monitor, create_players_list, read_settings, read_translation, switch_sound_state
 from ScreenData import MainScreen
 from Sprite import Sprite
 
@@ -66,8 +66,7 @@ TEMP_VARS = {}
 check_files()
 SETTINGS = read_settings()
 TRANSLATION = read_translation(SETTINGS['language'])
-PLAYERS = [{'name'  : SETTINGS['pl_name'],
-            'color' : SETTINGS['pl_color']}]
+create_players_list()
 #--- Create main window
 pygame.display.set_icon(pygame.image.load(PICS['appicon']))
 window = pygame.display.set_mode(RESOLUTION)

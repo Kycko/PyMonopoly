@@ -48,6 +48,11 @@ def write_to_file(file, data, method='w'):
     list = open(file, method)
     list.writelines(map(lambda x: x.encode('UTF'), data))
     list.close()
+#--- Game related
+def create_players_list():
+    Globals.PLAYERS = [{'color' : Globals.SETTINGS['pl_color'],
+                        'name'  : Globals.SETTINGS['pl_name'],
+                        'human' : True}]
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

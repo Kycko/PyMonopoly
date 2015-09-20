@@ -109,16 +109,19 @@ class MenuSelector():
     def __init__(self, type):
         self.type = type
         if type == 'main_settings_volume_SELECTOR':
-            self.items = [AlphaText(u'●', type, i) for i in range(10)]
+            itemcount = 10
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
-            self.cursor_inflate = (10, 16)
         elif type == 'main_settings_player_color_SELECTOR':
-            self.items = [AlphaText(u'●', type, i) for i in range(len(Globals.PLAYERS_COLORS))]
+            itemcount = len(Globals.PLAYERS_COLORS)
             if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
                 self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
             else:
                 self.active = 0
-            self.cursor_inflate = (10, 16)
+        elif type == 'main_new_total_SELECTOR':
+            itemcount = 6
+            self.active = len(Globals.PLAYERS) - 1
+        self.items = [AlphaText(u'●', type, i) for i in range(itemcount)]
+        self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
     def keypress(self, KEY):
@@ -202,7 +205,7 @@ class MainCursor(Cursor):
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['exit']
+            self.keys = ['total', 'exit']
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
     def update_cords(self, menuitems):

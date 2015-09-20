@@ -12,7 +12,7 @@ class AlphaText():
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
-        if group in ('main_settings_volume_SELECTOR', 'main_settings_player_color_SELECTOR'):
+        if 'SELECTOR' in group:
             self.font = Globals.FONTS['ume_16']
         elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player'):
             self.font = Globals.FONTS['ubuntu_24']
@@ -28,7 +28,9 @@ class AlphaText():
         if group in ('authors', 'stats_switch'):
             self.color = Globals.COLORS['grey']
         elif group == 'main_settings_volume_SELECTOR':
-            self.choose_vol_color(number)
+            self.choose_selector_color(number < Globals.SETTINGS['volume']*10)
+        elif group == 'main_new_total_SELECTOR':
+            self.choose_selector_color(number < len(Globals.PLAYERS))
         elif group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif group == 'main_settings_player':
@@ -58,12 +60,14 @@ class AlphaText():
         elif 'stats_table' in group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.rect = Rect((0, 365 + 20*number), (0, 0))
-        elif group == 'main_settings_volume_SELECTOR':
+        elif 'main_' in group and 'SELECTOR' in group:
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.rect = Rect((0, 623), (0, 0))
-        elif group == 'main_settings_player_color_SELECTOR':
-            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.rect = Rect((0, 458), (0, 0))
+            if group == 'main_settings_volume_SELECTOR':
+                self.rect = Rect((0, 623), (0, 0))
+            elif group == 'main_settings_player_color_SELECTOR':
+                self.rect = Rect((0, 458), (0, 0))
+            elif group == 'main_new_total_SELECTOR':
+                self.rect = Rect((0, 403), (0, 0))
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))
@@ -94,11 +98,11 @@ class AlphaText():
             self.new_pos = (self.rect.x, self.rect.y - 100)
         else:
             self.new_pos = self.rect.topleft
-    def choose_vol_color(self, num):
-        if num > Globals.SETTINGS['volume']*10-1:
-            self.color = Globals.COLORS['grey63']
-        else:
+    def choose_selector_color(self, state):
+        if state:
             self.color = Globals.COLORS['white']
+        else:
+            self.color = Globals.COLORS['grey63']
     def RErender(self):
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):

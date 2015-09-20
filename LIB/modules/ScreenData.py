@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import count_new_pos, read_stats
+from GlobalFuncs import count_new_pos, create_players_list, read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import Line
 from TransparentText import AlphaText
@@ -24,6 +24,7 @@ class MainScreen():
                 if self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
                     Globals.TEMP_VARS.pop('cur_game')
+                    create_players_list()
                 else:
                     self.move_APPINFO((0, 50))
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -62,13 +63,15 @@ class MainScreen():
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
+            Globals.PLAYERS.extend([{}, {}])
             Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
             self.move_APPINFO((300, 0))
-            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
+            self.menuitems = {'total'       : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
+                              'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
+            self.labels.update({'total' : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
-
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
