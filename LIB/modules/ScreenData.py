@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import read_stats
+from GlobalFuncs import count_new_pos, read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import Line
 from TransparentText import AlphaText
@@ -134,9 +134,9 @@ class MainScreen():
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
     def move_APPINFO(self, offset):
-        self.pics['logo'].new_y += offset
+        self.pics['logo'].new_pos = count_new_pos(self.pics['logo'].new_pos, (0, offset))
         for key in ('APPNAME', 'APPVERSION'):
-            self.labels[key].new_y += offset
+            self.labels[key].new_pos = count_new_pos(self.labels[key].new_pos, (0, offset))
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         new = not(6-Globals.TRANSLATION.index(current))

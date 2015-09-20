@@ -8,6 +8,7 @@ class AlphaText():
         self.init_for_group(group, number)
         self.anticolor = Globals.COLORS['white'] - self.color
         self.update_text(text)
+        self.init_new_pos(group)
     def init_for_group(self, group, number):
         self.AV = True
         #--- Fonts
@@ -38,60 +39,61 @@ class AlphaText():
         if group == 'main_main':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
-            self.y = Globals.RESOLUTION[1]/2+50+35*number
+            self.rect = Rect((0, Globals.RESOLUTION[1]/2+50+35*number), (0, 0))
         elif group == 'stats_common':
             self.x = Globals.RESOLUTION[0]/7
-            self.y = 320 + 25 * number
+            self.rect = Rect((0, 320 + 25 * number), (0, 0))
         elif 'exit' in group or group == 'main_stats':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
-            self.y = Globals.RESOLUTION[1]+50
+            self.rect = Rect((0, Globals.RESOLUTION[1]+50), (0, 0))
         elif group == 'stats_game_name':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/3-50
-            self.y = 280
+            self.rect = Rect((0, 280), (0, 0))
         elif group == 'stats_switch':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/3+85
-            self.y = 280
+            self.rect = Rect((0, 280), (0, 0))
         elif 'stats_table' in group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
-            self.y = 365 + 20*number
+            self.rect = Rect((0, 365 + 20*number), (0, 0))
         elif group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.y = 623
+            self.rect = Rect((0, 623), (0, 0))
         elif group == 'main_settings_player_color_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.y = 458
+            self.rect = Rect((0, 458), (0, 0))
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
-            self.y = 320 + 55*number
+            self.rect = Rect((0, 320 + 55*number), (0, 0))
         elif group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
-            self.y = 342 + 55*number
+            self.rect = Rect((0, 342 + 55*number), (0, 0))
         elif group == 'main_settings_player':
             self.x = Globals.RESOLUTION[0]/4 - 50
-            self.y = 397 + 35*number
+            self.rect = Rect((0, 397 + 35*number), (0, 0))
         elif group == 'stats_latest':
             self.x = Globals.RESOLUTION[0]/7 + 365
-            self.y = 365 + 20*number
+            self.rect = Rect((0, 365 + 20*number), (0, 0))
         elif group == 'stats_bests':
             self.x = Globals.RESOLUTION[0]/7 - 20
-            self.y = 400
+            self.rect = Rect((0, 400), (0, 0))
         elif group == 'authors':
             self.x = 'right'
             self.x_offset = 10
-            self.y = Globals.RESOLUTION[1]-26-20*number
+            self.rect = Rect((0, Globals.RESOLUTION[1]-26-20*number), (0, 0))
         elif group == 'APPNAME':
-            self.x = Globals.PICS['logo'].x + 110
-            self.y = Globals.PICS['logo'].y + 10
+            self.x = Globals.PICS['logo'].pos[0] + 110
+            self.rect = Rect((0, Globals.PICS['logo'].pos[1] + 10), (0, 0))
         elif group == 'APPVERSION':
-            self.x = Globals.PICS['logo'].x + 112
-            self.y = Globals.PICS['logo'].y + 50
+            self.x = Globals.PICS['logo'].pos[0] + 112
+            self.rect = Rect((0, Globals.PICS['logo'].pos[1] + 50), (0, 0))
+    def init_new_pos(self, group):
         if group[:5] in ('main_', 'stats', 'setti'):
-            self.new_y = self.y - 100
+            self.new_pos = (self.rect.x, self.rect.y - 100)
         else:
-            self.new_y = self.y
+            self.new_pos = self.rect.topleft
     def choose_vol_color(self, num):
         if num > Globals.SETTINGS['volume']*10-1:
             self.color = Globals.COLORS['grey63']
@@ -100,14 +102,13 @@ class AlphaText():
     def RErender(self):
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):
-        if self.new_y != self.y:
-            self.x, self.y = slight_animation_count_pos((self.x, self.new_y), (self.x, self.y), 10)
-            self.rect = Rect((self.rect.x, self.y), self.rect.size)
+        if self.new_pos != self.rect.topleft:
+            self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10)
     def update_text(self, text, reset_alpha=True):
         self.symbols = text
         size = self.font.size(text)
         xpos = self.find_xpos(size)
-        self.rect = Rect((xpos, self.y), size)
+        self.rect = Rect((xpos, self.rect.y), size)
         self.RErender()
         if reset_alpha:
             self.alpha = 5

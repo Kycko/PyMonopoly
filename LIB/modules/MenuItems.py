@@ -49,7 +49,7 @@ class MenuItem():
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
-        if self.text.new_y != self.text.y:
+        if self.text.new_pos != self.text.rect.topleft:
             self.move_text()
         if self.group[:4] != 'main':
             self.cursor.render(state)

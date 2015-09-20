@@ -9,6 +9,8 @@ def change_color_alpha(color, alpha):
     color -= Globals.COLORS['black']
     color.a = alpha
     return color
+def count_new_pos(old, offset):
+    return tuple([old[i]+offset[i] for i in range(2)])
 def change_volume(volume, write_to_file=False):
     mixer.music.set_volume(volume)
     Globals.SOUNDS['button-pressed'].set_volume(volume)
