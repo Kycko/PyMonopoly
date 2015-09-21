@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import count_new_pos, create_players_list, read_stats
+from GlobalFuncs import count_new_pos, create_players_list, read_file, read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import Line
 from TransparentText import AlphaText
@@ -63,7 +63,9 @@ class MainScreen():
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
-            Globals.PLAYERS.extend([{}, {}])
+            LGS = read_file(Globals.FILES['last_game_settings'])
+            for string in LGS:
+                Globals.PLAYERS.append({'human' : string == 'human'})
             Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
             self.move_APPINFO((300, 0))
             self.menuitems = {'total'       : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),

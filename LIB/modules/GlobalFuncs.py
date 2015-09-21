@@ -73,7 +73,7 @@ def create_init_file(type):
     elif type == 'settings':
         data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
-        data = ("3\n", "2\n")
+        data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
