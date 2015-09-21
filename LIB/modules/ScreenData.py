@@ -145,6 +145,9 @@ class MainScreen():
         elif type == 'main_settings_player_color_SELECTOR':
             self.menuitems['name'].text.color = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
             self.menuitems['name'].text.RErender()
+        elif type == 'main_settings_player' and key == 'exit' and not self.labels['name_MI'].symbols:
+            if 'error' not in self.labels.keys():
+                self.labels.update({'error' : AlphaText(Globals.TRANSLATION[29], 'ERROR_main')})
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)

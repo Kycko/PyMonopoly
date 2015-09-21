@@ -18,7 +18,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_24']
         elif group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in group:
+        elif group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in group or 'ERROR' in group:
             self.font = Globals.FONTS['ubuntu_16']
         elif group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
@@ -35,6 +35,8 @@ class AlphaText():
             self.color = Globals.PLAYERS_COLORS[number]
         elif group == 'main_settings_player':
             self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color']
+        elif 'ERROR' in group:
+            self.color = Globals.COLORS['light_green']
         else:
             self.color = Globals.COLORS['white']
         #--- Position
@@ -83,6 +85,9 @@ class AlphaText():
         elif group == 'stats_bests':
             self.x = Globals.RESOLUTION[0]/7 - 20
             self.rect = Rect((0, 400), (0, 0))
+        elif group == 'ERROR_main':
+            self.x = Globals.RESOLUTION[0]/2
+            self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
         elif group == 'authors':
             self.x = 'right'
             self.x_offset = 10
@@ -96,6 +101,8 @@ class AlphaText():
     def init_new_pos(self, group):
         if group[:5] in ('main_', 'stats', 'setti'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
+        elif 'ERROR' in group:
+            self.new_pos = (self.rect.x, self.rect.y - 50)
         else:
             self.new_pos = self.rect.topleft
     def choose_selector_color(self, state):
