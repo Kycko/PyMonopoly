@@ -153,7 +153,7 @@ class MenuSelector():
         if self.type == 'main_settings_volume_SELECTOR':
             change_volume(float(self.active+1)/10)
             for i in range(len(self.items)):
-                self.items[i].choose_vol_color(i)
+                self.items[i].choose_selector_color('volume', i)
                 self.items[i].RErender()
         elif self.type == 'main_settings_player_color_SELECTOR':
             Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]

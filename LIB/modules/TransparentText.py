@@ -28,9 +28,9 @@ class AlphaText():
         if group in ('authors', 'stats_switch'):
             self.color = Globals.COLORS['grey']
         elif group == 'main_settings_volume_SELECTOR':
-            self.choose_selector_color(number < Globals.SETTINGS['volume']*10)
+            self.choose_selector_color('volume', number)
         elif group == 'main_new_total_SELECTOR':
-            self.choose_selector_color(number < len(Globals.PLAYERS))
+            self.choose_selector_color('new_settings_total', number)
         elif group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif group == 'main_settings_player':
@@ -105,7 +105,11 @@ class AlphaText():
             self.new_pos = (self.rect.x, self.rect.y - 50)
         else:
             self.new_pos = self.rect.topleft
-    def choose_selector_color(self, state):
+    def choose_selector_color(self, type, num):
+        if type == 'volume':
+            state = num < Globals.SETTINGS['volume']*10
+        elif type == 'new_settings_total':
+            state = num < len(Globals.PLAYERS)
         if state:
             self.color = Globals.COLORS['white']
         else:
