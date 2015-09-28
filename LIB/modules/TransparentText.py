@@ -64,14 +64,15 @@ class AlphaText():
         elif 'stats_table' in group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(group[len(group)-1])
             self.rect = Rect((0, 365 + 20*number), (0, 0))
-        elif 'main_' in group and 'SELECTOR' in group:
+        elif group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            if group == 'main_settings_volume_SELECTOR':
-                self.rect = Rect((0, 623), (0, 0))
-            elif group in ('main_settings_player_color_SELECTOR', 'main_new_humans_SELECTOR'):
-                self.rect = Rect((0, 458), (0, 0))
-            elif group == 'main_new_total_SELECTOR':
-                self.rect = Rect((0, 403), (0, 0))
+            self.rect = Rect((0, 623), (0, 0))
+        elif group in ('main_settings_player_color_SELECTOR', 'main_new_humans_SELECTOR'):
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
+            self.rect = Rect((0, 458), (0, 0))
+        elif group == 'main_new_total_SELECTOR':
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
+            self.rect = Rect((0, 403), (0, 0))
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))

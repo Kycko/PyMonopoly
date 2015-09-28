@@ -68,11 +68,12 @@ class MainScreen():
                 Globals.PLAYERS.append({'human' : string == 'human'})
             Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
             self.move_APPINFO((300, 0))
-            self.menuitems = {'total'       : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
-                              'humans'      : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
-                              'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
-            self.labels.update({'total'     : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
-                                'humans'    : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2)})
+            self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
+                              'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
+                              'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
+            self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
+                                'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
+                                'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
@@ -102,14 +103,14 @@ class MainScreen():
     def render(self, cur_key):
         for key in self.pics['order']:
             self.pics[key].render()
-        for label in self.labels.values():
-            label.render()
         for obj in self.objects.values():
             obj.render()
         if self.cursor:
             self.cursor.render(self.menuitems)
         for key in self.menuitems.keys():
             self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
+        for label in self.labels.values():
+            label.render()
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):

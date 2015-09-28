@@ -108,24 +108,26 @@ class Tooltip():
 class MenuSelector():
     def __init__(self, type):
         self.type = type
+        itemcount_start = 0
         if type == 'main_settings_volume_SELECTOR':
-            itemcount = 10
+            itemcount_end = 10
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
         elif type == 'main_settings_player_color_SELECTOR':
-            itemcount = len(Globals.PLAYERS_COLORS)
+            itemcount_end = len(Globals.PLAYERS_COLORS)
             if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
                 self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
             else:
                 self.active = 0
         elif type == 'main_new_total_SELECTOR':
-            itemcount = 6
-            self.active = len(Globals.PLAYERS) - 1
+            itemcount_start = 1
+            itemcount_end = 6
+            self.active = len(Globals.PLAYERS) - 2
         elif type == 'main_new_humans_SELECTOR':
-            itemcount = len(Globals.PLAYERS)
+            itemcount_end = len(Globals.PLAYERS)
             for i in range(len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i]['human']:
                     self.active = i
-        self.items = [AlphaText(u'●', type, i) for i in range(itemcount)]
+        self.items = [AlphaText(u'●', type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
