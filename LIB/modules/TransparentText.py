@@ -31,6 +31,8 @@ class AlphaText():
             self.choose_selector_color('volume', number)
         elif group == 'main_new_total_SELECTOR':
             self.choose_selector_color('new_settings_total', number)
+        elif group == 'main_new_humans_SELECTOR':
+            self.choose_selector_color('new_settings_humans', number)
         elif group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif group == 'main_settings_player':
@@ -66,7 +68,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             if group == 'main_settings_volume_SELECTOR':
                 self.rect = Rect((0, 623), (0, 0))
-            elif group == 'main_settings_player_color_SELECTOR':
+            elif group in ('main_settings_player_color_SELECTOR', 'main_new_humans_SELECTOR'):
                 self.rect = Rect((0, 458), (0, 0))
             elif group == 'main_new_total_SELECTOR':
                 self.rect = Rect((0, 403), (0, 0))
@@ -110,6 +112,8 @@ class AlphaText():
             state = num < Globals.SETTINGS['volume']*10
         elif type == 'new_settings_total':
             state = num < len(Globals.PLAYERS)
+        elif type == 'new_settings_humans':
+            state = Globals.PLAYERS[num]['human']
         if state:
             self.color = Globals.COLORS['white']
         else:

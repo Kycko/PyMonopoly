@@ -69,8 +69,10 @@ class MainScreen():
             Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
             self.move_APPINFO((300, 0))
             self.menuitems = {'total'       : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
+                              'humans'      : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
-            self.labels.update({'total' : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1)})
+            self.labels.update({'total'     : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
+                                'humans'    : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})

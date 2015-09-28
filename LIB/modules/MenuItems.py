@@ -120,6 +120,11 @@ class MenuSelector():
         elif type == 'main_new_total_SELECTOR':
             itemcount = 6
             self.active = len(Globals.PLAYERS) - 1
+        elif type == 'main_new_humans_SELECTOR':
+            itemcount = len(Globals.PLAYERS)
+            for i in range(len(Globals.PLAYERS)):
+                if Globals.PLAYERS[i]['human']:
+                    self.active = i
         self.items = [AlphaText(u'●', type, i) for i in range(itemcount)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
@@ -205,7 +210,7 @@ class MainCursor(Cursor):
         elif type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['total', 'exit']
+            self.keys = ['total', 'humans', 'exit']
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
     def update_cords(self, menuitems):
