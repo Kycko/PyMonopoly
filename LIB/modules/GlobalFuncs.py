@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import Globals
-from pygame import Color, display, mixer
 from os import listdir
+from pygame import Color, display, mixer
+from random import randrange
 from sys import exit as SYSEXIT
 
 #--- Common
@@ -49,6 +50,11 @@ def write_to_file(file, data, method='w'):
     list.writelines(map(lambda x: x.encode('UTF'), data))
     list.close()
 #--- Game related
+def add_new_player(human):
+    Globals.PLAYERS.append({'color' : Globals.TEMP_VARS['avail_colors'].pop(randrange(len(Globals.TEMP_VARS['avail_colors']))),
+                            'human' : human})
+    print(Globals.PLAYERS)
+    print(Globals.TEMP_VARS)
 def create_players_list():
     Globals.PLAYERS = [{'color' : Globals.SETTINGS['pl_color'],
                         'name'  : Globals.SETTINGS['pl_name'],
