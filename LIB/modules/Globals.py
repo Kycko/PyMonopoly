@@ -19,6 +19,7 @@ COLORS = {'black'               : pygame.Color('black'),
           'grey'                : pygame.Color('grey'),
           'grey63'              : pygame.Color(95, 95, 95),
           'magenta'             : pygame.Color('magenta'),
+          'light_red'           : pygame.Color(231, 85, 85),
           'red'                 : pygame.Color(255, 30, 30),
           'white'               : pygame.Color('white'),
           'yellow'              : pygame.Color(228, 227, 17)}

@@ -42,7 +42,7 @@ class AlphaText():
         elif group == 'main_settings_player':
             self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color']
         elif 'ERROR' in group:
-            self.color = Globals.COLORS['light_green']
+            self.color = Globals.COLORS['light_red']
         else:
             self.color = Globals.COLORS['white']
         #--- Position

@@ -69,6 +69,7 @@ class MainScreen():
             if key == 'exit':
                 Globals.TEMP_VARS.pop('edit_player')
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+                self.check_error(type)
             else:
                 self.move_APPINFO((300, 0))
                 Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
@@ -163,7 +164,7 @@ class MainScreen():
         elif type == 'main_settings_player_color_SELECTOR':
             self.menuitems['name'].text.color = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
             self.menuitems['name'].text.RErender()
-        elif type == 'main_settings_player' and key == 'exit' and not self.labels['name_MI'].symbols:
+        elif type and ('main_new_edit_player' in type or type == 'main_settings_player') and key == 'exit' and not self.labels['name_MI'].symbols:
             if 'error' not in self.labels.keys():
                 self.labels.update({'error' : AlphaText(Globals.TRANSLATION[29], 'ERROR_main')})
         elif type:
@@ -222,3 +223,12 @@ class MainScreen():
         Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')
         if Globals.PLAYERS[0]['name'] in Globals.TEMP_VARS['avail_names']:
             Globals.TEMP_VARS['avail_names'].remove(Globals.PLAYERS[0]['name'])
+    def check_error(self, type):
+        if type == 'main_new_game':
+            if self.check_doubles_for_players() and 'error' not in self.labels.keys():
+                self.labels.update({'error' : AlphaText(Globals.TRANSLATION[32], 'ERROR_main')})
+    def check_doubles_for_players(self):
+        for i in range(len(Globals.PLAYERS)-1):
+            for j in range(i+1, len(Globals.PLAYERS)):
+                if Globals.PLAYERS[i]['color'] == Globals.PLAYERS[j]['color'] or Globals.PLAYERS[i]['name'] == Globals.PLAYERS[j]['name']:
+                    return True
