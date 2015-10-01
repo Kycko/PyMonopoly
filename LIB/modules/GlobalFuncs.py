@@ -53,10 +53,7 @@ def write_to_file(file, data, method='w'):
 def add_new_player(human):
     Globals.PLAYERS.append({'color' : Globals.TEMP_VARS['avail_colors'].pop(randrange(len(Globals.TEMP_VARS['avail_colors']))),
                             'name'  : Globals.TEMP_VARS['avail_names'].pop(randrange(len(Globals.TEMP_VARS['avail_names']))),
-                                                    'human' : human})
-    print(Globals.PLAYERS)
-    for value in Globals.TEMP_VARS.values():
-        print(len(value))
+                            'human' : human})
 def create_players_list():
     Globals.PLAYERS = [{'color' : Globals.SETTINGS['pl_color'],
                         'name'  : Globals.SETTINGS['pl_name'],
