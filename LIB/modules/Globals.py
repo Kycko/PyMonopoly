@@ -44,7 +44,8 @@ FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
 
-FONTS = {'ubuntu_16'    : pygame.font.Font(FILES['font_ubuntu'], 16),
+FONTS = {'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
+         'ubuntu_16'    : pygame.font.Font(FILES['font_ubuntu'], 16),
          'ubuntu_20'    : pygame.font.Font(FILES['font_ubuntu'], 20),
          'ubuntu_24'    : pygame.font.Font(FILES['font_ubuntu'], 24),
          'ubuntu_32'    : pygame.font.Font(FILES['font_ubuntu'], 32),
