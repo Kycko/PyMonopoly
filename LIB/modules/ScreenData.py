@@ -71,11 +71,11 @@ class MainScreen():
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             else:
                 self.move_APPINFO((300, 0))
+                Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
                 self.init_avail_colors_and_names()
                 LGS = read_file(Globals.FILES['last_game_settings'])
                 for string in LGS:
                     add_new_player(string == 'human')
-            Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
             self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
                               'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
@@ -88,9 +88,8 @@ class MainScreen():
                 if not Globals.PLAYERS[i]['human']:
                     self.labels.update({'playertype'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
             if not Globals.SETTINGS['block']:
-                self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
+                self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
-        print(len(Globals.PLAYERS))
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
