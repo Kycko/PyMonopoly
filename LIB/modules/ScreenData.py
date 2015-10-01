@@ -23,7 +23,7 @@ class MainScreen():
             else:
                 if self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
-                    Globals.TEMP_VARS.pop('cur_game')
+                    Globals.TEMP_VARS.clear()
                     create_players_list()
                 else:
                     self.move_APPINFO((0, 50))
@@ -72,6 +72,8 @@ class MainScreen():
             self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
                               'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
+            for i in range(len(Globals.PLAYERS)):
+                self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
             self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
                                 'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
                                 'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2),

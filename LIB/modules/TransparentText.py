@@ -33,6 +33,8 @@ class AlphaText():
             self.choose_selector_color('new_settings_total', number)
         elif group == 'main_new_humans_SELECTOR':
             self.choose_selector_color('new_settings_humans', number)
+        elif group == 'main_new_playerlist':
+            self.color = Globals.PLAYERS[number]['color']
         elif group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif group == 'main_settings_player':
@@ -73,6 +75,9 @@ class AlphaText():
         elif group == 'main_new_total_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 403), (0, 0))
+        elif group == 'main_new_playerlist':
+            self.x = Globals.RESOLUTION[0]/4 - 50
+            self.rect = Rect((0, 507+number*30), (0, 0))
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))

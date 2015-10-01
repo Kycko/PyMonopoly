@@ -213,6 +213,8 @@ class MainCursor(Cursor):
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
             self.keys = ['total', 'humans', 'exit']
+            for i in range(len(Globals.PLAYERS)):
+                self.keys.insert(len(self.keys)-1, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
     def update_cords(self, menuitems):
