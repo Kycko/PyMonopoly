@@ -63,8 +63,7 @@ class MainScreen():
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
-            Globals.TEMP_VARS['avail_colors'] = [color for color in Globals.PLAYERS_COLORS if color != Globals.PLAYERS[0]['color']]
-            Globals.TEMP_VARS['avail_names'] = 
+            self.init_avail_colors_and_names()
             LGS = read_file(Globals.FILES['last_game_settings'])
             for string in LGS:
                 add_new_player(string == 'human')
@@ -201,3 +200,8 @@ class MainScreen():
             self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 6)})
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
+    def init_avail_colors_and_names(self):
+        Globals.TEMP_VARS['avail_colors'] = [color for color in Globals.PLAYERS_COLORS if color != Globals.PLAYERS[0]['color']]
+        Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')
+        if Globals.PLAYERS[0]['name'] in Globals.TEMP_VARS['avail_names']:
+            Globals.TEMP_VARS['avail_names'].remove(Globals.PLAYERS[0]['name'])
