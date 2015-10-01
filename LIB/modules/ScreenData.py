@@ -46,16 +46,15 @@ class MainScreen():
             else:
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.make_settings_screen()
-        elif type == 'main_settings_player':
+        elif 'main_new_edit_player' in type or type == 'main_settings_player':
             if key == 'exit':
                 Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'] = self.labels['name_MI'].symbols
                 self.objects = {}
-            self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
-                              'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2),
-                              'exit'        : MenuItem(Globals.TRANSLATION[21], 'main_settings', 'main_settings_player_exit')}
-            self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
-            self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[22], 'settings_left', 1),
-                                'color'     : AlphaText(Globals.TRANSLATION[23], 'settings_left', 2)})
+            self.make_playersettings_screen()
+            if 'main_new_edit_player' in type:
+                self.menuitems.update({'exit'   : MenuItem(Globals.TRANSLATION[21], 'main_new_game', 'main_settings_player_exit')})
+            else:
+                self.menuitems.update({'exit'   : MenuItem(Globals.TRANSLATION[21], 'main_settings', 'main_settings_player_exit')})
         elif type == 'main_settings_player_name':
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], 'main_settings_player', 'main_settings_player_exit')}
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -63,12 +62,16 @@ class MainScreen():
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
-            self.init_avail_colors_and_names()
-            LGS = read_file(Globals.FILES['last_game_settings'])
-            for string in LGS:
-                add_new_player(string == 'human')
+            if key == 'exit':
+                Globals.TEMP_VARS.pop('edit_player')
+                self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+            else:
+                self.move_APPINFO((300, 0))
+                self.init_avail_colors_and_names()
+                LGS = read_file(Globals.FILES['last_game_settings'])
+                for string in LGS:
+                    add_new_player(string == 'human')
             Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
-            self.move_APPINFO((300, 0))
             self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
                               'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
@@ -204,6 +207,12 @@ class MainScreen():
             self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 6)})
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
+    def make_playersettings_screen(self):
+        self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
+                          'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2)}
+        self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+        self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[22], 'settings_left', 1),
+                            'color'     : AlphaText(Globals.TRANSLATION[23], 'settings_left', 2)})
     def init_avail_colors_and_names(self):
         Globals.TEMP_VARS['avail_colors'] = [color for color in Globals.PLAYERS_COLORS if color != Globals.PLAYERS[0]['color']]
         Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')

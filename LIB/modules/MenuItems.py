@@ -84,6 +84,9 @@ class MenuItem():
             Globals.TEMP_VARS['cur_game'] = int(not(Globals.TEMP_VARS['cur_game']))
             self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›')
             return None
+        elif 'main_new_edit_player' in self.type:
+            Globals.TEMP_VARS['edit_player'] = int(self.type[len(self.type)-1])
+            return self.type
         elif self.type in ('main_settings_language', 'main_settings_fav_game'):
             Globals.SETTINGS[self.type[14:]] = int(not(Globals.SETTINGS[self.type[14:]]))
             if self.type == 'main_settings_fav_game':
@@ -209,7 +212,7 @@ class MainCursor(Cursor):
             self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'exit']
             if not Globals.SETTINGS['block']:
                 self.keys.insert(6, 'fav_game')
-        elif type == 'main_settings_player':
+        elif 'main_new_edit_player' in type or type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
             self.keys = ['total', 'humans', 'exit']
