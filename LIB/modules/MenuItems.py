@@ -62,7 +62,7 @@ class MenuItem():
     def render(self, state):
         if self.text.AV:
             self.group_checkings(state)
-    def action(self):
+    def action(self, key):
         play_click_sound()
         if self.group == 'main_settings_exit':
             Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0]['name']
@@ -84,9 +84,8 @@ class MenuItem():
             Globals.TEMP_VARS['cur_game'] = int(not(Globals.TEMP_VARS['cur_game']))
             self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›')
             return None
-        elif 'main_new_edit_player' in self.type:
+        elif key != 'exit' and 'main_new_edit_player' in self.type:
             Globals.TEMP_VARS['edit_player'] = int(self.type[len(self.type)-1])
-            return self.type
         elif self.type in ('main_settings_language', 'main_settings_fav_game'):
             Globals.SETTINGS[self.type[14:]] = int(not(Globals.SETTINGS[self.type[14:]]))
             if self.type == 'main_settings_fav_game':

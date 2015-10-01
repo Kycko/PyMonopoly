@@ -56,7 +56,11 @@ class MainScreen():
             else:
                 self.menuitems.update({'exit'   : MenuItem(Globals.TRANSLATION[21], 'main_settings', 'main_settings_player_exit')})
         elif type == 'main_settings_player_name':
-            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], 'main_settings_player', 'main_settings_player_exit')}
+            if self.menuitems['exit'].type == 'main_new_game':
+                type = 'main_new_edit_player'
+            else:
+                type = 'main_settings_player'
+            self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], type, 'main_settings_player_exit')}
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
@@ -86,6 +90,7 @@ class MainScreen():
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
+        print(len(Globals.PLAYERS))
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
@@ -135,7 +140,7 @@ class MainScreen():
                     self.action_call('exit')
                 elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
-                elif self.menuitems['exit'].type == 'main_settings_player':
+                elif 'main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player':
                     if e.key == pygame.K_BACKSPACE:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
                     elif len(self.labels['name_MI'].symbols) < 15:
@@ -150,7 +155,7 @@ class MainScreen():
             elif e.type == pygame.QUIT:
                 SYSEXIT()
     def action_call(self, key):
-        type = self.menuitems[key].action()
+        type = self.menuitems[key].action(key)
         if type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
