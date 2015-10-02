@@ -175,6 +175,8 @@ class MainScreen():
                     self.menuitems.pop('player'+str(i))
                     if not Globals.PLAYERS[i]['human']:
                         self.labels.pop('playertype'+str(i))
+                    self.menuitems[key].selector.items[i-1].color = Globals.COLORS['grey63']
+                    self.menuitems[key].selector.items[i-1].RErender()
                     Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
                     Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[i]['name'])
                 Globals.PLAYERS = Globals.PLAYERS[:new]
