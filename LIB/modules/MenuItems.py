@@ -167,6 +167,8 @@ class MenuSelector():
         elif self.type == 'main_settings_player_color_SELECTOR':
             Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
             return self.type
+        else:
+            return self.type
 #--- Cursor TEMPLATE
 class Cursor():
     def __init__(self, alpha, rect):
