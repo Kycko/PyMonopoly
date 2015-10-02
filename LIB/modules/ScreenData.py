@@ -173,6 +173,7 @@ class MainScreen():
             if new < old:
                 for i in range(new, old):
                     dictkey = 'player'+str(i)
+                    self.cursor.add_rm_keys(False, dictkey)
                     self.menuitems.pop(dictkey)
                     if not Globals.PLAYERS[i]['human']:
                         self.labels.pop(dictkey)

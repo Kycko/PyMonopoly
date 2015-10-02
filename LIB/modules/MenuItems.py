@@ -221,6 +221,13 @@ class MainCursor(Cursor):
                 self.keys.insert(len(self.keys)-1, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
+    def add_rm_keys(self, add, key):
+        if add:
+            print('add')
+        else:
+            index = self.keys.index(key)
+            self.keys.pop(index)
+            self.cords.pop(index)
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
