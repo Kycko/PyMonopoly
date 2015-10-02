@@ -173,6 +173,8 @@ class MainScreen():
             if new < old:
                 for i in range(new, old):
                     self.menuitems.pop('player'+str(i))
+                    if not Globals.PLAYERS[i]['human']:
+                        self.labels.pop('playertype'+str(i))
                     Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
                     Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[i]['name'])
                 Globals.PLAYERS = Globals.PLAYERS[:new]
