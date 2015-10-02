@@ -87,7 +87,7 @@ class MainScreen():
             for i in range(len(Globals.PLAYERS)):
                 self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                 if not Globals.PLAYERS[i]['human']:
-                    self.labels.update({'playertype'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
+                    self.labels.update({'player'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
@@ -172,9 +172,10 @@ class MainScreen():
             new = self.menuitems[key].selector.active + 2
             if new < old:
                 for i in range(new, old):
-                    self.menuitems.pop('player'+str(i))
+                    dictkey = 'player'+str(i)
+                    self.menuitems.pop(dictkey)
                     if not Globals.PLAYERS[i]['human']:
-                        self.labels.pop('playertype'+str(i))
+                        self.labels.pop(dictkey)
                     self.menuitems[key].selector.items[i-1].color = Globals.COLORS['grey63']
                     self.menuitems[key].selector.items[i-1].RErender()
                     Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
