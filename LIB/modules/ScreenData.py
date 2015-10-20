@@ -179,6 +179,7 @@ class MainScreen():
                         self.labels.pop(dictkey)
                     self.menuitems[key].selector.items[i-1].color = Globals.COLORS['grey63']
                     self.menuitems[key].selector.items[i-1].RErender()
+                    self.menuitems['humans'].selector.add_rm_items(False, new)
                     Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
                     Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[i]['name'])
                 Globals.PLAYERS = Globals.PLAYERS[:new]

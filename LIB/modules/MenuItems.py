@@ -143,6 +143,13 @@ class MenuSelector():
             if self.active == len(self.items):
                 self.active = 0
         self.apply_new_active(self.active)
+    def add_rm_items(self, add, new_length):
+        if add:
+            print('add')
+        else:
+            self.items = self.items[:new_length]
+            if self.active >= new_length:
+                self.apply_new_active(new_length - 1)
     def apply_new_active(self, active):
         self.active = active
         self.cursor.new_cords = self.rects[active].topleft
