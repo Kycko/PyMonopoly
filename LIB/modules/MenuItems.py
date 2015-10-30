@@ -232,9 +232,10 @@ class MainCursor(Cursor):
                 self.keys.insert(len(self.keys)-1, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
-    def add_rm_keys(self, add, key):
+    def add_rm_keys(self, add, key, index=None, cords=None):
         if add:
-            print('add')
+            self.keys.insert(index, key)
+            self.cords.insert(index, cords)
         else:
             index = self.keys.index(key)
             self.keys.pop(index)

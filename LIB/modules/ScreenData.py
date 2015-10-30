@@ -186,12 +186,12 @@ class MainScreen():
                     add_new_player(False)
                     self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                     self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
+                    self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-1, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
                     selector_color = 'white'
                 self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
                 self.menuitems[key].selector.items[i-2+tempModifier].RErender()
             self.menuitems['humans'].selector.add_rm_items(new > old, new)
             print(len(Globals.PLAYERS))
-            print(self.menuitems.keys())
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
