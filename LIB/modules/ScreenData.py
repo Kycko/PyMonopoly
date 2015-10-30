@@ -66,6 +66,7 @@ class MainScreen():
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
+            self.init_avail_colors_and_names()
             if key == 'exit':
                 Globals.TEMP_VARS.pop('edit_player')
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -73,7 +74,6 @@ class MainScreen():
             else:
                 self.move_APPINFO((300, 0))
                 Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
-                self.init_avail_colors_and_names()
                 LGS = read_file(Globals.FILES['last_game_settings'])
                 for string in LGS:
                     add_new_player(string == 'human')
