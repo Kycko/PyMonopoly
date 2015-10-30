@@ -115,7 +115,7 @@ class AlphaText():
         if group[:5] in ('main_', 'stats', 'setti', 'newga'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in group:
-            self.new_pos = (self.rect.x, self.rect.y - 50)
+            self.new_pos = (self.rect.x + 25, self.rect.y - 50)
         else:
             self.new_pos = self.rect.topleft
     def choose_selector_color(self, type, num):
