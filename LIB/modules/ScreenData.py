@@ -170,8 +170,8 @@ class MainScreen():
         elif type == 'main_new_total_SELECTOR':
             old = len(Globals.PLAYERS)
             new = self.menuitems[key].selector.active + 2
-            tempModifier = int(new > old)
             if old != new:
+                tempModifier = int(new > old)
                 for i in range(old, new, (new-old)/abs(new-old)):
                     dictkey = 'player'+str(i-1+tempModifier)
                     if new < old:
