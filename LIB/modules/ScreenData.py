@@ -184,8 +184,8 @@ class MainScreen():
                     Globals.PLAYERS.pop(i-1)
                 elif new > old:
                     add_new_player(False)
-                    self.menuitems[key].selector.items[i-2].color = Globals.COLORS['white']
-                    self.menuitems[key].selector.items[i-2].RErender()
+                    self.menuitems[key].selector.items[i-1].color = Globals.COLORS['white']
+                    self.menuitems[key].selector.items[i-1].RErender()
             self.menuitems['humans'].selector.add_rm_items(new > old, new)
             print(len(Globals.PLAYERS))
         elif type:
