@@ -180,7 +180,6 @@ class MainScreen():
                         if not Globals.PLAYERS[i-1]['human']:
                             self.labels.pop(dictkey)
                         selector_color = 'grey63'
-                        Globals.PLAYERS.pop(i-1)
                     elif new > old:
                         add_new_player(False)
                         self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
@@ -190,6 +189,7 @@ class MainScreen():
                     self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
                     self.menuitems[key].selector.items[i-2+tempModifier].RErender()
             if new < old:
+                Globals.PLAYERS = Globals.PLAYERS[:new]
                 self.init_avail_colors_and_names()
                 self.check_error('main_new_game')
             self.menuitems['humans'].selector.add_rm_items(new > old, new)
