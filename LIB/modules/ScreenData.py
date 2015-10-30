@@ -183,6 +183,12 @@ class MainScreen():
                     Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
                     Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[i]['name'])
                 Globals.PLAYERS = Globals.PLAYERS[:new]
+            elif new > old:
+                for i in range(old, new):
+                    add_new_player(False)
+                    self.menuitems[key].selector.items[i-1].color = Globals.COLORS['white']
+                    self.menuitems[key].selector.items[i-1].RErender()
+            print(len(Globals.PLAYERS))
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
