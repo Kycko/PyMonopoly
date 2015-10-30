@@ -148,6 +148,7 @@ class MenuSelector():
             print('add')
         else:
             self.items = self.items[:new_length]
+            self.rects = self.rects[:new_length]
             if self.active >= new_length:
                 self.apply_new_active(new_length - 1)
     def apply_new_active(self, active):
