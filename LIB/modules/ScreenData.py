@@ -170,7 +170,6 @@ class MainScreen():
         elif type == 'main_new_total_SELECTOR':
             old = len(Globals.PLAYERS)
             new = self.menuitems[key].selector.active + 2
-            self.menuitems['humans'].selector.add_rm_items(new > old, new)
             if new < old:
                 for i in range(new, old):
                     dictkey = 'player'+str(i)
@@ -188,6 +187,7 @@ class MainScreen():
                     add_new_player(False)
                     self.menuitems[key].selector.items[i-1].color = Globals.COLORS['white']
                     self.menuitems[key].selector.items[i-1].RErender()
+            self.menuitems['humans'].selector.add_rm_items(new > old, new)
             print(len(Globals.PLAYERS))
         elif type:
             self.switch_screen(type, key)

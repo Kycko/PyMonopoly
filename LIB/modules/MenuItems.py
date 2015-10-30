@@ -145,7 +145,10 @@ class MenuSelector():
         self.apply_new_active(self.active)
     def add_rm_items(self, add, new_length):
         if add:
-            print('add')
+            for i in range(len(self.items), new_length):
+                self.items.append(AlphaText(u'●', self.type, i))
+                self.items[i].rect.topleft = self.items[i].new_pos
+                self.rects.append(pygame.Rect(self.items[i].rect.inflate(self.cursor_inflate)))
         else:
             self.items = self.items[:new_length]
             self.rects = self.rects[:new_length]
