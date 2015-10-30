@@ -191,6 +191,7 @@ class MainScreen():
                     self.menuitems[key].selector.items[i-2+tempModifier].RErender()
             if new < old:
                 self.init_avail_colors_and_names()
+                self.check_error('main_new_game')
             self.menuitems['humans'].selector.add_rm_items(new > old, new)
         elif type:
             self.switch_screen(type, key)
@@ -253,8 +254,11 @@ class MainScreen():
                 Globals.TEMP_VARS['avail_names'].remove(player['name'])
     def check_error(self, type):
         if type == 'main_new_game':
-            if self.check_doubles_for_players() and 'error' not in self.labels.keys():
+            status = self.check_doubles_for_players()
+            if status and 'error' not in self.labels.keys():
                 self.labels.update({'error' : AlphaText(Globals.TRANSLATION[32], 'ERROR_main')})
+            elif not status and 'error' in self.labels.keys():
+                self.labels.pop('error')
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
