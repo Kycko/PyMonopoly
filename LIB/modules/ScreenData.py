@@ -188,11 +188,11 @@ class MainScreen():
                         selector_color = 'white'
                     self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
                     self.menuitems[key].selector.items[i-2+tempModifier].RErender()
-            if new < old:
-                Globals.PLAYERS = Globals.PLAYERS[:new]
-                self.init_avail_colors_and_names()
-                self.check_error('main_new_game')
-            self.menuitems['humans'].selector.add_rm_items(new > old, new)
+                if new < old:
+                    Globals.PLAYERS = Globals.PLAYERS[:new]
+                    self.init_avail_colors_and_names()
+                    self.check_error('main_new_game')
+                self.menuitems['humans'].selector.add_rm_items(new > old, new)
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
