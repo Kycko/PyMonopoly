@@ -193,6 +193,14 @@ class MainScreen():
                     self.init_avail_colors_and_names()
                     self.check_error('main_new_game')
                 self.menuitems['humans'].selector.add_rm_items(new > old, new)
+        elif type == 'main_new_humans_SELECTOR':
+            for i in range(1, len(Globals.PLAYERS)):
+                dictkey = 'player'+str(i)
+                if Globals.PLAYERS[i]['human'] and dictkey in self.labels.keys():
+                    self.labels.pop(dictkey)
+                elif not Globals.PLAYERS[i]['human'] and dictkey not in self.labels.keys():
+                    self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
+                    self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)

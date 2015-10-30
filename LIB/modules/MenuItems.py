@@ -178,6 +178,14 @@ class MenuSelector():
         elif self.type == 'main_settings_player_color_SELECTOR':
             Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
             return self.type
+        elif self.type == 'main_new_humans_SELECTOR':
+            for i in range(1, len(Globals.PLAYERS)):
+                status = i <= self.active
+                if (status and not Globals.PLAYERS[i]['human']) or (not status and Globals.PLAYERS[i]['human']):
+                    Globals.PLAYERS[i]['human'] = not Globals.PLAYERS[i]['human']
+                    self.items[i].choose_selector_color('new_settings_humans', i)
+                    self.items[i].RErender()
+            return self.type
         else:
             return self.type
 #--- Cursor TEMPLATE
