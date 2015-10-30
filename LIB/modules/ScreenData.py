@@ -170,19 +170,19 @@ class MainScreen():
         elif type == 'main_new_total_SELECTOR':
             old = len(Globals.PLAYERS)
             new = self.menuitems[key].selector.active + 2
+            self.menuitems['humans'].selector.add_rm_items(new > old, new)
             if new < old:
                 for i in range(new, old):
                     dictkey = 'player'+str(i)
                     self.cursor.add_rm_keys(False, dictkey)
                     self.menuitems.pop(dictkey)
-                    if not Globals.PLAYERS[i]['human']:
+                    if not Globals.PLAYERS[new]['human']:
                         self.labels.pop(dictkey)
                     self.menuitems[key].selector.items[i-1].color = Globals.COLORS['grey63']
                     self.menuitems[key].selector.items[i-1].RErender()
-                    self.menuitems['humans'].selector.add_rm_items(False, new)
-                    Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[i]['color'])
-                    Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[i]['name'])
-                Globals.PLAYERS = Globals.PLAYERS[:new]
+                    Globals.TEMP_VARS['avail_colors'].append(Globals.PLAYERS[new]['color'])
+                    Globals.TEMP_VARS['avail_names'].append(Globals.PLAYERS[new]['name'])
+                    Globals.PLAYERS.pop(new)
             elif new > old:
                 for i in range(old, new):
                     add_new_player(False)
