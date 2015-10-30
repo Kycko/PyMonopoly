@@ -143,6 +143,17 @@ class MenuSelector():
             if self.active == len(self.items):
                 self.active = 0
         self.apply_new_active(self.active)
+    def add_rm_items(self, add, new_length):
+        if add:
+            for i in range(len(self.items), new_length):
+                self.items.append(AlphaText(u'●', self.type, i))
+                self.items[i].rect.topleft = self.items[i].new_pos
+                self.rects.append(pygame.Rect(self.items[i].rect.inflate(self.cursor_inflate)))
+        else:
+            self.items = self.items[:new_length]
+            self.rects = self.rects[:new_length]
+            if self.active >= new_length:
+                self.apply_new_active(new_length - 1)
     def apply_new_active(self, active):
         self.active = active
         self.cursor.new_cords = self.rects[active].topleft
@@ -166,6 +177,8 @@ class MenuSelector():
                 self.items[i].RErender()
         elif self.type == 'main_settings_player_color_SELECTOR':
             Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
+            return self.type
+        else:
             return self.type
 #--- Cursor TEMPLATE
 class Cursor():
@@ -219,6 +232,14 @@ class MainCursor(Cursor):
                 self.keys.insert(len(self.keys)-1, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
+    def add_rm_keys(self, add, key, index=None, cords=None):
+        if add:
+            self.keys.insert(index, key)
+            self.cords.insert(index, cords)
+        else:
+            index = self.keys.index(key)
+            self.keys.pop(index)
+            self.cords.pop(index)
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
