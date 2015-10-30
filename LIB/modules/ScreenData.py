@@ -172,8 +172,8 @@ class MainScreen():
             new = self.menuitems[key].selector.active + 2
             tempModifier = int(new > old)
             for i in range(old, new, (new-old)/abs(new-old)):
+                dictkey = 'player'+str(i-1+tempModifier)
                 if new < old:
-                    dictkey = 'player'+str(i-1)
                     self.cursor.add_rm_keys(False, dictkey)
                     self.menuitems.pop(dictkey)
                     if not Globals.PLAYERS[i-1]['human']:
@@ -184,11 +184,14 @@ class MainScreen():
                     Globals.PLAYERS.pop(i-1)
                 elif new > old:
                     add_new_player(False)
+                    self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                    self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
                     selector_color = 'white'
                 self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
                 self.menuitems[key].selector.items[i-2+tempModifier].RErender()
             self.menuitems['humans'].selector.add_rm_items(new > old, new)
             print(len(Globals.PLAYERS))
+            print(self.menuitems.keys())
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
