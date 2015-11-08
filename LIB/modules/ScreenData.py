@@ -77,20 +77,20 @@ class MainScreen():
                 LGS = read_file(Globals.FILES['last_game_settings'])
                 for string in LGS:
                     add_new_player(string == 'human')
-            self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
-                              'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
+            self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 0),
+                              'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 1),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
-            self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
+            self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 0),
                                 'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
-                                'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2),
-                                'players'       : AlphaText(Globals.TRANSLATION[31], 'settings_left', 3)})
+                                'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 1),
+                                'players'       : AlphaText(Globals.TRANSLATION[31], 'settings_left', 2)})
             for i in range(len(Globals.PLAYERS)):
                 self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                 if not Globals.PLAYERS[i]['human']:
                     self.labels.update({'player'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
             if not Globals.SETTINGS['block']:
-                self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', 0)})
-                self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', 0)})
+                self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
+                self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', -1)})
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:

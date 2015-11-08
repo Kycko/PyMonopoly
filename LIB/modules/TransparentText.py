@@ -71,21 +71,24 @@ class AlphaText():
         elif group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))
-        elif group in ('main_settings_player_color_SELECTOR', 'main_new_humans_SELECTOR'):
+        elif group == 'main_settings_player_color_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 458), (0, 0))
-        elif group == 'main_new_total_SELECTOR':
+        elif group == 'main_new_humans_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 403), (0, 0))
+        elif group == 'main_new_total_SELECTOR':
+            self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
+            self.rect = Rect((0, 348), (0, 0))
         elif group == 'main_new_playerlist':
             self.x = Globals.RESOLUTION[0]/4 - 50
-            self.rect = Rect((0, 507 + 30*number), (0, 0))
+            self.rect = Rect((0, 452 + 30*number), (0, 0))
         elif group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))
         elif group == 'newgame_playertype':
             self.x = Globals.RESOLUTION[0]/4 - 50 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number]['name'])[0] + 2
-            self.rect = Rect((0, 510 + 30*number), (0, 0))
+            self.rect = Rect((0, 455 + 30*number), (0, 0))
         elif group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
             self.rect = Rect((0, 342 + 55*number), (0, 0))
