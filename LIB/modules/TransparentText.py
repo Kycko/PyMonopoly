@@ -4,7 +4,7 @@ from GlobalFuncs import slight_animation_count_pos
 from pygame import Rect, Surface
 
 class AlphaText():
-    def __init__(self, text, group, number=None):
+    def __init__(self, text, group, number=0):
         self.init_for_group(group, number)
         self.anticolor = Globals.COLORS['white'] - self.color
         self.update_text(text)
@@ -56,7 +56,7 @@ class AlphaText():
         elif 'exit' in group or group == 'main_stats':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/6
-            self.rect = Rect((0, Globals.RESOLUTION[1]+50), (0, 0))
+            self.rect = Rect((0, Globals.RESOLUTION[1]+50-35*number), (0, 0))
         elif group == 'stats_game_name':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/3-50

@@ -79,6 +79,7 @@ class MainScreen():
                     add_new_player(string == 'human')
             self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 0),
                               'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 1),
+                              'start'           : MenuItem(Globals.TRANSLATION[33], 'game_start', 'main_settings_player_exit', 1),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
             self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 0),
                                 'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
@@ -184,7 +185,7 @@ class MainScreen():
                         add_new_player(False)
                         self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                         self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
-                        self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-1, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
+                        self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-2, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
                         selector_color = 'white'
                     self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
                     self.menuitems[key].selector.items[i-2+tempModifier].RErender()

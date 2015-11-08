@@ -6,7 +6,7 @@ from TransparentText import AlphaText
 
 #--- Menuitems
 class MenuItem():
-    def __init__(self, text, type, group, number=None):
+    def __init__(self, text, type, group, number=0):
         self.type = type
         self.group = group
         self.text = AlphaText(text, group, number)
@@ -235,9 +235,9 @@ class MainCursor(Cursor):
         elif 'main_new_edit_player' in type or type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['total', 'humans', 'exit']
+            self.keys = ['total', 'humans', 'start', 'exit']
             for i in range(len(Globals.PLAYERS)):
-                self.keys.insert(len(self.keys)-1, 'player'+str(i))
+                self.keys.insert(len(self.keys)-2, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
     def add_rm_keys(self, add, key, index=None, cords=None):
