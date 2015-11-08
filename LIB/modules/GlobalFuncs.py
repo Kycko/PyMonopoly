@@ -123,3 +123,12 @@ def read_stats(game):
                         'date'      : temp[2],
                         'recent'    : bool(int(temp[3]))}
     return array[line:line+10]
+def save_last_game_settings():
+    data = []
+    for i in range(1, len(Globals.PLAYERS)):
+        if Globals.PLAYERS[i]['human']:
+            data.append('human\n')
+        else:
+            data.append('AI\n')
+    print(data)
+    write_to_file(Globals.FILES['last_game_settings'], data)
