@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 from GlobalFuncs import change_volume, check_files, check_user_monitor, create_players_list, read_settings, read_translation, switch_sound_state
+from os.path import expanduser
 from ScreenData import MainScreen
 from Sprite import Sprite
 
@@ -31,8 +32,8 @@ PLAYERS_COLORS = (COLORS['light_blue'],
                   COLORS['light_brown'],
                   COLORS['yellow'])
 
-DIRS = {'LIB'                   : '/usr/lib/pymonopoly/LIB/',
-        'settings'              : '/usr/lib/pymonopoly/settings/'}
+DIRS = {'LIB'                   : '/usr/lib/pymonopoly/',
+        'settings'              : expanduser('~') + '/.config/pymonopoly/'}
 DIRS['fonts'] = DIRS['LIB'] + 'fonts/'
 DIRS['images'] = DIRS['LIB'] + 'images/'
 DIRS['images_etc'] = DIRS['images'] + 'etc/'
