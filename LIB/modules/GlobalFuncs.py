@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from os import listdir
+from os import listdir, mkdir
 from pygame import Color, display, mixer
 from random import randrange
 from sys import exit as SYSEXIT
@@ -67,6 +67,10 @@ def check_user_monitor(x, y):
         return (x, y)
 #--- Statistics, settings and translations
 def check_files():
+    try:
+        mkdir(Globals.DIRS['settings'])
+    except:
+        print('config dir exists')
     DB = listdir(Globals.DIRS['settings'])
     for FILE in ('stats', 'settings', 'last_game_settings'):
         if FILE not in DB:
