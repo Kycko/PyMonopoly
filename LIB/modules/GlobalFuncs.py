@@ -78,7 +78,7 @@ def check_files():
 def create_init_file(type):
     if type == 'stats':
         data = ['0\n' if x<3 else 'None 0 01.01.01 black\n' for x in range(10)]
-        data = ['0\n'] + data + ['1\n'] + data
+        data = data + data
     elif type == 'settings':
         data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
