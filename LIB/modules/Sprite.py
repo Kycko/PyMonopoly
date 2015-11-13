@@ -3,12 +3,13 @@ import Globals, pygame
 from GlobalFuncs import change_color_alpha, slight_animation_count_pos
 
 class Sprite():
-    def __init__(self, pos, file):
+    def __init__(self, pos, file, speed_limit=None):
         self.pos = pos
         self.new_pos = pos
+        self.speed_limit = speed_limit
         self.bitmap = pygame.image.load(file)
     def render(self):
-        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10)
+        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, self.speed_limit)
         Globals.screen.blit(self.bitmap, self.pos)
 class Line():
     def __init__(self, obj, type, width, color=None):

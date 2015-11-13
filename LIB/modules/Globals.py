@@ -54,7 +54,7 @@ FONTS = {'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
          'ume_16'       : pygame.font.Font(FILES['font_ume'], 16)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
-        'background'            : Sprite(((RESOLUTION[0]-1820)/2, -130), DIRS['images'] + 'background.jpg'),
+        'background'            : DIRS['images'] + 'background.jpg',
         'logo'                  : Sprite((RESOLUTION[0]/3, 120), DIRS['images_etc'] + 'logo.png')}
 
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
