@@ -70,7 +70,6 @@ class MainScreen():
             if key == 'exit':
                 Globals.TEMP_VARS.pop('edit_player')
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
-                self.check_error(type)
             else:
                 self.move_APPINFO((300, 0))
                 Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
@@ -85,6 +84,8 @@ class MainScreen():
                                 'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
                                 'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 1),
                                 'players'       : AlphaText(Globals.TRANSLATION[31], 'settings_left', 2)})
+            if key == 'exit':
+                self.check_error(type)
             for i in range(len(Globals.PLAYERS)):
                 self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                 if not Globals.PLAYERS[i]['human']:
@@ -266,8 +267,12 @@ class MainScreen():
             status = self.check_doubles_for_players()
             if status and 'error' not in self.labels.keys():
                 self.labels.update({'error' : AlphaText(Globals.TRANSLATION[32], 'ERROR_main')})
+                self.menuitems['start'].text.color = Globals.COLORS['grey63']
+                self.menuitems['start'].text.RErender()
             elif not status and 'error' in self.labels.keys():
                 self.labels.pop('error')
+                self.menuitems['start'].text.color = Globals.COLORS['white']
+                self.menuitems['start'].text.RErender()
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
