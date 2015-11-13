@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
+from GameObjects import GameField
 from GlobalFuncs import add_new_player, count_new_pos, create_players_list, read_file, read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import *
@@ -94,6 +95,7 @@ class MainScreen():
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', -1)})
         elif type == 'game_start':
+            self.objects = {'gamefield'         : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 15),
                               'order'           : ['background', 'gamebackground', 'logo']})
             for key in ('background', 'gamebackground', 'logo'):
