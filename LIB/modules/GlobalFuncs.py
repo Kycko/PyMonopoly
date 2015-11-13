@@ -130,5 +130,4 @@ def save_last_game_settings():
             data.append('human\n')
         else:
             data.append('AI\n')
-    print(data)
     write_to_file(Globals.FILES['last_game_settings'], data)

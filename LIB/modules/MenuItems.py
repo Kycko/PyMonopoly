@@ -81,7 +81,10 @@ class MenuItem():
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
             return None
         elif self.type == 'game_start':
-            save_last_game_settings()
+            if self.text.color == Globals.COLORS['white']:
+                save_last_game_settings()
+            else:
+                return None
         elif self.type == 'main_new_game_switch':
             Globals.TEMP_VARS['cur_game'] = int(not(Globals.TEMP_VARS['cur_game']))
             self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›')
