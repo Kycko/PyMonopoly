@@ -2,7 +2,7 @@
 import Globals, pygame
 from GlobalFuncs import add_new_player, count_new_pos, create_players_list, read_file, read_stats
 from MenuItems import MainCursor, MenuItem
-from Sprite import Line
+from Sprite import *
 from TransparentText import AlphaText
 from sys import exit as SYSEXIT
 
@@ -13,7 +13,7 @@ class MainScreen():
     def switch_screen(self, type, key):
         if type == 'main_main':
             if key != 'exit':
-                self.pics = {'background'   : Globals.PICS['background'],
+                self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 15),
                              'logo'         : Globals.PICS['logo'],
                              'order'        : ['background', 'logo']}
                 self.labels = {'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
@@ -93,6 +93,18 @@ class MainScreen():
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', -1)})
+        elif type == 'game_start':
+            self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 15),
+                              'order'           : ['background', 'gamebackground', 'logo']})
+            for key in ('background', 'gamebackground', 'logo'):
+                self.pics[key].new_pos = (self.pics[key].new_pos[0] - 1820, self.pics[key].new_pos[1])
+            for label in self.labels.values():
+                label.new_pos = (label.new_pos[0]-1820, label.new_pos[1])
+            for item in self.menuitems.values():
+                item.text.new_pos = (item.text.new_pos[0]-1820, item.text.new_pos[1])
+                if 'SELECTOR' in item.type:
+                    for dot in item.selector.items:
+                        dot.new_pos = (dot.new_pos[0]-1820, dot.new_pos[1])
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:

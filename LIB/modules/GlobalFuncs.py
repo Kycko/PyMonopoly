@@ -30,7 +30,7 @@ def switch_sound_state(object, current, write_to_file=False):
 def play_click_sound():
     if Globals.SETTINGS['sounds']:
         Globals.SOUNDS['button-pressed'].play()
-def slight_animation_count_pos(new, current, speed):
+def slight_animation_count_pos(new, current, speed, limitation=None):
     if new != current:
         current = list(current)
         for axis in range(2):
@@ -38,6 +38,11 @@ def slight_animation_count_pos(new, current, speed):
                 diff = (new[axis] - current[axis])/speed
                 if abs(diff) < 0.1:
                     diff = 1
+                elif limitation and abs(diff) > limitation:
+                    if diff < 0:
+                        diff = -limitation
+                    else:
+                        diff = limitation
                 current[axis] += diff
     return tuple(current)
 def read_file(file):
