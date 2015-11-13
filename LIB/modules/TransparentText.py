@@ -121,6 +121,7 @@ class AlphaText():
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
         else:
             self.new_pos = self.rect.topleft
+        self.speed_limit = 15
     def choose_selector_color(self, type, num):
         if type == 'volume':
             state = num < Globals.SETTINGS['volume']*10
@@ -136,7 +137,7 @@ class AlphaText():
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):
         if self.new_pos != self.rect.topleft:
-            self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10)
+            self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10, self.speed_limit)
     def update_text(self, text, reset_alpha=True):
         self.symbols = text
         size = self.font.size(text)

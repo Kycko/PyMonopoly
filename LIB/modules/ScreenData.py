@@ -96,8 +96,15 @@ class MainScreen():
         elif type == 'game_start':
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 15),
                               'order'           : ['background', 'gamebackground', 'logo']})
-            for key in ('background', 'gamebackground'):
+            for key in ('background', 'gamebackground', 'logo'):
                 self.pics[key].new_pos = (self.pics[key].new_pos[0] - 1820, self.pics[key].new_pos[1])
+            for label in self.labels.values():
+                label.new_pos = (label.new_pos[0]-1820, label.new_pos[1])
+            for item in self.menuitems.values():
+                item.text.new_pos = (item.text.new_pos[0]-1820, item.text.new_pos[1])
+                if 'SELECTOR' in item.type:
+                    for dot in item.selector.items:
+                        dot.new_pos = (dot.new_pos[0]-1820, dot.new_pos[1])
     def clear_labels(self, exception):
         for key in self.labels.keys():
             if key not in exception:
