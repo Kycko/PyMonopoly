@@ -31,8 +31,8 @@ PLAYERS_COLORS = (COLORS['light_blue'],
                   COLORS['light_brown'],
                   COLORS['yellow'])
 
-DIRS = {'LIB'                   : 'LIB/',
-        'settings'              : 'settings/'}
+DIRS = {'LIB'                   : '/usr/lib/pymonopoly/LIB/',
+        'settings'              : '/usr/lib/pymonopoly/settings/'}
 DIRS['fonts'] = DIRS['LIB'] + 'fonts/'
 DIRS['images'] = DIRS['LIB'] + 'images/'
 DIRS['images_etc'] = DIRS['images'] + 'etc/'
