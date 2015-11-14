@@ -37,11 +37,12 @@ class FieldCell():
         self.pos = (x, y)
         self.rect = pygame.Rect((0, 0), size)
         self.surf = pygame.Surface(size, pygame.SRCALPHA)
-        self.change_color(Globals.COLORS['black'])
+        self.change_color(Globals.COLORS['grey22'])
     def change_new_pos(self, offset):
         self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
     def change_color(self, color):
-        pygame.draw.rect(self.surf, change_color_alpha(color, 104), self.rect, 0)
+        pygame.draw.rect(self.surf, color, self.rect, 0)
+        pygame.draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
