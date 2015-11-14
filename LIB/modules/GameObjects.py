@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-import Globals, pygame
-from GlobalFuncs import change_color_alpha, slight_animation_count_pos
+import Globals
+from GlobalFuncs import change_color_alpha, read_onboard_text, slight_animation_count_pos
+from pygame import draw, Rect, Surface
 
 class GameField():
     def __init__(self):
-        self.cells = tuple([FieldCell(i) for i in range(40)])
+        onboard_text = read_onboard_text()
+        self.cells = tuple([FieldCell(onboard_text, i) for i in range(40)])
         self.move((-1820, 0))
     def move(self, offset):
         for cell in self.cells:
@@ -13,7 +15,7 @@ class GameField():
         for cell in self.cells:
             cell.render()
 class FieldCell():
-    def __init__(self, number):
+    def __init__(self, onboard_text, number):
         if not number % 10:
             size = (80, 80)
             x = 2120+int(number in (0, 30))*521
@@ -35,14 +37,20 @@ class FieldCell():
                 x = 2151+(10-number % 10)*49
                 y = 591
         self.pos = (x, y)
-        self.rect = pygame.Rect((0, 0), size)
-        self.surf = pygame.Surface(size, pygame.SRCALPHA)
+        self.rect = Rect((0, 0), size)
+        self.surf = Surface(size)
+        if number in onboard_text.keys():
+            self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
+        else:
+            self.onboard_text = None
         self.change_color(Globals.COLORS['grey22'])
     def change_new_pos(self, offset):
         self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
     def change_color(self, color):
-        pygame.draw.rect(self.surf, color, self.rect, 0)
-        pygame.draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
+        draw.rect(self.surf, color, self.rect, 0)
+        draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
+        if self.onboard_text:
+            self.surf.blit(self.onboard_text, ((self.rect.w-self.onboard_text.get_width())/2, self.rect.h/5))
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)

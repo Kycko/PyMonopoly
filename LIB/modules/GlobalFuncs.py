@@ -63,6 +63,11 @@ def create_players_list():
     Globals.PLAYERS = [{'color' : Globals.SETTINGS['pl_color'],
                         'name'  : Globals.SETTINGS['pl_name'],
                         'human' : True}]
+def get_gamename():
+    if Globals.TEMP_VARS['cur_game']:
+        return 'manager'
+    else:
+        return 'monopoly'
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
@@ -140,3 +145,12 @@ def save_last_game_settings():
         else:
             data.append('AI\n')
     write_to_file(Globals.FILES['last_game_settings'], data)
+def read_onboard_text():
+    raw = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/' + get_gamename() + '_onboard')
+    data = {}
+    for string in raw:
+        if string[0] == '*' and string[len(string)-1] == '*':
+            field = int(string[1:len(string)-1])
+        else:
+            data[field] = string
+    return data

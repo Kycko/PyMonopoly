@@ -95,6 +95,8 @@ class MainScreen():
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', -1)})
         elif type == 'game_start':
+            for key in ('avail_colors', 'avail_names'):
+                Globals.TEMP_VARS.pop(key)
             self.objects = {'gamefield'         : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
