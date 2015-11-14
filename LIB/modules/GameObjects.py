@@ -43,5 +43,5 @@ class FieldCell():
     def change_color(self, color):
         pygame.draw.rect(self.surf, change_color_alpha(color, 104), self.rect, 0)
     def render(self):
-        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 15)
+        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)

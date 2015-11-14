@@ -14,7 +14,7 @@ class MainScreen():
     def switch_screen(self, type, key):
         if type == 'main_main':
             if key != 'exit':
-                self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 15),
+                self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 50),
                              'logo'         : Globals.PICS['logo'],
                              'order'        : ['background', 'logo']}
                 self.labels = {'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
@@ -96,7 +96,7 @@ class MainScreen():
                 self.labels.update({'game'      : AlphaText(Globals.TRANSLATION[27], 'settings_left', -1)})
         elif type == 'game_start':
             self.objects = {'gamefield'         : GameField()}
-            self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 15),
+            self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
             for key in ('background', 'gamebackground', 'logo'):
                 self.pics[key].new_pos = (self.pics[key].new_pos[0] - 1820, self.pics[key].new_pos[1])
