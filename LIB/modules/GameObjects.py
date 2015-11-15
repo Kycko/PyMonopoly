@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import Globals
+import Globals, FieldCellsData
 from GlobalFuncs import read_onboard_text, slight_animation_count_pos
 from pygame import draw, Rect, Surface
 
@@ -16,6 +16,8 @@ class GameField():
             cell.render()
 class FieldCell():
     def __init__(self, onboard_text, number):
+        self.group = FieldCellsData.choose_cell_group(number)
+        self.group_symbol = FieldCellsData.choose_group_symbol(self.group)
         if not number % 10:
             size = (80, 80)
             x = 2120+int(number in (0, 30))*521
@@ -43,6 +45,8 @@ class FieldCell():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
         else:
             self.onboard_text = None
+        if self.group_symbol:
+            self.group_symbol = Globals.FONTS['ubuntu_16'].render(self.group_symbol, True, Globals.COLORS['black'])
         self.change_color(Globals.COLORS['grey22'])
         self.RErender()
     def change_new_pos(self, offset):
@@ -52,8 +56,10 @@ class FieldCell():
     def RErender(self):
         draw.rect(self.surf, self.color, self.rect, 0)
         draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
-        if self.onboard_text:
-            self.surf.blit(self.onboard_text, ((self.rect.w-self.onboard_text.get_width())/2, self.rect.h/5))
+        objects = (self.onboard_text, self.group_symbol)
+        for i in range(len(objects)):
+            if objects[i]:
+                self.surf.blit(objects[i], ((self.rect.w-objects[i].get_width())/2, self.rect.h/5+16*i))
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
