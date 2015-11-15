@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from GlobalFuncs import change_color_alpha, read_onboard_text, slight_animation_count_pos
+from GlobalFuncs import read_onboard_text, slight_animation_count_pos
 from pygame import draw, Rect, Surface
 
 class GameField():
@@ -44,10 +44,13 @@ class FieldCell():
         else:
             self.onboard_text = None
         self.change_color(Globals.COLORS['grey22'])
+        self.RErender()
     def change_new_pos(self, offset):
         self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
     def change_color(self, color):
-        draw.rect(self.surf, color, self.rect, 0)
+        self.color = color
+    def RErender(self):
+        draw.rect(self.surf, self.color, self.rect, 0)
         draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
         if self.onboard_text:
             self.surf.blit(self.onboard_text, ((self.rect.w-self.onboard_text.get_width())/2, self.rect.h/5))
