@@ -59,10 +59,9 @@ class FieldCell():
     def RErender(self):
         draw.rect(self.surf, self.color, self.rect, 0)
         draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
-        objects = (self.onboard_text, self.group_symbol)
+        objects = [obj for obj in (self.onboard_text, self.group_symbol) if obj]
         for i in range(len(objects)):
-            if objects[i]:
-                self.surf.blit(objects[i], ((self.rect.w-objects[i].get_width())/2, self.rect.h/5+16*i))
+            self.surf.blit(objects[i], (self.rect.x+5+5*i, self.rect.y+5+16*i))
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
