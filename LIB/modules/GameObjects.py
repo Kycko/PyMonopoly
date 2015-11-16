@@ -16,8 +16,14 @@ class GameField():
             cell.render()
 class FieldCell():
     def __init__(self, onboard_text, number):
+        #--- Onboard text
         self.group = FieldCellsData.choose_cell_group(number)
         self.group_symbol = FieldCellsData.choose_group_symbol(self.group)
+        if number in onboard_text.keys():
+            self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
+        else:
+            self.onboard_text = None
+        #--- Size and position
         if not number % 10:
             size = (80, 80)
             x = 2120+int(number in (0, 30))*521
@@ -39,14 +45,9 @@ class FieldCell():
                 x = 2151+(10-number % 10)*49
                 y = 591
         self.pos = (x, y)
+        #--- Rect and surface
         self.rect = Rect((0, 0), size)
         self.surf = Surface(size)
-        if number in onboard_text.keys():
-            self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
-        else:
-            self.onboard_text = None
-        if self.group_symbol:
-            self.group_symbol = Globals.FONTS['ubuntu_16'].render(self.group_symbol, True, Globals.COLORS['black'])
         self.change_color(Globals.COLORS['grey22'])
         self.RErender()
     def change_new_pos(self, offset):
