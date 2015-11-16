@@ -6,7 +6,9 @@ from pygame import draw, Rect, Surface
 class GameField():
     def __init__(self):
         onboard_text = read_onboard_text()
-        self.cells = tuple([FieldCell(onboard_text, i) for i in range(40)])
+        groups = FieldCellsData.make_groups()
+        group_symbols = FieldCellsData.make_group_symbols()
+        self.cells = tuple([FieldCell(onboard_text, groups[i], group_symbols[i], i) for i in range(40)])
         self.move((-1820, 0))
     def move(self, offset):
         for cell in self.cells:
@@ -15,10 +17,10 @@ class GameField():
         for cell in self.cells:
             cell.render()
 class FieldCell():
-    def __init__(self, onboard_text, number):
+    def __init__(self, onboard_text, group, group_symbol, number):
         #--- Onboard text
-        self.group = FieldCellsData.choose_cell_group(number)
-        self.group_symbol = FieldCellsData.choose_group_symbol(self.group)
+        self.group = group
+        self.group_symbol = group_symbol
         if number in onboard_text.keys():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
         else:

@@ -1,19 +1,93 @@
 # -*- coding: utf-8 -*-
 import Globals
 
-def choose_cell_group(number):
-    if number == 0:
-        return 'start'
-    elif number == 10:
-        return 'jail'
-    elif number == 30:
-        return 'gotojail'
-def choose_group_symbol(group):
+def make_groups():
+    if Globals.TEMP_VARS['cur_game']:
+        return ('start', 1, 1, 'income', 1, 'chance', 2, 2, 'chest', 2, 'jail', 3, 3, 'income', 3, 'chance', 4, 4, 'chest', 4, 'skip', 5, 'tax', 5, 5, 'chance', 6, 'chest', 6, 6, 'gotojail', 7, 'income', 7, 7, 'chance', 8, 'chest', 8, 8)
+    else:
+        return ('start', 1, 'chest', 1, 'tax', 'railroad', 2, 'chance', 2, 2, 'jail', 3, 'service', 3, 3, 'railroad', 4, 'chest', 4, 4, 'skip', 5, 'chance', 5, 5, 'railroad', 6, 6, 'service', 6, 'gotojail', 7, 7, 'chest', 7, 'railroad', 'chance', 8, 'tax', 8)
+def make_group_symbols():
     font = Globals.FONTS['ubuntu_16']
     color = Globals.COLORS['black']
-    if group == 'start':
-        return font.render('$', True, color)
-    elif group == 'jail':
-        return font.render('#', True, color)
-    elif group == 'gotojail':
-        return font.render('-> #', True, color)
+    if Globals.TEMP_VARS['cur_game']:
+        return (font.render('$', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                font.render('#', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                font.render('-> #', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None)
+    else:
+        return (font.render('$', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                font.render('#', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                font.render('-> #', True, color),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None)
