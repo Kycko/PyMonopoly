@@ -91,3 +91,8 @@ def make_group_symbols():
                 None,
                 None,
                 None)
+def make_group_colors():
+    if Globals.TEMP_VARS['cur_game']:
+        return ('light_brown', 'light_blue', 'magenta', 'light_red', 'red', 'yellow', 'light_green', 'white')
+    else:
+        return ('light_brown', 'light_blue', 'magenta', 'light_red', 'red', 'yellow', 'light_green', 'white')

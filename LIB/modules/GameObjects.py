@@ -8,7 +8,8 @@ class GameField():
         onboard_text = read_onboard_text()
         groups = FieldCellsData.make_groups()
         group_symbols = FieldCellsData.make_group_symbols()
-        self.cells = tuple([FieldCell(onboard_text, groups[i], group_symbols[i], i) for i in range(40)])
+        group_colors = FieldCellsData.make_group_colors()
+        self.cells = tuple([FieldCell(onboard_text, groups[i], group_symbols[i], group_colors, i) for i in range(40)])
         self.move((-1820, 0))
     def move(self, offset):
         for cell in self.cells:
@@ -17,10 +18,14 @@ class GameField():
         for cell in self.cells:
             cell.render()
 class FieldCell():
-    def __init__(self, onboard_text, group, group_symbol, number):
+    def __init__(self, onboard_text, group, group_symbol, group_colors, number):
         #--- Onboard text
         self.group = group
         self.group_symbol = group_symbol
+        if group in range(1, 9):
+            self.group_color = Globals.COLORS[group_colors[group-1]]
+        else:
+            self.group_color = None
         if number in onboard_text.keys():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
         else:
@@ -58,6 +63,20 @@ class FieldCell():
         self.color = color
     def RErender(self):
         draw.rect(self.surf, self.color, self.rect, 0)
+        if self.group_color:
+            rect = self.rect.copy()
+            if self.group in (1, 2):
+                rect.h = 20
+            elif self.group in (3, 4):
+                rect.w = 20
+                rect = rect.move(60, 0)
+            elif self.group in (5, 6):
+                rect.h = 20
+                rect = rect.move(0, 60)
+            elif self.group in (7, 8):
+                rect.w = 20
+            draw.rect(self.surf, self.group_color, rect, 0)
+            draw.rect(self.surf, Globals.COLORS['black'], rect, 1)
         draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
         objects = [obj for obj in (self.onboard_text, self.group_symbol) if obj]
         for i in range(len(objects)):
