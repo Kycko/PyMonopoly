@@ -40,15 +40,16 @@ class GameField():
         return size, (x, y)
     def change_new_pos(self, offset):
         self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
-    def render(self):
-        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
-        Globals.screen.blit(self.surf, self.pos)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
+    def render(self):
+        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
+        Globals.screen.blit(self.surf, self.pos)
 class FieldCell():
     def __init__(self, onboard_text, group, group_symbol, group_colors, number, size, pos):
         #--- Onboard text
+        self.number = number
         self.group = group
         self.group_symbol = group_symbol
         if group in range(1, 9):
@@ -67,7 +68,9 @@ class FieldCell():
         self.color = color
         self.RErender()
     def RErender(self):
+        #--- Background
         pygame.draw.rect(self.surf, Globals.COLORS[self.color], self.rect, 0)
+        #--- Group-specific color (for groups 1-8)
         if self.group_color:
             rect = self.rect.copy()
             if self.group in (1, 2):
@@ -82,7 +85,25 @@ class FieldCell():
                 rect.w = 20
             pygame.draw.rect(self.surf, Globals.COLORS[self.group_color], rect, 0)
             pygame.draw.rect(self.surf, Globals.COLORS['black'], rect, 1)
+        #--- Border
         pygame.draw.rect(self.surf, Globals.COLORS['black'], self.rect, 1)
-        objects = [obj for obj in (self.onboard_text, self.group_symbol) if obj]
-        for i in range(len(objects)):
-            self.surf.blit(objects[i], ((self.rect.w-objects[i].get_width())/2, self.rect.h/4+16*i))
+        #--- Onboard text
+        if self.onboard_text:
+            self.surf.blit(self.onboard_text, ((self.rect.w-self.onboard_text.get_width())/2, self.rect.h/4))
+        #--- Cell-specific symbol
+        if not self.number % 10:
+            y = 35
+        elif self.group in ('chance', 'chest', 'income', 'railroad', 'service', 'tax'):
+            if self.group == 'income' and self.number in (13, 32):
+                y = -7
+            else:
+                y = (self.rect.h-self.group_symbol.get_height())/2
+        elif self.group in (1, 2, 5, 6):
+            y = 5 + int(self.group in (1, 2))*17
+        else:
+            y = 2
+        if self.group in (3, 4, 7, 8):
+            x = int(self.group in (7, 8))*20 + (60-self.group_symbol.get_width())/2
+        else:
+            x = (self.rect.w-self.group_symbol.get_width())/2
+        self.surf.blit(self.group_symbol, (x, y))
