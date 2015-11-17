@@ -21,11 +21,24 @@ class MainScreen():
                                'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
+                self.objects = {}
             else:
                 if self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
                     Globals.TEMP_VARS.clear()
                     create_players_list()
+                elif self.menuitems['exit'].group == 'ingame_start':
+                    create_players_list()
+                    self.pics['logo'].pos = (self.pics['logo'].pos[0]-300, self.pics['logo'].pos[1])
+                    self.pics['logo'].new_pos = self.pics['logo'].pos
+                    for key in ('APPNAME', 'APPVERSION'):
+                        self.labels[key].rect.x -= 300
+                        self.labels[key].new_pos = self.labels[key].rect.topleft
+                    for key in ('background', 'gamebackground', 'logo'):
+                        self.pics[key].new_pos = (self.pics[key].new_pos[0] + 1820, self.pics[key].new_pos[1])
+                    for label in self.labels.values():
+                        label.new_pos = (label.new_pos[0] + 1820, label.new_pos[1])
+                    self.objects['gamefield'].change_new_pos((1820, 0))
                 else:
                     self.move_APPINFO((0, 50))
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -33,7 +46,6 @@ class MainScreen():
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
-            self.objects = {}
         elif type == 'main_stats':
             self.move_APPINFO((0, -50))
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
@@ -97,6 +109,8 @@ class MainScreen():
         elif type == 'game_start':
             for key in ('avail_colors', 'avail_names'):
                 Globals.TEMP_VARS.pop(key)
+            self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
+                              'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield'         : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})

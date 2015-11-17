@@ -33,25 +33,25 @@ class MenuItem():
         if 'SELECTOR' in self.type:
             self.selector.move_text()
         self.make_active_zone()
-        if self.group[:4] != 'main':
+        if self.group[:4] not in ('main', 'inga'):
             self.cursor.rect = self.active_zone.copy()
             self.tooltip.move_text(self.text.rect)
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
     def make_active_zone(self):
-        if self.group[:4] == 'main':
+        if self.group[:4] in ('main', 'inga'):
             if self.text.x == 'center':
-                self.active_zone = self.text.rect.inflate(500-self.text.rect.w, 6)
+                self.active_zone = self.text.rect.inflate(400-self.text.rect.w, 6)
             else:
-                self.active_zone = self.text.rect.move(-150, -3)
-                self.active_zone.size = (500, self.text.rect.h+6)
+                self.active_zone = self.text.rect.move(-100, -3)
+                self.active_zone.size = (400, self.text.rect.h+6)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
         if self.text.new_pos != self.text.rect.topleft:
             self.move_text()
-        if self.group[:4] != 'main':
+        if self.group[:4] not in ('main', 'inga'):
             self.cursor.render(state)
             if Globals.SETTINGS['hotkeys']:
                 self.tooltip.render(state)
@@ -245,6 +245,8 @@ class MainCursor(Cursor):
                 self.keys.insert(len(self.keys)-2, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
+        elif type == 'game_start':
+            self.keys = ['start_game', 'exit']
     def add_rm_keys(self, add, key, index=None, cords=None):
         if add:
             self.keys.insert(index, key)
@@ -272,7 +274,7 @@ class MainCursor(Cursor):
         if menuitems[self.keys[0]].active_zone.topleft != self.cords[0]:
             self.update_cords(menuitems)
             self.change_new_cords()
-        self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5)
+        self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5, 15)
         if self.surf_color.a != 104:
             self.surf_color.a += 8
             self.draw_rect()

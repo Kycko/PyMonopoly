@@ -14,7 +14,7 @@ class AlphaText():
         #--- Fonts
         if 'SELECTOR' in group:
             self.font = Globals.FONTS['ume_16']
-        elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player'):
+        elif group[:4] == 'main' or group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'ingame_start'):
             self.font = Globals.FONTS['ubuntu_24']
         elif group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
@@ -46,7 +46,11 @@ class AlphaText():
         else:
             self.color = Globals.COLORS['white']
         #--- Position
-        if group == 'main_main':
+        if group == 'ingame_start':
+            self.x = 'center'
+            self.x_offset = 1820
+            self.rect = Rect((0, Globals.RESOLUTION[1]/2+35*number), (0, 0))
+        elif group == 'main_main':
             self.x = 'center'
             self.x_offset = -Globals.RESOLUTION[0]/4
             self.rect = Rect((0, Globals.RESOLUTION[1]/2+50+35*number), (0, 0))
@@ -115,7 +119,7 @@ class AlphaText():
             self.x = Globals.PICS['logo'].pos[0] + 112
             self.rect = Rect((0, Globals.PICS['logo'].pos[1] + 50), (0, 0))
     def init_new_pos(self, group):
-        if group[:5] in ('main_', 'stats', 'setti', 'newga'):
+        if group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
