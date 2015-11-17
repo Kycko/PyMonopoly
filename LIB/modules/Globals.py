@@ -13,17 +13,24 @@ VERSION = '0.4-dev'
 RESOLUTION = check_user_monitor(1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
+          'brown45'             : pygame.Color(140, 77, 60),
           'light_brown'         : pygame.Color(160, 78, 61),
           'light_blue'          : pygame.Color(15, 124, 164),
+          'sky_blue'            : pygame.Color(186, 219, 238),
           'light_green'         : pygame.Color(126, 231, 85),
+          'deep_green'          : pygame.Color(95, 185, 93),
           'grey'                : pygame.Color('grey'),
           'grey22'              : pygame.Color(200, 200, 200),
           'grey63'              : pygame.Color(95, 95, 95),
           'magenta'             : pygame.Color('magenta'),
+          'deep_magenta'        : pygame.Color(210, 59, 128),
+          'orange'              : pygame.Color(223, 138, 55),
+          'red27'               : pygame.Color(207, 41, 44),
           'light_red'           : pygame.Color(231, 85, 85),
           'red'                 : pygame.Color(255, 30, 30),
           'white'               : pygame.Color('white'),
-          'yellow'              : pygame.Color(228, 227, 17)}
+          'yellow'              : pygame.Color(228, 227, 17),
+          'deep_yellow'         : pygame.Color(235, 221, 57)}
 
 PLAYERS_COLORS = (COLORS['light_blue'],
                   COLORS['magenta'],
