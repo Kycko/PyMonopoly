@@ -94,7 +94,7 @@ class FieldCell():
         if not self.number % 10:
             y = 35
         elif self.group in ('chance', 'chest', 'income', 'railroad', 'service', 'tax'):
-            if self.group == 'income' and self.number in (13, 32):
+            if (self.group == 'income' and self.number in (13, 32)) or (self.group == 'tax' and self.number == 38):
                 y = -7
             else:
                 y = (self.rect.h-self.group_symbol.get_height())/2
