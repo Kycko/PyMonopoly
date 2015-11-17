@@ -93,6 +93,6 @@ def make_group_symbols():
                 None)
 def make_group_colors():
     if Globals.TEMP_VARS['cur_game']:
-        return ('light_brown', 'light_blue', 'magenta', 'light_red', 'red', 'yellow', 'light_green', 'white')
+        return ('deep_yellow', 'orange', 'pink', 'red27', 'light_green', 'deep_sky_blue', 'white', 'blue_magenta')
     else:
         return ('brown45', 'sky_blue', 'deep_magenta', 'orange', 'red27', 'deep_yellow', 'deep_green', 'light_blue')
