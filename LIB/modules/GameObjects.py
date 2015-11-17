@@ -12,7 +12,7 @@ class GameField():
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
-            self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[i], group_colors, i, size, pos))
+            self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[groups[i]], group_colors, i, size, pos))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
         self.change_new_pos((-1820, 0))

@@ -62,7 +62,10 @@ FONTS = {'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
          'ubuntu_24'    : pygame.font.Font(FILES['font_ubuntu'], 24),
          'ubuntu_32'    : pygame.font.Font(FILES['font_ubuntu'], 32),
          'ume_12'       : pygame.font.Font(FILES['font_ume'], 12),
-         'ume_16'       : pygame.font.Font(FILES['font_ume'], 16)}
+         'ume_16'       : pygame.font.Font(FILES['font_ume'], 16),
+         'ume_32'       : pygame.font.Font(FILES['font_ume'], 32),
+         'ume_40'       : pygame.font.Font(FILES['font_ume'], 40),
+         'ume_48'       : pygame.font.Font(FILES['font_ume'], 48)}
 
 PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
         'background'            : DIRS['images'] + 'background.jpg',
