@@ -135,7 +135,7 @@ class MainScreen():
             self.events(cur_key)
     def check_mouse_pos(self, mp):
         key = self.find_hovering_menuitem(mp)
-        if key != self.cursor.active_key and key in self.cursor.keys:
+        if self.cursor and key != self.cursor.active_key and key in self.cursor.keys:
             self.cursor.change_pos(key)
         return key
     def find_hovering_menuitem(self, mp):
@@ -148,16 +148,24 @@ class MainScreen():
                 return key
         return None
     def render(self, cur_key):
+#        print('PICS:')
         for key in self.pics['order']:
+#            print(key)
             self.pics[key].render()
         for obj in self.objects.values():
+#            print('OBJ')
             obj.render()
         if self.cursor:
+#            print('CURSOR')
             self.cursor.render(self.menuitems)
+#        print('MENUITEMS:')
         for key in self.menuitems.keys():
+#            print(key)
             self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
         for label in self.labels.values():
+#            print('LABEL')
             label.render()
+#        print()
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
@@ -171,9 +179,9 @@ class MainScreen():
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.action_call('exit')
-                elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
+                elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and self.menuitems and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
-                elif 'main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player':
+                elif self.menuitems and ('main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player'):
                     if e.key == pygame.K_BACKSPACE:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
                     elif len(self.labels['name_MI'].symbols) < 15:
@@ -234,6 +242,13 @@ class MainScreen():
                 elif not Globals.PLAYERS[i]['human'] and dictkey not in self.labels.keys():
                     self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
                     self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
+        elif type == 'ingame_start_game':
+            for string in ('background', 'logo'):
+                self.pics.pop(string)
+                self.pics['order'].remove(string)
+            self.labels = {}
+            self.cursor = None
+            self.menuitems = {}
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
