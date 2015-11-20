@@ -8,11 +8,12 @@ class GameField():
         groups = FieldCellsData.make_groups()
         group_symbols = FieldCellsData.make_group_symbols()
         group_colors = FieldCellsData.make_group_colors()
+        buy_costs = FieldCellsData.read_cells_costs()
         self.cells = []
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
-            self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[groups[i]], group_colors, i, size, pos))
+            self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[groups[i]], group_colors, buy_costs, i, size, pos))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
         self.change_new_pos((-1820, 0))
@@ -47,11 +48,15 @@ class GameField():
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
 class FieldCell():
-    def __init__(self, onboard_text, group, group_symbol, group_colors, number, size, pos):
+    def __init__(self, onboard_text, group, group_symbol, group_colors, buy_costs, number, size, pos):
         #--- Onboard text
         self.number = number
         self.group = group
         self.group_symbol = group_symbol
+        if number in buy_costs.keys():
+            self.buy_cost = buy_costs[number]
+        else:
+            self.buy_cost = None
         if group in range(1, 9):
             self.group_color = group_colors[group-1]
         else:
@@ -107,3 +112,13 @@ class FieldCell():
         else:
             x = (self.rect.w-self.group_symbol.get_width())/2
         self.surf.blit(self.group_symbol, (x, y))
+        #--- Cell price
+        if self.number not in (0, 10) and self.buy_cost:
+            pic = Globals.FONTS['ubuntu_11'].render(str(self.buy_cost), True, Globals.COLORS['black'])
+            x = self.rect.right-pic.get_width()-3
+            if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):
+                x -= 20
+            y = self.rect.bottom-15
+            if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
+                y -= 20
+            self.surf.blit(pic, (x, y))

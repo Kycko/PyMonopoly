@@ -42,6 +42,7 @@ class MainScreen():
                 else:
                     self.move_APPINFO((0, 50))
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
+                self.objects = {}
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
