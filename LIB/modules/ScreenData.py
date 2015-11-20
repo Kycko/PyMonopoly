@@ -12,6 +12,9 @@ class MainScreen():
         self.switch_screen('main_main', None)
         self.cursor = MainCursor(self.menuitems, 'main_main')
     def switch_screen(self, type, key):
+        if type in ('main_new_game', 'main_settings', 'main_stats') and 'gamebackground' in self.pics.keys():
+            self.pics.pop('gamebackground')
+            self.pics['order'].remove('gamebackground')
         if type == 'main_main':
             if key != 'exit':
                 self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 50),
