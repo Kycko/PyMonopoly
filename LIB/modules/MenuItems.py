@@ -14,11 +14,12 @@ class MenuItem():
         self.init_for_group()
         self.init_for_type()
     def init_for_group(self):
-        if self.group in ('stats_switch', 'onboard_select_cell'):
+        self.tooltip = None
+        if self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
-        else:
-            self.tooltip = None
+        elif self.group == 'onboard_select_cell':
+            self.cursor = FieldCellCursor(self.active_zone)
     def init_for_type(self):
         #--- Hotkeys
         if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
@@ -46,6 +47,8 @@ class MenuItem():
             else:
                 self.active_zone = self.text.rect.move(-100, -3)
                 self.active_zone.size = (400, self.text.rect.h+6)
+        elif self.group == 'onboard_select_cell':
+            self.active_zone = self.text.rect
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
@@ -53,7 +56,7 @@ class MenuItem():
             self.move_text()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.render(state)
-            if Globals.SETTINGS['hotkeys']:
+            if self.tooltip and ((Globals.SETTINGS['hotkeys'] and self.HOTKEYS) or (not self.HOTKEYS)):
                 self.tooltip.render(state)
         if 'SELECTOR' in self.type:
             self.selector.render(state)
@@ -293,3 +296,10 @@ class OwnCursor(Cursor):
             Cursor.render(self)
         elif self.u_length:
             self.u_length = 0
+class FieldCellCursor(Cursor):
+    def __init__(self, rect):
+        Cursor.__init__(self, 104, rect)
+        self.draw_rect()
+    def render(self, state):
+        if state:
+            Cursor.render(self)
