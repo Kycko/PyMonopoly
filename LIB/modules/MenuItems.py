@@ -112,12 +112,21 @@ class Tooltip():
             self.move_text(obj.rect)
             self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
         elif type == 'fieldcells_info':
+            self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
             self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-300), (300, 300))
             self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
             self.RErender()
-    def RErender(self):
+    def RErender(self, cell_state=0):
         self.text.blit(self.NAME, (0, 0))
+        y = 20
+        if cell_state == 0:
+            color = Globals.COLORS['light_green']
+        else:
+            color = Globals.COLORS['grey22']
+        if self.number not in (10, 20):
+            self.text.blit(Globals.FONTS['ubuntu_13'].render(Globals.TRANSLATION[37], True, color), (0, y))
+            self.text.blit(Globals.FONTS['ubuntu_13'].render(str(Globals.TEMP_VARS['cells_cost'][self.number]), True, color), (100, y))
     def move_text(self, rect):
         x = rect.x + (rect.w - self.rect.w)/2 - 15
         y = rect.y - self.rect.h - 5
