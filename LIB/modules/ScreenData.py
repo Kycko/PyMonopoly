@@ -276,13 +276,16 @@ class MainScreen():
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
                             'profit'    : AlphaText(Globals.TRANSLATION[10] + '$' + str(data[2]), 'stats_common', 2),
                             'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
-        for i in range(3, len(data)):
-            if data[i]['score']:
-                self.labels.update({'bestname'+str(i-2)     : AlphaText(str(i-2)+'. '+data[i]['name'], 'stats_table_0', i),
-                                    'bestscore'+str(i-2)    : AlphaText('  '*(10-len(str(data[i]['score'])))+str(data[i]['score']), 'stats_table_1', i),
-                                    'bestdate'+str(i-2)     : AlphaText(data[i]['date'], 'stats_table_2', i)})
-                if data[i]['recent']:
-                    self.labels.update({'bestrecent'        : AlphaText('latest', 'stats_latest', i)})
+        if data[3]['score']:
+            for i in range(3, len(data)):
+                if data[i]['score']:
+                    self.labels.update({'bestname'+str(i-2)     : AlphaText(str(i-2)+'. '+data[i]['name'], 'stats_table_0', i),
+                                        'bestscore'+str(i-2)    : AlphaText('  '*(10-len(str(data[i]['score'])))+str(data[i]['score']), 'stats_table_1', i),
+                                        'bestdate'+str(i-2)     : AlphaText(data[i]['date'], 'stats_table_2', i)})
+                    if data[i]['recent']:
+                        self.labels.update({'bestrecent'        : AlphaText('latest', 'stats_latest', i)})
+        else:
+            self.labels.update({'message'                       : AlphaText(Globals.TRANSLATION[36], 'stats_table_0', 3)})
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
