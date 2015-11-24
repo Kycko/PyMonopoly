@@ -15,6 +15,7 @@ class MainScreen():
         if type in ('main_new_game', 'main_settings', 'main_stats') and 'gamebackground' in self.pics.keys():
             self.pics.pop('gamebackground')
             self.pics['order'].remove('gamebackground')
+            self.objects = {}
         if type == 'main_main':
             if key != 'exit':
                 self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 50),
@@ -44,8 +45,8 @@ class MainScreen():
                     self.objects['gamefield'].change_new_pos((1820, 0))
                 else:
                     self.move_APPINFO((0, 50))
+                    self.objects = {}
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
-                self.objects = {}
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
