@@ -114,7 +114,7 @@ class Tooltip():
         elif type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
-            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-300), (300, 300))
+            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-200), (250, 200))
             self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
             self.RErender()
     def RErender(self, cell_state=0):
@@ -140,6 +140,14 @@ class Tooltip():
             for i in range(count):
                 color = self.choose_color(i+1, cell_state)
                 self.text.blit(font.render(Globals.TEMP_VARS['onboard_text']['rentlabels'][i+start_string], True, color), (0, 45+i*15))
+                string = str(Globals.TEMP_VARS['cells_rent_costs'][self.number][i])
+                self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 45+i*15))
+            statuses = ('mortrage_cost', 'mortraged')
+            for i in range(len(statuses)):
+                color = self.choose_color(statuses[i], cell_state)
+                self.text.blit(font.render(Globals.TRANSLATION[38+i], True, color), (0, 60+(count+i)*15))
+                string = str(int((Globals.TEMP_VARS['cells_cost'][self.number]/2)+((Globals.TEMP_VARS['cells_cost'][self.number]/2)*0.1*i)))
+                self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 60+(count+i)*15))
     def choose_color(self, cur, needed):
         if cur == needed:
             return Globals.COLORS['light_green']

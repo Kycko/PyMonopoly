@@ -11,11 +11,8 @@ class GameField():
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
-            self.cells.append(FieldCell(Globals.TEMP_VARS['onboard_text']['onboard'],
-                                        Globals.TEMP_VARS['cells_groups'][i],
-                                        group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
+            self.cells.append(FieldCell(group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
                                         group_colors,
-                                        Globals.TEMP_VARS['cells_cost'],
                                         i,
                                         size,
                                         pos))
@@ -54,21 +51,25 @@ class GameField():
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
 class FieldCell():
-    def __init__(self, onboard_text, group, group_symbol, group_colors, buy_costs, number, size, pos):
+    def __init__(self, group_symbol, group_colors, number, size, pos):
         #--- Onboard text
         self.number = number
-        self.group = group
+        self.group = Globals.TEMP_VARS['cells_groups'][number]
         self.group_symbol = group_symbol
-        if number in buy_costs.keys():
-            self.buy_cost = buy_costs[number]
+        if number in Globals.TEMP_VARS['cells_cost'].keys():
+            self.buy_cost = Globals.TEMP_VARS['cells_cost'][number]
         else:
             self.buy_cost = None
-        if group in range(1, 9):
-            self.group_color = group_colors[group-1]
+        if number in Globals.TEMP_VARS['cells_rent_costs'].keys():
+            self.rent_costs = Globals.TEMP_VARS['cells_rent_costs'][number]
+        else:
+            self.rent_costs = None
+        if self.group in range(1, 9):
+            self.group_color = group_colors[self.group-1]
         else:
             self.group_color = None
-        if number in onboard_text.keys():
-            self.onboard_text = Globals.FONTS['ubuntu_16'].render(onboard_text[number], True, Globals.COLORS['black'])
+        if number in Globals.TEMP_VARS['onboard_text']['onboard'].keys():
+            self.onboard_text = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['onboard'][number], True, Globals.COLORS['black'])
         else:
             self.onboard_text = None
         #--- Position, rect and surface

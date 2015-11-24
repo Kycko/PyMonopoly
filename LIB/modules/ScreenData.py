@@ -29,7 +29,6 @@ class MainScreen():
             else:
                 if self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
-                    Globals.TEMP_VARS.clear()
                     create_players_list()
                 elif self.menuitems['exit'].group == 'ingame_start':
                     create_players_list()
@@ -46,6 +45,7 @@ class MainScreen():
                 else:
                     self.move_APPINFO((0, 50))
                     self.objects = {}
+                Globals.TEMP_VARS.clear()
                 self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.menuitems = {'new_game'    : MenuItem(Globals.TRANSLATION[0], 'main_new_game', 'main_main', 0),
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
@@ -117,6 +117,7 @@ class MainScreen():
             Globals.TEMP_VARS['onboard_text'] = read_onboard_text()
             Globals.TEMP_VARS['cells_cost'] = FieldCellsData.read_cells_costs()
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
+            Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield'         : GameField()}
@@ -259,7 +260,7 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
-            clear_TEMP_VARS(('cur_game'))
+            Globals.TEMP_VARS.pop('cells_rects')
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
