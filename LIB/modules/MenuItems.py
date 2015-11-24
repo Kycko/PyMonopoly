@@ -119,14 +119,32 @@ class Tooltip():
             self.RErender()
     def RErender(self, cell_state=0):
         self.text.blit(self.NAME, (0, 0))
-        y = 20
-        if cell_state == 0:
-            color = Globals.COLORS['light_green']
-        else:
-            color = Globals.COLORS['grey22']
+        #--- Font and color
+        font = Globals.FONTS['ubuntu_13']
+        #--- Render elements
+        ##--- Buy cost
         if self.number not in (10, 20):
-            self.text.blit(Globals.FONTS['ubuntu_13'].render(Globals.TRANSLATION[37], True, color), (0, y))
-            self.text.blit(Globals.FONTS['ubuntu_13'].render(str(Globals.TEMP_VARS['cells_cost'][self.number]), True, color), (100, y))
+            color = self.choose_color(0, cell_state)
+            self.text.blit(font.render(Globals.TRANSLATION[37], True, color), (0, 18))
+            self.text.blit(font.render(str(Globals.TEMP_VARS['cells_cost'][self.number]), True, color), (font.size(Globals.TRANSLATION[37]+' ')[0], 18))
+        ##--- Rentlabels
+        if Globals.TEMP_VARS['cells_groups'][self.number] in range(1, 9) + ['railroad', 'service']:
+            start_string = 6
+            if Globals.TEMP_VARS['cells_groups'][self.number] == 'railroad':
+                count = 4
+            elif Globals.TEMP_VARS['cells_groups'][self.number] == 'service':
+                count = 2
+            else:
+                count = 6 - Globals.TEMP_VARS['cur_game']
+                start_string = 0
+            for i in range(count):
+                color = self.choose_color(i+1, cell_state)
+                self.text.blit(font.render(Globals.TEMP_VARS['onboard_text']['rentlabels'][i+start_string], True, color), (0, 45+i*15))
+    def choose_color(self, cur, needed):
+        if cur == needed:
+            return Globals.COLORS['light_green']
+        else:
+            return Globals.COLORS['grey22']
     def move_text(self, rect):
         x = rect.x + (rect.w - self.rect.w)/2 - 15
         y = rect.y - self.rect.h - 5

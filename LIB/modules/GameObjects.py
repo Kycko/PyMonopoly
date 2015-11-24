@@ -4,7 +4,6 @@ from GlobalFuncs import slight_animation_count_pos
 
 class GameField():
     def __init__(self):
-        groups = FieldCellsData.make_groups()
         group_symbols = FieldCellsData.make_group_symbols()
         group_colors = FieldCellsData.make_group_colors()
         self.cells = []
@@ -13,8 +12,8 @@ class GameField():
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
             self.cells.append(FieldCell(Globals.TEMP_VARS['onboard_text']['onboard'],
-                                        groups[i],
-                                        group_symbols[groups[i]],
+                                        Globals.TEMP_VARS['cells_groups'][i],
+                                        group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
                                         group_colors,
                                         Globals.TEMP_VARS['cells_cost'],
                                         i,

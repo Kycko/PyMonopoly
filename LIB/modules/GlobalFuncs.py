@@ -10,6 +10,10 @@ def change_color_alpha(color, alpha):
     color -= Globals.COLORS['black']
     color.a = alpha
     return color
+def clear_TEMP_VARS(exception):
+    for key in Globals.TEMP_VARS.keys():
+        if key not in exception:
+            Globals.TEMP_VARS.pop(key)
 def count_new_pos(old, offset):
     return tuple([old[i]+offset[i] for i in range(2)])
 def change_volume(volume, write_to_file=False):
@@ -154,4 +158,5 @@ def read_onboard_text():
         for string in raw:
             string = string.split(':')
             data[type][int(string[0])] = string[1]
+    data['rentlabels'] = read_file(directory + 'rentlabels')
     return data
