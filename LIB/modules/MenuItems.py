@@ -14,7 +14,7 @@ class MenuItem():
         self.init_for_group()
         self.init_for_type()
     def init_for_group(self):
-        if self.group == 'stats_switch':
+        if self.group in ('stats_switch', 'onboard_select_cell'):
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         else:

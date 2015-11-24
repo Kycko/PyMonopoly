@@ -10,10 +10,12 @@ class GameField():
         group_colors = FieldCellsData.make_group_colors()
         buy_costs = FieldCellsData.read_cells_costs()
         self.cells = []
+        Globals.TEMP_VARS['cells_rects'] = []
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
             self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[groups[i]], group_colors, buy_costs, i, size, pos))
+            Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
         self.change_new_pos((-1820, 0))
