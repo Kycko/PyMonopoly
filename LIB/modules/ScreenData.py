@@ -254,7 +254,7 @@ class MainScreen():
             self.cursor = None
             self.menuitems = {}
             for cell in self.objects['gamefield'].cells:
-                if cell.group in range(1, 9) + ['railroad', 'service']:
+                if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
             Globals.TEMP_VARS.pop('cells_rects')
         elif type:
