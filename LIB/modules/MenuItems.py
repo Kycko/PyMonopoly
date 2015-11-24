@@ -114,7 +114,7 @@ class Tooltip():
         elif type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
-            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-200), (250, 200))
+            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-188), (250, 188))
             self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
             self.RErender()
     def RErender(self, cell_state=0):
