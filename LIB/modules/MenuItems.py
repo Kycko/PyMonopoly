@@ -11,15 +11,17 @@ class MenuItem():
         self.group = group
         self.text = AlphaText(text, group, number)
         self.make_active_zone()
-        self.init_for_group()
+        self.init_for_group(number)
         self.init_for_type()
-    def init_for_group(self):
-        self.tooltip = None
+    def init_for_group(self, number):
         if self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         elif self.group == 'onboard_select_cell':
             self.cursor = FieldCellCursor(self.active_zone)
+            self.tooltip = Tooltip(number, 'fieldcells_info')
+        else:
+            self.tooltip = None
     def init_for_type(self):
         #--- Hotkeys
         if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
@@ -103,11 +105,19 @@ class MenuItem():
                 Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
         return self.type
 class Tooltip():
-    def __init__(self, text, type, obj):
+    def __init__(self, text, type, obj=None):
         self.type = type
-        self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
-        self.move_text(obj.rect)
-        self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+        if type == 'top':
+            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.move_text(obj.rect)
+            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+        elif type == 'fieldcells_info':
+            self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
+            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-300), (300, 300))
+            self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+            self.RErender()
+    def RErender(self):
+        self.text.blit(self.NAME, (0, 0))
     def move_text(self, rect):
         x = rect.x + (rect.w - self.rect.w)/2 - 15
         y = rect.y - self.rect.h - 5

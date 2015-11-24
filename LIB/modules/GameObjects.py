@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import read_onboard_text, slight_animation_count_pos
+from GlobalFuncs import slight_animation_count_pos
 
 class GameField():
     def __init__(self):
-        onboard_text = read_onboard_text()
         groups = FieldCellsData.make_groups()
         group_symbols = FieldCellsData.make_group_symbols()
         group_colors = FieldCellsData.make_group_colors()
@@ -14,7 +13,7 @@ class GameField():
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
-            self.cells.append(FieldCell(onboard_text, groups[i], group_symbols[groups[i]], group_colors, buy_costs, i, size, pos))
+            self.cells.append(FieldCell(Globals.TEMP_VARS['onboard_text']['onboard'], groups[i], group_symbols[groups[i]], group_colors, buy_costs, i, size, pos))
             Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)

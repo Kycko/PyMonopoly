@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
 from GameObjects import GameField
-from GlobalFuncs import add_new_player, count_new_pos, create_players_list, read_file, read_stats
+from GlobalFuncs import add_new_player, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
 from MenuItems import MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
@@ -114,6 +114,7 @@ class MainScreen():
         elif type == 'game_start':
             for key in ('avail_colors', 'avail_names'):
                 Globals.TEMP_VARS.pop(key)
+            Globals.TEMP_VARS['onboard_text'] = read_onboard_text()
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield'         : GameField()}
@@ -256,7 +257,8 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
-            Globals.TEMP_VARS.pop('cells_rects')
+            for x in ('cells_rects', 'onboard_text'):
+                Globals.TEMP_VARS.pop(x)
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)

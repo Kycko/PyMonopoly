@@ -146,11 +146,12 @@ def save_last_game_settings():
             data.append('AI\n')
     write_to_file(Globals.FILES['last_game_settings'], data)
 def read_onboard_text():
-    raw = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/' + get_gamename() + '_onboard')
+    directory = Globals.DIRS['translations']+Globals.LANGUAGES[Globals.SETTINGS['language']][0]+'/'+get_gamename()+'/'
     data = {}
-    for string in raw:
-        if string[0] == '*' and string[len(string)-1] == '*':
-            field = int(string[1:len(string)-1])
-        else:
-            data[field] = string
+    for type in ('fieldnames', 'onboard'):
+        raw = read_file(directory + type)
+        data[type] = {}
+        for string in raw:
+            string = string.split(':')
+            data[type][int(string[0])] = string[1]
     return data
