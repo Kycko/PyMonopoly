@@ -14,18 +14,23 @@ class MenuItem():
         self.init_for_group(number)
         self.init_for_type()
     def init_for_group(self, number):
-        if self.group == 'stats_switch':
-            self.cursor = OwnCursor('light_green', self.active_zone)
-            self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
-        elif self.group == 'onboard_select_cell':
+        if self.group == 'onboard_select_cell':
             self.cursor = FieldCellCursor(self.active_zone)
             self.tooltip = Tooltip(number, 'fieldcells_info')
+        elif self.group == 'show_menu':
+            self.cursor = OwnCursor('orange', self.active_zone)
+            self.tooltip = Tooltip(u'HOTKEY: PageDown', 'left', self.text)
+        elif self.group == 'stats_switch':
+            self.cursor = OwnCursor('light_green', self.active_zone)
+            self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
         else:
             self.tooltip = None
     def init_for_type(self):
         #--- Hotkeys
         if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
             self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
+        elif self.type == 'show_menu':
+            self.HOTKEYS = (pygame.K_PAGEDOWN)
         else:
             self.HOTKEYS = ()
         #--- Selector
@@ -51,6 +56,8 @@ class MenuItem():
                 self.active_zone.size = (400, self.text.rect.h+6)
         elif self.group == 'onboard_select_cell':
             self.active_zone = self.text.rect
+        elif self.group == 'show_menu':
+            self.active_zone = self.text.rect.inflate(20, 10)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def group_checkings(self, state):
@@ -111,6 +118,10 @@ class Tooltip():
             self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
             self.move_text(obj.rect)
             self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+        elif type == 'left':
+            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.move_text(obj.rect)
+            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
         elif type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
@@ -154,8 +165,12 @@ class Tooltip():
         else:
             return Globals.COLORS['grey22']
     def move_text(self, rect):
-        x = rect.x + (rect.w - self.rect.w)/2 - 15
-        y = rect.y - self.rect.h - 5
+        if self.type == 'top':
+            x = rect.x + (rect.w - self.rect.w)/2 - 15
+            y = rect.y - self.rect.h - 5
+        elif self.type == 'left':
+            x = rect.x - self.rect.w - 15
+            y = rect.y + (rect.h - self.rect.h)/2
         self.rect.topleft = (x, y)
     def render(self, state):
         if state:
@@ -334,7 +349,7 @@ class OwnCursor(Cursor):
         Cursor.__init__(self, 104, rect)
     def render(self, state):
         if state:
-            if self.u_length < self.rect.w/2-25:
+            if self.u_length < self.rect.w/2-15:
                 self.u_length += 1
                 self.draw_rect()
                 pygame.draw.line(self.surf, self.u_color, (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)

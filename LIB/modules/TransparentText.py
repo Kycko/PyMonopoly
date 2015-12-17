@@ -15,6 +15,8 @@ class AlphaText():
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']
+        elif self.group == 'show_menu':
+            self.font = Globals.FONTS['ume_32']
         elif self.group[:4] == 'main' or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'ingame_start'):
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
@@ -28,7 +30,7 @@ class AlphaText():
         else:
             self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
-        if self.group in ('authors', 'stats_switch'):
+        if self.group in ('authors', 'stats_switch', 'show_menu'):
             self.color = Globals.COLORS['grey']
         elif self.group == 'main_settings_volume_SELECTOR':
             self.choose_selector_color('volume', number)
@@ -76,6 +78,9 @@ class AlphaText():
         elif 'stats_table' in self.group:
             self.x = Globals.RESOLUTION[0]/7 + 150*int(self.group[len(self.group)-1])
             self.rect = Rect((0, 365 + 20*number), (0, 0))
+        elif self.group == 'show_menu':
+            self.x = Globals.RESOLUTION[0] - 43
+            self.rect = Rect((0, 6), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))
@@ -123,7 +128,9 @@ class AlphaText():
             self.x = Globals.PICS['logo'].pos[0] + 112
             self.rect = Rect((0, Globals.PICS['logo'].pos[1] + 50), (0, 0))
     def init_new_pos(self):
-        if self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
+        if self.group == 'show_menu':
+            self.new_pos = self.rect.topleft
+        elif self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
@@ -155,6 +162,8 @@ class AlphaText():
         self.RErender()
         if reset_alpha:
             self.alpha = 5
+    def change_new_pos(self, offset):
+        self.new_pos = (self.rect.x+offset[0], self.rect.y+offset[1])
     def find_xpos(self, size):
         if self.x == 'center':
             return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2
