@@ -266,7 +266,8 @@ class MainScreen():
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
             if not state:
                 state = -1
-            for obj in (self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['show_menu'].text):
+            cells = [cell.text for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
+            for obj in [self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['show_menu'].text] + cells:
                 obj.change_new_pos((0, state*100))
         elif type:
             self.switch_screen(type, key)

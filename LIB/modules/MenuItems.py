@@ -43,7 +43,8 @@ class MenuItem():
         self.make_active_zone()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.rect = self.active_zone.copy()
-            self.tooltip.move_text(self.text.rect)
+            if self.group != 'onboard_select_cell':
+                self.tooltip.move_text(self.text.rect)
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
