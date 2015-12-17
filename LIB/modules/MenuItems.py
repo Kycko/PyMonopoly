@@ -19,7 +19,7 @@ class MenuItem():
             self.tooltip = Tooltip(number, 'fieldcells_info')
         elif self.group == 'show_menu':
             self.cursor = OwnCursor('orange', self.active_zone)
-            self.tooltip = Tooltip(u'HOTKEY: PageDown', 'left', self.text)
+            self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
         elif self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
