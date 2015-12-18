@@ -162,8 +162,6 @@ class AlphaText():
         self.RErender()
         if reset_alpha:
             self.alpha = 5
-    def change_new_pos(self, offset):
-        self.new_pos = (self.rect.x+offset[0], self.rect.y+offset[1])
     def find_xpos(self, size):
         if self.x == 'center':
             return Globals.RESOLUTION[0]/2 + self.x_offset - size[0]/2

@@ -32,11 +32,9 @@ class MainScreen():
                     create_players_list()
                 elif self.menuitems['exit'].group == 'ingame_start':
                     create_players_list()
-                    self.pics['logo'].pos = (self.pics['logo'].pos[0]-300, self.pics['logo'].pos[1])
-                    self.pics['logo'].new_pos = self.pics['logo'].pos
+                    self.pics['logo'].new_pos = (self.pics['logo'].pos[0]-300, self.pics['logo'].pos[1])
                     for key in ('APPNAME', 'APPVERSION'):
-                        self.labels[key].rect.x -= 300
-                        self.labels[key].new_pos = self.labels[key].rect.topleft
+                        self.labels[key].new_pos = (self.labels[key].new_pos[0]-300, self.labels[key].new_pos[1])
                     for key in ('background', 'gamebackground', 'logo'):
                         self.pics[key].new_pos = (self.pics[key].new_pos[0] + 1820, self.pics[key].new_pos[1])
                     for label in self.labels.values():
@@ -268,7 +266,7 @@ class MainScreen():
                 state = -1
             cells = [cell.text for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
             for obj in [self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['show_menu'].text] + cells:
-                obj.change_new_pos((0, state*100))
+                obj.new_pos = count_new_pos(obj.new_pos, (0, state*100))
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)

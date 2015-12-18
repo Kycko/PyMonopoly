@@ -8,8 +8,6 @@ class Sprite():
         self.new_pos = pos
         self.speed_limit = speed_limit
         self.bitmap = pygame.image.load(file)
-    def change_new_pos(self, offset):
-        self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, self.speed_limit)
         Globals.screen.blit(self.bitmap, self.pos)
