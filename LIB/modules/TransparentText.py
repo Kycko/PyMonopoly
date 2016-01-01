@@ -79,7 +79,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/7 + 150*int(self.group[len(self.group)-1])
             self.rect = Rect((0, 365 + 20*number), (0, 0))
         elif self.group == 'show_menu':
-            self.x = Globals.RESOLUTION[0] - 43
+            self.x = Globals.RESOLUTION[0] - 42
             self.rect = Rect((0, 6), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
