@@ -32,7 +32,7 @@ class MainScreen():
                     create_players_list()
                 elif self.menuitems['exit'].group == 'ingame_start':
                     create_players_list()
-                    self.pics['logo'].new_pos = (self.pics['logo'].pos[0]-300, self.pics['logo'].pos[1])
+                    self.pics['logo'].new_pos = (self.pics['logo'].new_pos[0]-300, self.pics['logo'].pos[1])
                     for key in ('APPNAME', 'APPVERSION'):
                         self.labels[key].new_pos = (self.labels[key].new_pos[0]-300, self.labels[key].new_pos[1])
                     for key in ('background', 'gamebackground', 'logo'):

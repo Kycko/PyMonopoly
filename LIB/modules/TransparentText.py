@@ -151,8 +151,7 @@ class AlphaText():
     def RErender(self):
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):
-        if self.new_pos != self.rect.topleft:
-            self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10, self.speed_limit)
+        self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10, self.speed_limit)
     def update_text(self, text, reset_alpha=True):
         self.symbols = text
         if self.group != 'onboard_select_cell':
