@@ -11,7 +11,6 @@ class AlphaText():
         self.update_text(text)
         self.init_new_pos()
     def init_for_group(self, number):
-        self.AV = True
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']

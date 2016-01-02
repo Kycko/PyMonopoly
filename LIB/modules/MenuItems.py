@@ -66,7 +66,7 @@ class MenuItem():
             self.active_zone = self.text.rect.inflate(20, 10)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
-    def group_checkings(self, state):
+    def render(self, state):
         if self.text.new_pos != self.text.rect.topleft:
             self.move_text()
         if self.group[:4] not in ('main', 'inga'):
@@ -77,9 +77,6 @@ class MenuItem():
             self.selector.render(state)
         else:
             self.text.render(True)
-    def render(self, state):
-        if self.text.AV:
-            self.group_checkings(state)
     def action(self, key):
         play_click_sound()
         if self.group == 'main_settings_exit':
