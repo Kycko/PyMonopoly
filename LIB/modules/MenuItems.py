@@ -17,6 +17,9 @@ class MenuItem():
         if self.group == 'onboard_select_cell':
             self.cursor = FieldCellCursor(self.active_zone)
             self.tooltip = Tooltip(number, 'fieldcells_info')
+        elif self.group == 'from_game_return_to_menu':
+            self.cursor = OwnCursor('light_brown', self.active_zone)
+            self.tooltip = Tooltip(u'HOTKEY: Escape', 'left', self.text)
         elif self.group == 'show_menu':
             self.cursor = OwnCursor('orange', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
@@ -29,8 +32,10 @@ class MenuItem():
         #--- Hotkeys
         if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
             self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
+        elif self.type == 'from_game_return_to_menu':
+            self.HOTKEYS = (pygame.K_ESCAPE, None)
         elif self.type == 'show_menu':
-            self.HOTKEYS = (pygame.K_PAGEDOWN)
+            self.HOTKEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP)
         else:
             self.HOTKEYS = ()
         #--- Selector
@@ -57,7 +62,7 @@ class MenuItem():
                 self.active_zone.size = (400, self.text.rect.h+6)
         elif self.group == 'onboard_select_cell':
             self.active_zone = self.text.rect
-        elif self.group == 'show_menu':
+        elif self.group in ('from_game_return_to_menu', 'show_menu'):
             self.active_zone = self.text.rect.inflate(20, 10)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)

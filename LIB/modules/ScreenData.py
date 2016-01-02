@@ -254,7 +254,8 @@ class MainScreen():
                 self.pics['order'].remove(string)
             self.labels = {}
             self.cursor = None
-            self.menuitems = {'show_menu'    : MenuItem(u'↓', 'show_menu', 'show_menu')}
+            self.menuitems = {'exit'        : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
+                              'show_menu'   : MenuItem(u'↓', 'show_menu', 'show_menu')}
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
@@ -265,7 +266,7 @@ class MainScreen():
             if not state:
                 state = -1
             cells = [cell.text for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
-            for obj in [self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['show_menu'].text] + cells:
+            for obj in [self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['exit'].text, self.menuitems['show_menu'].text] + cells:
                 obj.new_pos = count_new_pos(obj.new_pos, (0, state*100))
         elif type:
             self.switch_screen(type, key)
