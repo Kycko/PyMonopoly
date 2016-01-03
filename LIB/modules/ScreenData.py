@@ -186,7 +186,7 @@ class MainScreen():
         for label in self.labels.values():
 #            print('LABEL')
             label.render()
-#        print()
+#        print(Globals.TEMP_VARS.keys())
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
@@ -200,7 +200,7 @@ class MainScreen():
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
                     self.action_call('exit')
-                elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and self.menuitems and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
+                elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and self.menuitems and self.cursor and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 elif self.menuitems and ('main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player'):
                     if e.key == pygame.K_BACKSPACE:
@@ -276,7 +276,7 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
-            Globals.TEMP_VARS.pop('cells_rects')
+            clear_TEMP_VARS('cur_game')
         elif type == 'show_menu':
             state = int(self.menuitems['show_menu'].text.symbols == u'↓')
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
