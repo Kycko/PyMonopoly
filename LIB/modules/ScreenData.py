@@ -10,7 +10,6 @@ from sys import exit as SYSEXIT
 class MainScreen():
     def __init__(self):
         self.switch_screen('main_main', None)
-        self.cursor = MainCursor(self.menuitems, 'main_main')
     def switch_screen(self, type, key):
         if type in ('main_new_game', 'main_settings', 'main_stats') and 'gamebackground' in self.pics.keys():
             self.pics.pop('gamebackground')
@@ -27,7 +26,23 @@ class MainScreen():
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
                 self.objects = {}
             else:
-                if self.menuitems['exit'].group == 'main_settings_player_exit':
+                if self.menuitems['exit'].group == 'from_game_return_to_menu':
+                    self.pics.update({'background'  : Sprite((((Globals.RESOLUTION[0]-1820)/2)-1820, self.pics['gamebackground'].pos[1]), Globals.PICS['background'], 50),
+                                      'logo'        : Globals.PICS['logo'],
+                                      'order'       : ['background', 'gamebackground', 'logo']})
+                    for key in ('background', 'gamebackground'):
+                        self.pics[key].change_new_pos((1820, -130-self.pics['gamebackground'].pos[1]))
+                    self.pics['logo'].change_new_pos((1820, 0))
+                    self.objects['gamefield'].change_new_pos((1820, 0))
+                    self.labels.update({'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
+                                        'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
+                                        'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
+                                        'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)})
+                    for key in ('authors', 'resources'):
+                        self.labels[key].rect.x -= 1820
+                    for key in ('APPNAME', 'APPVERSION'):
+                        self.labels[key].change_new_pos((1820, 0))
+                elif self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
                     create_players_list()
                 elif self.menuitems['exit'].group == 'ingame_start':
@@ -49,6 +64,7 @@ class MainScreen():
                               'settings'    : MenuItem(Globals.TRANSLATION[1], 'main_settings', 'main_main', 1),
                               'stats'       : MenuItem(Globals.TRANSLATION[2], 'main_stats', 'main_main', 2),
                               'exit'        : MenuItem(Globals.TRANSLATION[3], 'main_sysexit', 'main_main', 3)}
+            self.cursor = MainCursor(self.menuitems, 'main_main')
         elif type == 'main_stats':
             self.move_APPINFO((0, -50))
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_stats')}
@@ -249,6 +265,8 @@ class MainScreen():
                     self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
                     self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
         elif type == 'ingame_start_game':
+            self.pics['logo'].pos = (self.pics['logo'].init_pos[0]-1820, self.pics['logo'].init_pos[1])
+            self.pics['logo'].change_new_pos((-300, 0))
             for string in ('background', 'logo'):
                 self.pics.pop(string)
                 self.pics['order'].remove(string)

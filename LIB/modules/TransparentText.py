@@ -139,6 +139,8 @@ class AlphaText():
         else:
             self.new_pos = self.rect.topleft
         self.speed_limit = 50
+    def change_new_pos(self, offset):
+        self.new_pos = (self.new_pos[0] + offset[0], self.new_pos[1] + offset[1])
     def choose_selector_color(self, type, num):
         if type == 'volume':
             state = num < Globals.SETTINGS['volume']*10
