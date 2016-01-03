@@ -32,7 +32,7 @@ class MainScreen():
                                       'logo'        : Globals.PICS['logo'],
                                       'order'       : ['background', 'gamebackground', 'logo']})
                     for key in ('background', 'gamebackground'):
-                        self.pics[key].change_new_pos((1820, -130-self.pics['gamebackground'].pos[1]))
+                        self.pics[key].change_new_pos((1820, -130-self.pics[key].new_pos[1]))
                     self.pics['logo'].change_new_pos((1820, 0))
                     self.objects['gamefield'].change_new_pos((1820, 0))
                     self.labels.update({'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
