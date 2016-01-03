@@ -26,6 +26,7 @@ class MainScreen():
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
                 self.objects = {}
             else:
+                create_players_list()
                 if self.menuitems['exit'].group == 'from_game_return_to_menu':
                     self.pics.update({'background'  : Sprite((((Globals.RESOLUTION[0]-1820)/2)-1820, self.pics['gamebackground'].pos[1]), Globals.PICS['background'], 50),
                                       'logo'        : Globals.PICS['logo'],
@@ -44,9 +45,7 @@ class MainScreen():
                         self.labels[key].change_new_pos((1820, 0))
                 elif self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
-                    create_players_list()
                 elif self.menuitems['exit'].group == 'ingame_start':
-                    create_players_list()
                     self.pics['logo'].new_pos = (self.pics['logo'].new_pos[0]-300, self.pics['logo'].pos[1])
                     for key in ('APPNAME', 'APPVERSION'):
                         self.labels[key].new_pos = (self.labels[key].new_pos[0]-300, self.labels[key].new_pos[1])
