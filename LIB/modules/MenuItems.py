@@ -110,6 +110,8 @@ class MenuItem():
                 return None
             else:
                 Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
+        elif self.type == 'onboard_select_cell':
+            return None
         return self.type
 class Tooltip():
     def __init__(self, text, type, obj=None):
