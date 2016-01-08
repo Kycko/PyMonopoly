@@ -79,7 +79,7 @@ class MainScreen():
             self.make_settings_screen()
         elif 'main_new_edit_player' in type or type == 'main_settings_player':
             if key == 'exit':
-                Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'] = self.labels['name_MI'].symbols
+                Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name = self.labels['name_MI'].symbols
                 self.objects = {}
             self.make_playersettings_screen()
             if 'main_new_edit_player' in type:
@@ -94,7 +94,7 @@ class MainScreen():
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], type, 'main_settings_player_exit')}
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
-                                'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
+                                'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
             self.init_avail_colors_and_names()
@@ -118,8 +118,8 @@ class MainScreen():
             if key == 'exit':
                 self.check_error(type)
             for i in range(len(Globals.PLAYERS)):
-                self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
-                if not Globals.PLAYERS[i]['human']:
+                self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                if not Globals.PLAYERS[i].human:
                     self.labels.update({'player'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
@@ -239,12 +239,12 @@ class MainScreen():
                     if new < old:
                         self.cursor.add_rm_keys(False, dictkey)
                         self.menuitems.pop(dictkey)
-                        if not Globals.PLAYERS[i-1]['human']:
+                        if not Globals.PLAYERS[i-1].human:
                             self.labels.pop(dictkey)
                         selector_color = 'grey63'
                     elif new > old:
                         add_new_player(False)
-                        self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                        self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                         self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
                         self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-2, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
                         selector_color = 'white'
@@ -258,9 +258,9 @@ class MainScreen():
         elif type == 'main_new_humans_SELECTOR':
             for i in range(1, len(Globals.PLAYERS)):
                 dictkey = 'player'+str(i)
-                if Globals.PLAYERS[i]['human'] and dictkey in self.labels.keys():
+                if Globals.PLAYERS[i].human and dictkey in self.labels.keys():
                     self.labels.pop(dictkey)
-                elif not Globals.PLAYERS[i]['human'] and dictkey not in self.labels.keys():
+                elif not Globals.PLAYERS[i].human and dictkey not in self.labels.keys():
                     self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
                     self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
         elif type == 'ingame_start_game':
@@ -316,7 +316,7 @@ class MainScreen():
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
         self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.LANGUAGES[Globals.SETTINGS['language']][1]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
-                          'player'      : MenuItem(Globals.PLAYERS[0]['name'], 'main_settings_player', 'main_settings_player', 0),
+                          'player'      : MenuItem(Globals.PLAYERS[0].name, 'main_settings_player', 'main_settings_player', 0),
                           'hotkeys'     : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['hotkeys'])]+u' ›', 'main_settings_hotkeys', 'main_settings_left_MI', 2),
                           'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
                           'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 4),
@@ -334,7 +334,7 @@ class MainScreen():
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
     def make_playersettings_screen(self):
-        self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
+        self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player_name', 'main_settings_player', 0),
                           'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2)}
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[22], 'settings_left', 1),
@@ -343,10 +343,10 @@ class MainScreen():
         Globals.TEMP_VARS['avail_colors'] = list(Globals.PLAYERS_COLORS)
         Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')
         for player in Globals.PLAYERS:
-            if player['color'] in Globals.TEMP_VARS['avail_colors']:
-                Globals.TEMP_VARS['avail_colors'].remove(player['color'])
-            if player['name'] in Globals.TEMP_VARS['avail_names']:
-                Globals.TEMP_VARS['avail_names'].remove(player['name'])
+            if player.color in Globals.TEMP_VARS['avail_colors']:
+                Globals.TEMP_VARS['avail_colors'].remove(player.color)
+            if player.name in Globals.TEMP_VARS['avail_names']:
+                Globals.TEMP_VARS['avail_names'].remove(player.name)
     def check_error(self, type):
         if type == 'main_new_game':
             status = self.check_doubles_for_players()
@@ -361,5 +361,5 @@ class MainScreen():
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
-                if Globals.PLAYERS[i]['color'] == Globals.PLAYERS[j]['color'] or Globals.PLAYERS[i]['name'] == Globals.PLAYERS[j]['name']:
+                if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
+from Players import Player
 from os import listdir, mkdir
 from pygame import Color, display, mixer
 from random import randrange
@@ -60,13 +61,11 @@ def write_to_file(file, data, method='w'):
     list.close()
 #--- Game related
 def add_new_player(human):
-    Globals.PLAYERS.append({'color' : Globals.TEMP_VARS['avail_colors'].pop(randrange(len(Globals.TEMP_VARS['avail_colors']))),
-                            'name'  : Globals.TEMP_VARS['avail_names'].pop(randrange(len(Globals.TEMP_VARS['avail_names']))),
-                            'human' : human})
+    Globals.PLAYERS.append(Player(Globals.TEMP_VARS['avail_names'].pop(randrange(len(Globals.TEMP_VARS['avail_names']))),
+                                  Globals.TEMP_VARS['avail_colors'].pop(randrange(len(Globals.TEMP_VARS['avail_colors']))),
+                                  human))
 def create_players_list():
-    Globals.PLAYERS = [{'color' : Globals.SETTINGS['pl_color'],
-                        'name'  : Globals.SETTINGS['pl_name'],
-                        'human' : True}]
+    Globals.PLAYERS = [Player(Globals.SETTINGS['pl_name'], Globals.SETTINGS['pl_color'], True)]
 def get_gamename():
     if Globals.TEMP_VARS['cur_game']:
         return 'manager'
@@ -144,7 +143,7 @@ def read_stats(game):
 def save_last_game_settings():
     data = []
     for i in range(1, len(Globals.PLAYERS)):
-        if Globals.PLAYERS[i]['human']:
+        if Globals.PLAYERS[i].human:
             data.append('human\n')
         else:
             data.append('AI\n')

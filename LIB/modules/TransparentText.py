@@ -38,11 +38,11 @@ class AlphaText():
         elif self.group == 'main_new_humans_SELECTOR':
             self.choose_selector_color('new_settings_humans', number)
         elif self.group == 'main_new_playerlist':
-            self.color = Globals.PLAYERS[number]['color']
+            self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif self.group == 'main_settings_player':
-            self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color']
+            self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color
         elif 'ERROR' in self.group:
             self.color = Globals.COLORS['light_red']
         else:
@@ -102,7 +102,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))
         elif self.group == 'newgame_playertype':
-            self.x = Globals.RESOLUTION[0]/4 - 50 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number]['name'])[0] + 2
+            self.x = Globals.RESOLUTION[0]/4 - 50 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number].name)[0] + 2
             self.rect = Rect((0, 455 + 30*number), (0, 0))
         elif self.group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
@@ -147,7 +147,7 @@ class AlphaText():
         elif type == 'new_settings_total':
             state = num < len(Globals.PLAYERS)
         elif type == 'new_settings_humans':
-            state = Globals.PLAYERS[num]['human']
+            state = Globals.PLAYERS[num].human
         if state:
             self.color = Globals.COLORS['white']
         else:

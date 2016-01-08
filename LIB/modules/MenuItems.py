@@ -77,8 +77,8 @@ class MenuItem():
     def action(self, key):
         play_click_sound()
         if self.group == 'main_settings_exit':
-            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0]['name']
-            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0]['color']
+            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0].name
+            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0].color
             Globals.TEMP_VARS.pop('edit_player')
             save_settings()
         if 'SELECTOR' in self.type:
@@ -186,8 +186,8 @@ class MenuSelector():
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
         elif type == 'main_settings_player_color_SELECTOR':
             itemcount_end = len(Globals.PLAYERS_COLORS)
-            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
-                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
+            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color in Globals.PLAYERS_COLORS:
+                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color)
             else:
                 self.active = 0
         elif type == 'main_new_total_SELECTOR':
@@ -197,7 +197,7 @@ class MenuSelector():
         elif type == 'main_new_humans_SELECTOR':
             itemcount_end = len(Globals.PLAYERS)
             for i in range(len(Globals.PLAYERS)):
-                if Globals.PLAYERS[i]['human']:
+                if Globals.PLAYERS[i].human:
                     self.active = i
         self.items = [AlphaText(u'●', type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
@@ -246,13 +246,13 @@ class MenuSelector():
                 self.items[i].choose_selector_color('volume', i)
                 self.items[i].RErender()
         elif self.type == 'main_settings_player_color_SELECTOR':
-            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
+            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color = Globals.PLAYERS_COLORS[self.active]
             return self.type
         elif self.type == 'main_new_humans_SELECTOR':
             for i in range(1, len(Globals.PLAYERS)):
                 status = i <= self.active
-                if (status and not Globals.PLAYERS[i]['human']) or (not status and Globals.PLAYERS[i]['human']):
-                    Globals.PLAYERS[i]['human'] = not Globals.PLAYERS[i]['human']
+                if (status and not Globals.PLAYERS[i].human) or (not status and Globals.PLAYERS[i].human):
+                    Globals.PLAYERS[i].human = not Globals.PLAYERS[i].human
                     self.items[i].choose_selector_color('new_settings_humans', i)
                     self.items[i].RErender()
             return self.type
