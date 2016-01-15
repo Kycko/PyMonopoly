@@ -50,6 +50,21 @@ class GameField():
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
+        counter = []
+        for player in Globals.PLAYERS:
+            field = player.cur_field
+            cell = self.cells[field]
+            order = counter.count(field)
+            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
+            y = cell.pos[1]+self.pos[1]
+            if field <= 10:
+                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
+            else:
+                y += ((order//3))*15
+            if cell.group in (7, 8):
+                x += 19
+            Globals.screen.blit(player.game_piece, (x, y))
+            counter.append(field)
 class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
         #--- Onboard text
