@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import FieldCellsData, Globals, pygame
+import FieldCellsData, Globals, pygame, random
 from GameObjects import GameField
 from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
 from MenuItems import MainCursor, MenuItem
@@ -127,6 +127,7 @@ class MainScreen():
         elif type == 'game_start':
             for key in ('avail_colors', 'avail_names'):
                 Globals.TEMP_VARS.pop(key)
+            random.shuffle(Globals.PLAYERS)
             Globals.TEMP_VARS['onboard_text'] = read_onboard_text()
             Globals.TEMP_VARS['cells_cost'] = FieldCellsData.read_cells_costs()
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
