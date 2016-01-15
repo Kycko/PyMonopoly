@@ -14,7 +14,7 @@ class AlphaText():
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']
-        elif self.group in ('from_game_return_to_menu', 'show_menu'):
+        elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
         elif self.group[:4] == 'main' or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'ingame_start'):
             self.font = Globals.FONTS['ubuntu_24']
@@ -37,6 +37,8 @@ class AlphaText():
             self.choose_selector_color('new_settings_total', number)
         elif self.group == 'main_new_humans_SELECTOR':
             self.choose_selector_color('new_settings_humans', number)
+        elif self.group == 'pl_info_tab':
+            self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_new_playerlist':
             self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_settings_player_color_SELECTOR':
@@ -116,6 +118,9 @@ class AlphaText():
         elif self.group == 'stats_bests':
             self.x = Globals.RESOLUTION[0]/7 - 20
             self.rect = Rect((0, 400), (0, 0))
+        elif self.group == 'pl_info_tab':
+            self.x = Globals.RESOLUTION[0]-40
+            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))

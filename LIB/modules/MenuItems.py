@@ -18,6 +18,9 @@ class MenuItem():
         if self.group == 'onboard_select_cell':
             self.cursor = FieldCellCursor(self.active_zone)
             self.tooltip = Tooltip(number, 'fieldcells_info')
+        elif self.group == 'pl_info_tab':
+            self.cursor = OwnCursor('light_blue', self.active_zone)
+            self.tooltip = Tooltip(Globals.PLAYERS[number].name, 'left', self.text, 'ubuntu_13')
         elif self.group == 'from_game_return_to_menu':
             self.cursor = OwnCursor('light_brown', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEY: Escape', 'left', self.text)
@@ -110,20 +113,20 @@ class MenuItem():
                 return None
             else:
                 Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
-        elif self.type == 'onboard_select_cell':
+        elif self.type == 'onboard_select_cell' or 'pl_info_tab' in self.type:
             return None
         return self.type
 class Tooltip():
-    def __init__(self, text, type, obj=None):
+    def __init__(self, text, type, obj=None, font='ume_12'):
         self.type = type
         if type == 'top':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
             self.move_text(obj.rect)
-            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
         elif type == 'left':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
             self.move_text(obj.rect)
-            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
         elif type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
