@@ -134,6 +134,8 @@ class MainScreen():
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
+            for i in range(len(Globals.PLAYERS)):
+                self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
             self.objects = {'gamefield'         : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
@@ -272,10 +274,9 @@ class MainScreen():
                 self.pics['order'].remove(string)
             self.labels = {}
             self.cursor = None
-            self.menuitems = {'exit'        : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
-                              'show_menu'   : MenuItem(u'↓', 'show_menu', 'show_menu')}
-            for i in range(len(Globals.PLAYERS)):
-                self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
+            self.menuitems.pop('start_game')
+            self.menuitems.update({'exit'        : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
+                                   'show_menu'   : MenuItem(u'↓', 'show_menu', 'show_menu')})
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)

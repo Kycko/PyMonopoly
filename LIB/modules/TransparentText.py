@@ -119,7 +119,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/7 - 20
             self.rect = Rect((0, 400), (0, 0))
         elif self.group == 'pl_info_tab':
-            self.x = Globals.RESOLUTION[0]-40
+            self.x = Globals.RESOLUTION[0]+1780
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
