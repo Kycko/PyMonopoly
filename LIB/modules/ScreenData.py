@@ -135,7 +135,12 @@ class MainScreen():
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             for i in range(len(Globals.PLAYERS)):
+                if Globals.TEMP_VARS['cur_game']:
+                    Globals.PLAYERS[i].money = 20000
+                else:
+                    Globals.PLAYERS[i].money = 1500
                 self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
+                self.labels.update({'money_player'+str(i)   : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects = {'gamefield'         : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
@@ -189,7 +194,7 @@ class MainScreen():
         for label in self.labels.values():
 #            print('LABEL')
             label.render()
-#        print(Globals.TEMP_VARS.keys())
+#        print(Globals.TEMP_VARS)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
@@ -272,7 +277,9 @@ class MainScreen():
             for string in ('background', 'logo'):
                 self.pics.pop(string)
                 self.pics['order'].remove(string)
-            self.labels = {}
+            for lbl in self.labels.keys():
+                if 'money_player' not in lbl:
+                    self.labels.pop(lbl)
             self.cursor = None
             self.menuitems.pop('start_game')
             self.menuitems.update({'exit'        : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),

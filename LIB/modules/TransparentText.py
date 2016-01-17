@@ -24,12 +24,12 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
-        elif self.group == 'newgame_playertype':
+        elif self.group in ('newgame_playertype', 'pl_money_info'):
             self.font = Globals.FONTS['ubuntu_11']
         else:
             self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
-        if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu'):
+        if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif self.group == 'main_settings_volume_SELECTOR':
             self.choose_selector_color('volume', number)
@@ -104,7 +104,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))
         elif self.group == 'newgame_playertype':
-            self.x = Globals.RESOLUTION[0]/4 - 50 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number].name)[0] + 2
+            self.x = Globals.RESOLUTION[0]/4 - 48 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number].name)[0]
             self.rect = Rect((0, 455 + 30*number), (0, 0))
         elif self.group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
@@ -121,6 +121,10 @@ class AlphaText():
         elif self.group == 'pl_info_tab':
             self.x = Globals.RESOLUTION[0]+1780
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40), (0, 0))
+        elif self.group == 'pl_money_info':
+            self.x = 'right'
+            self.x_offset = -1783
+            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
