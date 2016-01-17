@@ -120,10 +120,10 @@ class AlphaText():
             self.rect = Rect((0, 400), (0, 0))
         elif self.group == 'pl_info_tab':
             self.x = Globals.RESOLUTION[0]+1780
-            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40), (0, 0))
+            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*39), (0, 0))
         elif self.group == 'pl_money_info':
             self.x = 'right'
-            self.x_offset = -1783
+            self.x_offset = -1781
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2

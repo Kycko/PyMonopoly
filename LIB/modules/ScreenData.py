@@ -2,7 +2,7 @@
 import FieldCellsData, Globals, pygame, random
 from GameObjects import GameField
 from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
-from MenuItems import MainCursor, MenuItem
+from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
 from sys import exit as SYSEXIT
@@ -34,7 +34,8 @@ class MainScreen():
                     for key in ('background', 'gamebackground'):
                         self.pics[key].change_new_pos((1820, -130-self.pics[key].new_pos[1]))
                     self.pics['logo'].change_new_pos((1820, 0))
-                    self.objects['gamefield'].change_new_pos((1820, 0))
+                    for obj in self.objects.values():
+                        obj.change_new_pos((1820, 0))
                     self.labels.update({'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
                                         'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                         'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
@@ -53,8 +54,10 @@ class MainScreen():
                         self.pics[key].new_pos = (self.pics[key].new_pos[0] + 1820, self.pics[key].new_pos[1])
                     for label in self.labels.values():
                         label.new_pos = (label.new_pos[0] + 1820, label.new_pos[1])
-                    self.objects['gamefield'].change_new_pos((1820, 0))
+                    for obj in self.objects.values():
+                        obj.change_new_pos((1820, 0))
                 else:
+                    print('yup')
                     self.move_APPINFO((0, 50))
                     self.objects = {}
                 Globals.TEMP_VARS.clear()
@@ -141,7 +144,8 @@ class MainScreen():
                     Globals.PLAYERS[i].money = 1500
                 self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
                 self.labels.update({'money_player'+str(i)   : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
-            self.objects = {'gamefield'         : GameField()}
+            self.objects = {'cur_turn_highlighter'  : CurTurnHighlighter(self.menuitems),
+                            'gamefield'             : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
             for key in ('background', 'gamebackground', 'logo'):
