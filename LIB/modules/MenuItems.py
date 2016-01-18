@@ -29,6 +29,9 @@ class MenuItem():
             self.cursor = OwnCursor('orange', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
             self.HOTKEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP)
+        elif self.group == 'volume_in_game':
+            self.cursor = OwnCursor('grey', self.active_zone)
+            self.tooltip = None
         elif self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
@@ -64,6 +67,9 @@ class MenuItem():
             self.active_zone = self.text.rect
         elif self.group in ('from_game_return_to_menu', 'show_menu'):
             self.active_zone = self.text.rect.inflate(20, 10)
+        elif self.type == 'in_game_volume_SELECTOR':
+            self.active_zone = self.text.rect
+            self.active_zone.size = (251, 33)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def render(self, state):
@@ -184,7 +190,7 @@ class MenuSelector():
     def __init__(self, type):
         self.type = type
         itemcount_start = 0
-        if type == 'main_settings_volume_SELECTOR':
+        if 'volume_SELECTOR' in type:
             itemcount_end = 10
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
         elif type == 'main_settings_player_color_SELECTOR':
@@ -206,6 +212,8 @@ class MenuSelector():
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
+        if type == 'in_game_volume_SELECTOR':
+            self.cursor.new_cords = self.rects[self.active].topleft
     def keypress(self, KEY):
         if KEY == pygame.K_LEFT:
             self.active -= 1
@@ -243,7 +251,7 @@ class MenuSelector():
         for item in self.items:
             item.render(True)
     def action(self):
-        if self.type == 'main_settings_volume_SELECTOR':
+        if 'volume_SELECTOR' in self.type:
             change_volume(float(self.active+1)/10)
             for i in range(len(self.items)):
                 self.items[i].choose_selector_color('volume', i)
@@ -351,11 +359,11 @@ class OwnCursor(Cursor):
     def __init__(self, color, rect):
         self.u_color = Globals.COLORS[color]
         self.u_length = 0
-        Cursor.__init__(self, 104, rect)
+        Cursor.__init__(self, 50, rect)
     def render(self, state):
         if state:
             if self.u_length < self.rect.w/2-15:
-                self.u_length += 1
+                self.u_length += 2
                 self.draw_rect()
                 pygame.draw.line(self.surf, self.u_color, (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
             Cursor.render(self)
