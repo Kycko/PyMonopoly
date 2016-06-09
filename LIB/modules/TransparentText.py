@@ -127,10 +127,10 @@ class AlphaText():
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
         elif self.group == 'in_game_volume_SELECTOR':
             self.x = 10+25*number
-            self.rect = Rect((0, 8), (0, 0))
+            self.rect = Rect((0, -92), (0, 0))
         elif self.group == 'volume_in_game':
             self.x = 5
-            self.rect = Rect((0, 0), (0, 0))
+            self.rect = Rect((0, -100), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
