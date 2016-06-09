@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import slight_animation_count_pos
+from GlobalFuncs import count_new_pos, slight_animation_count_pos
 
 class GameField():
     def __init__(self):
@@ -43,7 +43,7 @@ class GameField():
                 y = 521
         return size, (x, y)
     def change_new_pos(self, offset):
-        self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
+        self.new_pos = count_new_pos(self.pos, offset)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)

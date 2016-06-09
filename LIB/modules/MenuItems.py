@@ -51,8 +51,13 @@ class MenuItem():
         self.make_active_zone()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.rect = self.active_zone.copy()
-            if self.group != 'onboard_select_cell':
+            if self.group not in ('onboard_select_cell', 'volume_in_game'):
                 self.tooltip.move_text(self.text.rect)
+    def change_new_pos(self, offset):
+        self.text.new_pos = count_new_pos(self.text.new_pos, offset)
+        if 'SELECTOR' in self.type:
+            for item in self.selector.items:
+                item.change_new_pos(offset)
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
