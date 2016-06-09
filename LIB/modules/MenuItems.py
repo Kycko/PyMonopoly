@@ -18,6 +18,9 @@ class MenuItem():
         if self.group == 'onboard_select_cell':
             self.cursor = FieldCellCursor(self.active_zone)
             self.tooltip = Tooltip(number, 'fieldcells_info')
+        elif self.group == 'pl_info_tab':
+            self.cursor = OwnCursor('light_blue', self.active_zone)
+            self.tooltip = Tooltip(Globals.PLAYERS[number].name, 'left', self.text, 'ubuntu_13')
         elif self.group == 'from_game_return_to_menu':
             self.cursor = OwnCursor('light_brown', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEY: Escape', 'left', self.text)
@@ -26,6 +29,12 @@ class MenuItem():
             self.cursor = OwnCursor('orange', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
             self.HOTKEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP)
+        elif self.group == 'volume_in_game':
+            self.cursor = OwnCursor('grey', self.active_zone)
+            self.tooltip = None
+        elif self.group == 'music_and_sound_switches':
+            self.cursor = OwnCursor('light_blue', self.active_zone)
+            self.tooltip = None
         elif self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
@@ -45,8 +54,13 @@ class MenuItem():
         self.make_active_zone()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.rect = self.active_zone.copy()
-            if self.group != 'onboard_select_cell':
+            if self.group not in ('onboard_select_cell', 'volume_in_game', 'music_and_sound_switches'):
                 self.tooltip.move_text(self.text.rect)
+    def change_new_pos(self, offset):
+        self.text.new_pos = count_new_pos(self.text.new_pos, offset)
+        if 'SELECTOR' in self.type:
+            for item in self.selector.items:
+                item.change_new_pos(offset)
     def update_text(self, text):
         self.text.update_text(text)
         self.make_active_zone()
@@ -59,8 +73,11 @@ class MenuItem():
                 self.active_zone.size = (400, self.text.rect.h+6)
         elif self.group == 'onboard_select_cell':
             self.active_zone = self.text.rect
-        elif self.group in ('from_game_return_to_menu', 'show_menu'):
+        elif self.group in ('from_game_return_to_menu', 'show_menu', 'music_and_sound_switches'):
             self.active_zone = self.text.rect.inflate(20, 10)
+        elif self.type == 'in_game_volume_SELECTOR':
+            self.active_zone = self.text.rect
+            self.active_zone.size = (251, 33)
         else:
             self.active_zone = self.text.rect.inflate(6, 6)
     def render(self, state):
@@ -77,10 +94,16 @@ class MenuItem():
     def action(self, key):
         play_click_sound()
         if self.group == 'main_settings_exit':
-            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0]['name']
-            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0]['color']
+            Globals.SETTINGS['pl_name'] = Globals.PLAYERS[0].name
+            Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0].color
             Globals.TEMP_VARS.pop('edit_player')
             save_settings()
+        elif self.group == 'music_and_sound_switches':
+            type = self.type[8:len(self.type)-7]
+            switch_sound_state(type, Globals.SETTINGS[type], True)
+            self.text.choose_switch_color(type)
+            self.update_text((u'✖', u'✓')[int(Globals.SETTINGS[type])])
+            return None
         if 'SELECTOR' in self.type:
             return self.selector.action()
         elif self.type == 'main_sysexit':
@@ -110,20 +133,20 @@ class MenuItem():
                 return None
             else:
                 Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
-        elif self.type == 'onboard_select_cell':
+        elif self.type == 'onboard_select_cell' or 'pl_info_tab' in self.type:
             return None
         return self.type
 class Tooltip():
-    def __init__(self, text, type, obj=None):
+    def __init__(self, text, type, obj=None, font='ume_12'):
         self.type = type
         if type == 'top':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
             self.move_text(obj.rect)
-            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
         elif type == 'left':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS['ume_12'].size(text))
+            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
             self.move_text(obj.rect)
-            self.text = Globals.FONTS['ume_12'].render(text, True, Globals.COLORS['grey'])
+            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
         elif type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
@@ -181,13 +204,13 @@ class MenuSelector():
     def __init__(self, type):
         self.type = type
         itemcount_start = 0
-        if type == 'main_settings_volume_SELECTOR':
+        if 'volume_SELECTOR' in type:
             itemcount_end = 10
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
         elif type == 'main_settings_player_color_SELECTOR':
             itemcount_end = len(Globals.PLAYERS_COLORS)
-            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] in Globals.PLAYERS_COLORS:
-                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'])
+            if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color in Globals.PLAYERS_COLORS:
+                self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color)
             else:
                 self.active = 0
         elif type == 'main_new_total_SELECTOR':
@@ -197,12 +220,14 @@ class MenuSelector():
         elif type == 'main_new_humans_SELECTOR':
             itemcount_end = len(Globals.PLAYERS)
             for i in range(len(Globals.PLAYERS)):
-                if Globals.PLAYERS[i]['human']:
+                if Globals.PLAYERS[i].human:
                     self.active = i
         self.items = [AlphaText(u'●', type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
+        if type == 'in_game_volume_SELECTOR':
+            self.cursor.new_cords = self.rects[self.active].topleft
     def keypress(self, KEY):
         if KEY == pygame.K_LEFT:
             self.active -= 1
@@ -240,19 +265,19 @@ class MenuSelector():
         for item in self.items:
             item.render(True)
     def action(self):
-        if self.type == 'main_settings_volume_SELECTOR':
-            change_volume(float(self.active+1)/10)
+        if 'volume_SELECTOR' in self.type:
+            change_volume(float(self.active+1)/10, self.type == 'in_game_volume_SELECTOR')
             for i in range(len(self.items)):
                 self.items[i].choose_selector_color('volume', i)
                 self.items[i].RErender()
         elif self.type == 'main_settings_player_color_SELECTOR':
-            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color'] = Globals.PLAYERS_COLORS[self.active]
+            Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color = Globals.PLAYERS_COLORS[self.active]
             return self.type
         elif self.type == 'main_new_humans_SELECTOR':
             for i in range(1, len(Globals.PLAYERS)):
                 status = i <= self.active
-                if (status and not Globals.PLAYERS[i]['human']) or (not status and Globals.PLAYERS[i]['human']):
-                    Globals.PLAYERS[i]['human'] = not Globals.PLAYERS[i]['human']
+                if (status and not Globals.PLAYERS[i].human) or (not status and Globals.PLAYERS[i].human):
+                    Globals.PLAYERS[i].human = not Globals.PLAYERS[i].human
                     self.items[i].choose_selector_color('new_settings_humans', i)
                     self.items[i].RErender()
             return self.type
@@ -348,11 +373,11 @@ class OwnCursor(Cursor):
     def __init__(self, color, rect):
         self.u_color = Globals.COLORS[color]
         self.u_length = 0
-        Cursor.__init__(self, 104, rect)
+        Cursor.__init__(self, 50, rect)
     def render(self, state):
         if state:
             if self.u_length < self.rect.w/2-15:
-                self.u_length += 1
+                self.u_length += 2
                 self.draw_rect()
                 pygame.draw.line(self.surf, self.u_color, (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
             Cursor.render(self)
@@ -365,3 +390,15 @@ class FieldCellCursor(Cursor):
     def render(self, state):
         if state:
             Cursor.render(self)
+class CurTurnHighlighter(Cursor):
+    def __init__(self, menuitems):
+        self.verts = [menuitems['player'+str(i)].active_zone[1] for i in range(len(Globals.PLAYERS))]
+        Cursor.__init__(self, 80, pygame.Rect((menuitems['player0'].active_zone[0]-162, self.verts[0]), (200, 39)))
+        self.draw_rect()
+        self.surf.blit(Globals.FONTS['ubuntu_11'].render(Globals.TRANSLATION[40], True, Globals.COLORS['grey']), (2, 0))
+        self.new_cords = (self.rect.x-1820, self.rect.y)
+    def change_new_pos(self, offset):
+        self.new_cords = (self.new_cords[0]+offset[0], self.new_cords[1]+offset[1])
+    def render(self):
+        self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 10, 50)
+        Cursor.render(self)

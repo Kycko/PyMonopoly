@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import slight_animation_count_pos
+from GlobalFuncs import count_new_pos, slight_animation_count_pos
 
 class GameField():
     def __init__(self):
@@ -19,6 +19,7 @@ class GameField():
             Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
+        self.new_pos = (2120, 70)
         self.change_new_pos((-1820, 0))
     def count_size_and_pos(self, num):
         if not num % 10:
@@ -43,13 +44,28 @@ class GameField():
                 y = 521
         return size, (x, y)
     def change_new_pos(self, offset):
-        self.new_pos = (self.pos[0]+offset[0], self.pos[1]+offset[1])
+        self.new_pos = count_new_pos(self.new_pos, offset)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
+        counter = []
+        for player in Globals.PLAYERS:
+            field = player.cur_field
+            cell = self.cells[field]
+            order = counter.count(field)
+            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
+            y = cell.pos[1]+self.pos[1]
+            if field <= 10:
+                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
+            else:
+                y += ((order//3))*15
+            if cell.group in (7, 8):
+                x += 19
+            Globals.screen.blit(player.game_piece, (x, y))
+            counter.append(field)
 class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
         #--- Onboard text

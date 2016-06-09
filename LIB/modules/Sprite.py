@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, pygame
-from GlobalFuncs import change_color_alpha, slight_animation_count_pos
+from GlobalFuncs import change_color_alpha, count_new_pos, slight_animation_count_pos
 
 class Sprite():
     def __init__(self, pos, file, speed_limit=None):
@@ -10,7 +10,7 @@ class Sprite():
         self.speed_limit = speed_limit
         self.bitmap = pygame.image.load(file)
     def change_new_pos(self, offset):
-        self.new_pos = (self.new_pos[0] + offset[0], self.new_pos[1] + offset[1])
+        self.new_pos = count_new_pos(self.new_pos, offset)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, self.speed_limit)
         Globals.screen.blit(self.bitmap, self.pos)

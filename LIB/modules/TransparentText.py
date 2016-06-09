@@ -14,35 +14,41 @@ class AlphaText():
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']
-        elif self.group in ('from_game_return_to_menu', 'show_menu'):
+        elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
         elif self.group[:4] == 'main' or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'ingame_start'):
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in self.group or 'ERROR' in self.group:
+        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
+        elif self.group == 'music_and_sound_switches':
+            self.font = Globals.FONTS['ume_16']
         elif self.group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
-        elif self.group == 'newgame_playertype':
+        elif self.group in ('newgame_playertype', 'pl_money_info'):
             self.font = Globals.FONTS['ubuntu_11']
         else:
             self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
-        if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu'):
+        if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
-        elif self.group == 'main_settings_volume_SELECTOR':
+        elif 'volume_SELECTOR' in self.group:
             self.choose_selector_color('volume', number)
         elif self.group == 'main_new_total_SELECTOR':
             self.choose_selector_color('new_settings_total', number)
         elif self.group == 'main_new_humans_SELECTOR':
             self.choose_selector_color('new_settings_humans', number)
+        elif self.group == 'music_and_sound_switches':
+            self.choose_switch_color(('music', 'sounds')[number])
+        elif self.group == 'pl_info_tab':
+            self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_new_playerlist':
-            self.color = Globals.PLAYERS[number]['color']
+            self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_settings_player_color_SELECTOR':
             self.color = Globals.PLAYERS_COLORS[number]
         elif self.group == 'main_settings_player':
-            self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['color']
+            self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color
         elif 'ERROR' in self.group:
             self.color = Globals.COLORS['light_red']
         else:
@@ -102,7 +108,7 @@ class AlphaText():
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 320 + 55*number), (0, 0))
         elif self.group == 'newgame_playertype':
-            self.x = Globals.RESOLUTION[0]/4 - 50 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number]['name'])[0] + 2
+            self.x = Globals.RESOLUTION[0]/4 - 48 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number].name)[0]
             self.rect = Rect((0, 455 + 30*number), (0, 0))
         elif self.group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
@@ -116,6 +122,25 @@ class AlphaText():
         elif self.group == 'stats_bests':
             self.x = Globals.RESOLUTION[0]/7 - 20
             self.rect = Rect((0, 400), (0, 0))
+        elif self.group == 'pl_info_tab':
+            self.x = Globals.RESOLUTION[0]+1780
+            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*39), (0, 0))
+        elif self.group == 'pl_money_info':
+            self.x = 'right'
+            self.x_offset = -1781
+            self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
+        elif self.group == 'in_game_volume_SELECTOR':
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+17+25*number
+            self.rect = Rect((0, -92), (0, 0))
+        elif self.group == 'music_and_sound_switches':
+            self.x = Globals.main_scr.labels['sounds'].rect.w+25
+            self.rect = Rect((0, 28*number-63), (0, 0))
+        elif self.group == 'volume_in_game':
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+12
+            self.rect = Rect((0, -100), (0, 0))
+        elif self.group == 'volume_in_game_lbl':
+            self.x = 5
+            self.rect = Rect((0, 28*number-94), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
@@ -147,11 +172,17 @@ class AlphaText():
         elif type == 'new_settings_total':
             state = num < len(Globals.PLAYERS)
         elif type == 'new_settings_humans':
-            state = Globals.PLAYERS[num]['human']
+            state = Globals.PLAYERS[num].human
         if state:
             self.color = Globals.COLORS['white']
         else:
             self.color = Globals.COLORS['grey63']
+    def choose_switch_color(self, type):
+        if type in ('music', 'sounds'):
+            if Globals.SETTINGS[type]:
+                self.color = Globals.COLORS['deep_green']
+            else:
+                self.color = Globals.COLORS['light_red']
     def RErender(self):
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):

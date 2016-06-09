@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import FieldCellsData, Globals, pygame
+import FieldCellsData, Globals, pygame, random
 from GameObjects import GameField
 from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
-from MenuItems import MainCursor, MenuItem
+from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
 from sys import exit as SYSEXIT
@@ -34,7 +34,8 @@ class MainScreen():
                     for key in ('background', 'gamebackground'):
                         self.pics[key].change_new_pos((1820, -130-self.pics[key].new_pos[1]))
                     self.pics['logo'].change_new_pos((1820, 0))
-                    self.objects['gamefield'].change_new_pos((1820, 0))
+                    for obj in self.objects.values():
+                        obj.change_new_pos((1820, 0))
                     self.labels.update({'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
                                         'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                         'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
@@ -53,7 +54,8 @@ class MainScreen():
                         self.pics[key].new_pos = (self.pics[key].new_pos[0] + 1820, self.pics[key].new_pos[1])
                     for label in self.labels.values():
                         label.new_pos = (label.new_pos[0] + 1820, label.new_pos[1])
-                    self.objects['gamefield'].change_new_pos((1820, 0))
+                    for obj in self.objects.values():
+                        obj.change_new_pos((1820, 0))
                 else:
                     self.move_APPINFO((0, 50))
                     self.objects = {}
@@ -79,7 +81,7 @@ class MainScreen():
             self.make_settings_screen()
         elif 'main_new_edit_player' in type or type == 'main_settings_player':
             if key == 'exit':
-                Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'] = self.labels['name_MI'].symbols
+                Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name = self.labels['name_MI'].symbols
                 self.objects = {}
             self.make_playersettings_screen()
             if 'main_new_edit_player' in type:
@@ -94,7 +96,7 @@ class MainScreen():
             self.menuitems = {'exit'        : MenuItem(Globals.TRANSLATION[21], type, 'main_settings_player_exit')}
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
-                                'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player', 0)})
+                                'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player', 0)})
             self.make_obj_for_enter_name()
         elif type == 'main_new_game':
             self.init_avail_colors_and_names()
@@ -118,8 +120,8 @@ class MainScreen():
             if key == 'exit':
                 self.check_error(type)
             for i in range(len(Globals.PLAYERS)):
-                self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
-                if not Globals.PLAYERS[i]['human']:
+                self.menuitems.update({'player'+str(i)  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                if not Globals.PLAYERS[i].human:
                     self.labels.update({'player'+str(i) : AlphaText('AI', 'newgame_playertype', i)})
             if not Globals.SETTINGS['block']:
                 self.menuitems.update({'game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›', 'main_new_game_switch', 'main_settings_left_MI', -1)})
@@ -127,13 +129,22 @@ class MainScreen():
         elif type == 'game_start':
             for key in ('avail_colors', 'avail_names'):
                 Globals.TEMP_VARS.pop(key)
+            random.shuffle(Globals.PLAYERS)
             Globals.TEMP_VARS['onboard_text'] = read_onboard_text()
             Globals.TEMP_VARS['cells_cost'] = FieldCellsData.read_cells_costs()
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
-            self.objects = {'gamefield'         : GameField()}
+            for i in range(len(Globals.PLAYERS)):
+                if Globals.TEMP_VARS['cur_game']:
+                    Globals.PLAYERS[i].money = 20000
+                else:
+                    Globals.PLAYERS[i].money = 1500
+                self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
+                self.labels.update({'money_player'+str(i)   : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
+            self.objects = {'cur_turn_highlighter'  : CurTurnHighlighter(self.menuitems),
+                            'gamefield'             : GameField()}
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
             for key in ('background', 'gamebackground', 'logo'):
@@ -186,7 +197,7 @@ class MainScreen():
         for label in self.labels.values():
 #            print('LABEL')
             label.render()
-#        print(Globals.TEMP_VARS.keys())
+#        print(Globals.TEMP_VARS)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
@@ -239,12 +250,12 @@ class MainScreen():
                     if new < old:
                         self.cursor.add_rm_keys(False, dictkey)
                         self.menuitems.pop(dictkey)
-                        if not Globals.PLAYERS[i-1]['human']:
+                        if not Globals.PLAYERS[i-1].human:
                             self.labels.pop(dictkey)
                         selector_color = 'grey63'
                     elif new > old:
                         add_new_player(False)
-                        self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i]['name'], 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                        self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
                         self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
                         self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-2, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
                         selector_color = 'white'
@@ -258,9 +269,9 @@ class MainScreen():
         elif type == 'main_new_humans_SELECTOR':
             for i in range(1, len(Globals.PLAYERS)):
                 dictkey = 'player'+str(i)
-                if Globals.PLAYERS[i]['human'] and dictkey in self.labels.keys():
+                if Globals.PLAYERS[i].human and dictkey in self.labels.keys():
                     self.labels.pop(dictkey)
-                elif not Globals.PLAYERS[i]['human'] and dictkey not in self.labels.keys():
+                elif not Globals.PLAYERS[i].human and dictkey not in self.labels.keys():
                     self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
                     self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
         elif type == 'ingame_start_game':
@@ -269,10 +280,19 @@ class MainScreen():
             for string in ('background', 'logo'):
                 self.pics.pop(string)
                 self.pics['order'].remove(string)
-            self.labels = {}
+            for lbl in self.labels.keys():
+                if 'money_player' not in lbl:
+                    self.labels.pop(lbl)
+            self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),
+                                'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
+                                'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})
             self.cursor = None
-            self.menuitems = {'exit'        : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
-                              'show_menu'   : MenuItem(u'↓', 'show_menu', 'show_menu')}
+            self.menuitems.pop('start_game')
+            self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
+                                   'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
+                                   'volume_level'   : MenuItem('', 'in_game_volume_SELECTOR', 'volume_in_game'),
+                                   'music'          : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['music'])], 'in_game_music_switch', 'music_and_sound_switches', 0),
+                                   'sounds'         : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
@@ -282,9 +302,12 @@ class MainScreen():
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
             if not state:
                 state = -1
-            cells = [cell.text for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
-            for obj in [self.pics['gamebackground'], self.objects['gamefield'], self.menuitems['exit'].text, self.menuitems['show_menu'].text] + cells:
-                obj.new_pos = count_new_pos(obj.new_pos, (0, state*100))
+            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield']]
+            objects_to_move += [cell for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
+            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]
+            objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
+            for obj in objects_to_move:
+                obj.change_new_pos((0, state*100))
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
@@ -316,7 +339,7 @@ class MainScreen():
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
         self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.LANGUAGES[Globals.SETTINGS['language']][1]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
-                          'player'      : MenuItem(Globals.PLAYERS[0]['name'], 'main_settings_player', 'main_settings_player', 0),
+                          'player'      : MenuItem(Globals.PLAYERS[0].name, 'main_settings_player', 'main_settings_player', 0),
                           'hotkeys'     : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['hotkeys'])]+u' ›', 'main_settings_hotkeys', 'main_settings_left_MI', 2),
                           'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
                           'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 4),
@@ -334,7 +357,7 @@ class MainScreen():
     def make_obj_for_enter_name(self):
         self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
     def make_playersettings_screen(self):
-        self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']]['name'], 'main_settings_player_name', 'main_settings_player', 0),
+        self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player_name', 'main_settings_player', 0),
                           'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2)}
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[22], 'settings_left', 1),
@@ -343,10 +366,10 @@ class MainScreen():
         Globals.TEMP_VARS['avail_colors'] = list(Globals.PLAYERS_COLORS)
         Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')
         for player in Globals.PLAYERS:
-            if player['color'] in Globals.TEMP_VARS['avail_colors']:
-                Globals.TEMP_VARS['avail_colors'].remove(player['color'])
-            if player['name'] in Globals.TEMP_VARS['avail_names']:
-                Globals.TEMP_VARS['avail_names'].remove(player['name'])
+            if player.color in Globals.TEMP_VARS['avail_colors']:
+                Globals.TEMP_VARS['avail_colors'].remove(player.color)
+            if player.name in Globals.TEMP_VARS['avail_names']:
+                Globals.TEMP_VARS['avail_names'].remove(player.name)
     def check_error(self, type):
         if type == 'main_new_game':
             status = self.check_doubles_for_players()
@@ -361,5 +384,5 @@ class MainScreen():
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
-                if Globals.PLAYERS[i]['color'] == Globals.PLAYERS[j]['color'] or Globals.PLAYERS[i]['name'] == Globals.PLAYERS[j]['name']:
+                if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True
