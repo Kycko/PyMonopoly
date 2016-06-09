@@ -318,6 +318,8 @@ class MainScreen():
                 keys = ('volume_level', 'music', 'sounds')
                 for obj in [self.labels[key] for key in keys] + [self.menuitems[key] for key in keys]:
                     obj.change_new_pos(offset)
+        elif type == 'main_main' and 'show_menu' in self.menuitems.keys() and self.menuitems['show_menu'].text.symbols == u'↓':
+            return None
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
