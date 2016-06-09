@@ -18,9 +18,9 @@ class AlphaText():
             self.font = Globals.FONTS['ume_32']
         elif self.group[:4] == 'main' or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'ingame_start'):
             self.font = Globals.FONTS['ubuntu_24']
-        elif self.group in ('stats_common', 'volume_in_game_lbl'):
+        elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left') or 'stats_table' in self.group or 'ERROR' in self.group:
+        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
@@ -126,14 +126,14 @@ class AlphaText():
             self.x_offset = -1781
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
         elif self.group == 'in_game_volume_SELECTOR':
-            self.x = Globals.main_scr.labels['volume_level'].rect.w+20+25*number
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+17+25*number
             self.rect = Rect((0, -92), (0, 0))
         elif self.group == 'volume_in_game':
-            self.x = Globals.main_scr.labels['volume_level'].rect.w+15
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+12
             self.rect = Rect((0, -100), (0, 0))
         elif self.group == 'volume_in_game_lbl':
             self.x = 5
-            self.rect = Rect((0, -98), (0, 0))
+            self.rect = Rect((0, 28*number-94), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
