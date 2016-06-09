@@ -154,6 +154,9 @@ class AlphaText():
         elif self.group == 'APPVERSION':
             self.x = Globals.PICS['logo'].pos[0] + 112
             self.rect = Rect((0, Globals.PICS['logo'].pos[1] + 50), (0, 0))
+        temp = ('in_game_volume_SELECTOR', 'music_and_sound_switches', 'volume_in_game', 'volume_in_game_lbl')
+        if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds'] and self.group in temp:
+            self.rect.y -= 33
     def init_new_pos(self):
         if self.group == 'show_menu':
             self.new_pos = self.rect.topleft
