@@ -266,7 +266,7 @@ class MenuSelector():
             item.render(True)
     def action(self):
         if 'volume_SELECTOR' in self.type:
-            change_volume(float(self.active+1)/10)
+            change_volume(float(self.active+1)/10, self.type == 'in_game_volume_SELECTOR')
             for i in range(len(self.items)):
                 self.items[i].choose_selector_color('volume', i)
                 self.items[i].RErender()

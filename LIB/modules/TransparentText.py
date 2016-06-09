@@ -33,7 +33,7 @@ class AlphaText():
         #--- Colors
         if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
-        elif self.group == 'main_settings_volume_SELECTOR':
+        elif 'volume_SELECTOR' in self.group:
             self.choose_selector_color('volume', number)
         elif self.group == 'main_new_total_SELECTOR':
             self.choose_selector_color('new_settings_total', number)
