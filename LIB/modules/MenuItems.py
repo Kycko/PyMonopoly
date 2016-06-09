@@ -99,7 +99,10 @@ class MenuItem():
             Globals.TEMP_VARS.pop('edit_player')
             save_settings()
         elif self.group == 'music_and_sound_switches':
-            switch_sound_state(self.type[8:len(self.type)-7], Globals.SETTINGS[self.type[8:len(self.type)-7]], True)
+            type = self.type[8:len(self.type)-7]
+            switch_sound_state(type, Globals.SETTINGS[type], True)
+            self.text.choose_switch_color(type)
+            self.update_text((u'✖', u'✓')[int(Globals.SETTINGS[type])])
             return None
         if 'SELECTOR' in self.type:
             return self.selector.action()

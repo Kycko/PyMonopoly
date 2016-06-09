@@ -39,6 +39,8 @@ class AlphaText():
             self.choose_selector_color('new_settings_total', number)
         elif self.group == 'main_new_humans_SELECTOR':
             self.choose_selector_color('new_settings_humans', number)
+        elif self.group == 'music_and_sound_switches':
+            self.choose_switch_color(('music', 'sounds')[number])
         elif self.group == 'pl_info_tab':
             self.color = Globals.PLAYERS[number].color
         elif self.group == 'main_new_playerlist':
@@ -175,6 +177,12 @@ class AlphaText():
             self.color = Globals.COLORS['white']
         else:
             self.color = Globals.COLORS['grey63']
+    def choose_switch_color(self, type):
+        if type in ('music', 'sounds'):
+            if Globals.SETTINGS[type]:
+                self.color = Globals.COLORS['deep_green']
+            else:
+                self.color = Globals.COLORS['light_red']
     def RErender(self):
         self.text = self.font.render(self.symbols, True, self.color)
     def move_text(self):

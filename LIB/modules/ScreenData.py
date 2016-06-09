@@ -291,8 +291,8 @@ class MainScreen():
             self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
                                    'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
                                    'volume_level'   : MenuItem('', 'in_game_volume_SELECTOR', 'volume_in_game'),
-                                   'music'          : MenuItem((u'×', u'✓')[int(Globals.SETTINGS['music'])], 'in_game_music_switch', 'music_and_sound_switches', 0),
-                                   'sounds'         : MenuItem((u'×', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
+                                   'music'          : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['music'])], 'in_game_music_switch', 'music_and_sound_switches', 0),
+                                   'sounds'         : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
