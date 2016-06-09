@@ -32,6 +32,9 @@ class MenuItem():
         elif self.group == 'volume_in_game':
             self.cursor = OwnCursor('grey', self.active_zone)
             self.tooltip = None
+        elif self.group == 'music_and_sound_switches':
+            self.cursor = OwnCursor('light_blue', self.active_zone)
+            self.tooltip = None
         elif self.group == 'stats_switch':
             self.cursor = OwnCursor('light_green', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: ← →', 'top', self.text)
@@ -51,7 +54,7 @@ class MenuItem():
         self.make_active_zone()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.rect = self.active_zone.copy()
-            if self.group not in ('onboard_select_cell', 'volume_in_game'):
+            if self.group not in ('onboard_select_cell', 'volume_in_game', 'music_and_sound_switches'):
                 self.tooltip.move_text(self.text.rect)
     def change_new_pos(self, offset):
         self.text.new_pos = count_new_pos(self.text.new_pos, offset)
@@ -70,7 +73,7 @@ class MenuItem():
                 self.active_zone.size = (400, self.text.rect.h+6)
         elif self.group == 'onboard_select_cell':
             self.active_zone = self.text.rect
-        elif self.group in ('from_game_return_to_menu', 'show_menu'):
+        elif self.group in ('from_game_return_to_menu', 'show_menu', 'music_and_sound_switches'):
             self.active_zone = self.text.rect.inflate(20, 10)
         elif self.type == 'in_game_volume_SELECTOR':
             self.active_zone = self.text.rect
@@ -95,6 +98,9 @@ class MenuItem():
             Globals.SETTINGS['pl_color'] = Globals.PLAYERS[0].color
             Globals.TEMP_VARS.pop('edit_player')
             save_settings()
+        elif self.group == 'music_and_sound_switches':
+            switch_sound_state(self.type[8:len(self.type)-7], Globals.SETTINGS[self.type[8:len(self.type)-7]], True)
+            return None
         if 'SELECTOR' in self.type:
             return self.selector.action()
         elif self.type == 'main_sysexit':

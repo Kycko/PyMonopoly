@@ -22,6 +22,8 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_20']
         elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
+        elif self.group == 'music_and_sound_switches':
+            self.font = Globals.FONTS['ume_16']
         elif self.group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
         elif self.group in ('newgame_playertype', 'pl_money_info'):
@@ -128,6 +130,9 @@ class AlphaText():
         elif self.group == 'in_game_volume_SELECTOR':
             self.x = Globals.main_scr.labels['volume_level'].rect.w+17+25*number
             self.rect = Rect((0, -92), (0, 0))
+        elif self.group == 'music_and_sound_switches':
+            self.x = Globals.main_scr.labels['sounds'].rect.w+25
+            self.rect = Rect((0, 28*number-63), (0, 0))
         elif self.group == 'volume_in_game':
             self.x = Globals.main_scr.labels['volume_level'].rect.w+12
             self.rect = Rect((0, -100), (0, 0))
