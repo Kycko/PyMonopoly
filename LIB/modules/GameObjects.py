@@ -19,6 +19,7 @@ class GameField():
             Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
+        self.new_pos = (2120, 70)
         self.change_new_pos((-1820, 0))
     def count_size_and_pos(self, num):
         if not num % 10:
@@ -43,7 +44,7 @@ class GameField():
                 y = 521
         return size, (x, y)
     def change_new_pos(self, offset):
-        self.new_pos = count_new_pos(self.pos, offset)
+        self.new_pos = count_new_pos(self.new_pos, offset)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
