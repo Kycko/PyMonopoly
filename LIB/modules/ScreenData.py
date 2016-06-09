@@ -308,6 +308,16 @@ class MainScreen():
             objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
             for obj in objects_to_move:
                 obj.change_new_pos((0, state*100))
+        elif type == 'music_and_sound_switches':
+            offset = None
+            if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds']:
+                offset = (0, -33)
+            elif self.labels['volume_level'].new_pos[1] < 0:
+                offset = (0, 33)
+            if offset:
+                keys = ('volume_level', 'music', 'sounds')
+                for obj in [self.labels[key] for key in keys] + [self.menuitems[key] for key in keys]:
+                    obj.change_new_pos(offset)
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
