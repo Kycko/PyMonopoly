@@ -283,6 +283,7 @@ class MainScreen():
             for lbl in self.labels.keys():
                 if 'money_player' not in lbl:
                     self.labels.pop(lbl)
+            self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl')})
             self.cursor = None
             self.menuitems.pop('start_game')
             self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
@@ -297,7 +298,7 @@ class MainScreen():
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
             if not state:
                 state = -1
-            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield']]
+            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.labels['volume_level']]
             objects_to_move += [cell for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
             objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level')]
             for obj in objects_to_move:
