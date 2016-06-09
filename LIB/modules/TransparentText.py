@@ -130,17 +130,17 @@ class AlphaText():
             self.x_offset = -1781
             self.rect = Rect((0, Globals.RESOLUTION[1]-(len(Globals.PLAYERS)-number)*40+23), (0, 0))
         elif self.group == 'in_game_volume_SELECTOR':
-            self.x = Globals.main_scr.labels['volume_level'].rect.w+17+25*number
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+20+25*number
             self.rect = Rect((0, -92), (0, 0))
         elif self.group == 'music_and_sound_switches':
-            self.x = Globals.main_scr.labels['sounds'].rect.w+25
-            self.rect = Rect((0, 28*number-63), (0, 0))
+            self.x = Globals.main_scr.labels['sounds'].rect.w+28
+            self.rect = Rect((0, 31*number-59), (0, 0))
         elif self.group == 'volume_in_game':
-            self.x = Globals.main_scr.labels['volume_level'].rect.w+12
+            self.x = Globals.main_scr.labels['volume_level'].rect.w+15
             self.rect = Rect((0, -100), (0, 0))
         elif self.group == 'volume_in_game_lbl':
-            self.x = 5
-            self.rect = Rect((0, 28*number-94), (0, 0))
+            self.x = 8
+            self.rect = Rect((0, 32*number-94), (0, 0))
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))

@@ -103,7 +103,7 @@ class MenuItem():
             switch_sound_state(type, Globals.SETTINGS[type], True)
             self.text.choose_switch_color(type)
             self.update_text((u'✖', u'✓')[int(Globals.SETTINGS[type])])
-            return None
+            return self.group
         if 'SELECTOR' in self.type:
             return self.selector.action()
         elif self.type == 'main_sysexit':
