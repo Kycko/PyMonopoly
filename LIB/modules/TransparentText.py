@@ -16,6 +16,8 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
+        elif self.group == 'ingame_dices':
+            self.font = Globals.FONTS['dejavu_72']
         elif self.group[:4] in ('inga', 'main') or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player'):
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
@@ -57,7 +59,7 @@ class AlphaText():
         if self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
-        elif self.group == 'ingame_main':
+        elif self.group in ('ingame_main', 'ingame_dices'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 400+35*number), (0, 0))

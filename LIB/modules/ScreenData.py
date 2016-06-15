@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import FieldCellsData, Globals, pygame, random
+import FieldCellsData, GameMechanics, Globals, pygame, random
 from GameObjects import GameField
 from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
@@ -230,7 +230,11 @@ class MainScreen():
                 SYSEXIT()
     def action_call(self, key):
         type = self.menuitems[key].action(key)
-        if type == 'stats_switch':
+        if type == 'roll_the_dice':
+            self.disable_main_menu()
+            points, image = GameMechanics.roll_the_dice()
+            self.labels['dices'] = AlphaText(image, 'ingame_dices')
+        elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
             self.labels['APPVERSION'].update_text(Globals.TRANSLATION[4]+Globals.VERSION)
@@ -405,7 +409,9 @@ class MainScreen():
                                    'trade' :            MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)})
             self.cursor = MainCursor(self.menuitems, 'ingame_main')
         else:
-            for key in self.menuitems.keys():
-                if key in ('roll_the_dice', 'trade'):
-                    self.menuitems.pop(key)
-            self.cursor = None
+            self.disable_main_menu()
+    def disable_main_menu(self):
+        for key in self.menuitems.keys():
+            if key in ('roll_the_dice', 'trade'):
+                self.menuitems.pop(key)
+        self.cursor = None
