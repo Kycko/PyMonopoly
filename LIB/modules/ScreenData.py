@@ -134,6 +134,7 @@ class MainScreen():
             Globals.TEMP_VARS['cells_cost'] = FieldCellsData.read_cells_costs()
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
+            Globals.TEMP_VARS['cur_turn'] = 0
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             for i in range(len(Globals.PLAYERS)):
@@ -286,7 +287,7 @@ class MainScreen():
             self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),
                                 'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
                                 'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})
-            self.cursor = None
+            self.new_turn()
             self.menuitems.pop('start_game')
             self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
                                    'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
@@ -398,3 +399,13 @@ class MainScreen():
             for j in range(i+1, len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True
+    def new_turn(self):
+        if Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].human:
+            self.menuitems.update({'roll_the_dice' :    MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0),
+                                   'trade' :            MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)})
+            self.cursor = MainCursor(self.menuitems, 'ingame_main')
+        else:
+            for key in self.menuitems.keys():
+                if key in ('roll_the_dice', 'trade'):
+                    self.menuitems.pop(key)
+            self.cursor = None
