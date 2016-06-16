@@ -20,7 +20,6 @@ class GameField():
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
-        self.change_new_pos((-1820, 0))
     def count_size_and_pos(self, num):
         if not num % 10:
             size = (80, 80)
@@ -45,27 +44,16 @@ class GameField():
         return size, (x, y)
     def change_new_pos(self, offset):
         self.new_pos = count_new_pos(self.new_pos, offset)
+        for player in Globals.PLAYERS:
+            player.change_new_pos(offset)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
-        counter = []
         for player in Globals.PLAYERS:
-            field = player.cur_field
-            cell = self.cells[field]
-            order = counter.count(field)
-            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
-            y = cell.pos[1]+self.pos[1]
-            if field <= 10:
-                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
-            else:
-                y += ((order//3))*15
-            if cell.group in (7, 8):
-                x += 19
-            Globals.screen.blit(player.game_piece, (x, y))
-            counter.append(field)
+            player.render()
 class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
         #--- Onboard text
@@ -145,3 +133,20 @@ class FieldCell():
             if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
                 y -= 20
             self.surf.blit(pic, (x, y))
+
+'''        counter = []
+        for player in Globals.PLAYERS:
+            field = player.cur_field
+            cell = self.cells[field]
+            order = counter.count(field)
+            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
+            y = cell.pos[1]+self.pos[1]
+            if field <= 10:
+                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
+            else:
+                y += ((order//3))*15
+            if cell.group in (7, 8):
+                x += 19
+            Globals.screen.blit(player.game_piece, (x, y))
+            counter.append(field)
+'''

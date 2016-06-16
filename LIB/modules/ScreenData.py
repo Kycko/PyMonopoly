@@ -15,6 +15,7 @@ class MainScreen():
             self.pics.pop('gamebackground')
             self.pics['order'].remove('gamebackground')
             self.objects = {}
+            create_players_list()
         if type == 'main_main':
             if key != 'exit':
                 self.pics = {'background'   : Sprite(((Globals.RESOLUTION[0]-1820)/2, -130), Globals.PICS['background'], 50),
@@ -26,7 +27,8 @@ class MainScreen():
                                'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
                 self.objects = {}
             else:
-                create_players_list()
+                if self.menuitems['exit'].group not in ('from_game_return_to_menu', 'ingame_start'):
+                    create_players_list()
                 if self.menuitems['exit'].group == 'from_game_return_to_menu':
                     self.pics.update({'background'  : Sprite((((Globals.RESOLUTION[0]-1820)/2)-1820, self.pics['gamebackground'].pos[1]), Globals.PICS['background'], 50),
                                       'logo'        : Globals.PICS['logo'],
@@ -137,15 +139,17 @@ class MainScreen():
             Globals.TEMP_VARS['cur_turn'] = 0
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
+            self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
+                Globals.PLAYERS[i].initialize_coords(i)
                 if Globals.TEMP_VARS['cur_game']:
                     Globals.PLAYERS[i].money = 20000
                 else:
                     Globals.PLAYERS[i].money = 1500
                 self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
                 self.labels.update({'money_player'+str(i)   : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
-            self.objects = {'cur_turn_highlighter'  : CurTurnHighlighter(self.menuitems),
-                            'gamefield'             : GameField()}
+            self.objects['gamefield'].change_new_pos((-1820, 0))
+            self.objects['cur_turn_highlighter'] = CurTurnHighlighter(self.menuitems)
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
                               'order'           : ['background', 'gamebackground', 'logo']})
             for key in ('background', 'gamebackground', 'logo'):

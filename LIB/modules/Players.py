@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
+import GlobalFuncs
 from pygame import draw, Rect, Surface
 
 class Player():
@@ -12,3 +13,27 @@ class Player():
         draw.rect(self.game_piece, self.color, Rect((0, 0), (16, 16)))
         draw.rect(self.game_piece, Globals.COLORS['black'], Rect((0, 0), (16, 16)), 1)
         self.game_piece.blit(Globals.FONTS['ubuntu_11'].render(self.name[0], True, Globals.COLORS['black']), (4, 1))
+    def initialize_coords(self, number):
+        self.game_piece_order = 0
+        for i in range(number):
+            if Globals.PLAYERS[i].cur_field == self.cur_field:
+                self.game_piece_order += 1
+        self.coords = self.count_coords()
+        self.new_coords = self.coords
+    def count_coords(self):
+        gamefield = Globals.main_scr.objects['gamefield']
+        cell = gamefield.cells[self.cur_field]
+        x = cell.pos[0]+(self.game_piece_order%3)*15+gamefield.pos[0]
+        y = cell.pos[1]+gamefield.pos[1]
+        if self.cur_field <= 10:
+            y += int(self.cur_field <= 10)*cell.rect.h-((self.game_piece_order//3)+1)*15-1
+        else:
+            y += ((self.game_piece_order//3))*15
+        if cell.group in (7, 8):
+            x += 19
+        return (x, y)
+    def change_new_pos(self, offset):
+        self.new_coords = GlobalFuncs.count_new_pos(self.new_coords, offset)
+    def render(self):
+        self.coords = GlobalFuncs.slight_animation_count_pos(self.new_coords, self.coords, 10, 50)
+        Globals.screen.blit(self.game_piece, self.coords)
