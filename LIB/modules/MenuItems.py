@@ -400,7 +400,9 @@ class CurTurnHighlighter(Cursor):
         self.surf.blit(Globals.FONTS['ubuntu_11'].render(Globals.TRANSLATION[40], True, Globals.COLORS['grey']), (2, 0))
         self.new_cords = (self.rect.x-1820, self.rect.y)
     def change_new_pos(self, offset):
-        self.new_cords = (self.new_cords[0]+offset[0], self.new_cords[1]+offset[1])
+        self.new_cords = count_new_pos(self.new_cords, offset)
+    def move(self):
+        self.new_cords = (self.new_cords[0], self.verts[Globals.TEMP_VARS['cur_turn']])
     def render(self):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 10, 50)
         Cursor.render(self)

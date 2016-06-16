@@ -133,20 +133,3 @@ class FieldCell():
             if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
                 y -= 20
             self.surf.blit(pic, (x, y))
-
-'''        counter = []
-        for player in Globals.PLAYERS:
-            field = player.cur_field
-            cell = self.cells[field]
-            order = counter.count(field)
-            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
-            y = cell.pos[1]+self.pos[1]
-            if field <= 10:
-                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
-            else:
-                y += ((order//3))*15
-            if cell.group in (7, 8):
-                x += 19
-            Globals.screen.blit(player.game_piece, (x, y))
-            counter.append(field)
-'''

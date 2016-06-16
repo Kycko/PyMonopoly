@@ -235,9 +235,15 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action(key)
         if type == 'roll_the_dice':
-            self.disable_main_menu()
-            points, image = GameMechanics.roll_the_dice()
+#            self.disable_main_menu()
+            dice1, dice2, image = GameMechanics.roll_the_dice()
             self.labels['dices'] = AlphaText(image, 'ingame_dices')
+            Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].move_forward(dice1 + dice2)
+            if dice1 != dice2:
+                Globals.TEMP_VARS['cur_turn'] += 1
+                if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS):
+                    Globals.TEMP_VARS['cur_turn'] = 0
+                self.objects['cur_turn_highlighter'].move()
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -305,7 +311,7 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
-            clear_TEMP_VARS('cur_game')
+            clear_TEMP_VARS(('cur_game', 'cur_turn'))
         elif type == 'show_menu':
             state = int(self.menuitems['show_menu'].text.symbols == u'↓')
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])

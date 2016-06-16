@@ -16,8 +16,7 @@ class Player():
     def initialize_coords(self, number):
         self.game_piece_order = 0
         for i in range(number):
-            if Globals.PLAYERS[i].cur_field == self.cur_field:
-                self.game_piece_order += 1
+            self.game_piece_order += int(Globals.PLAYERS[i].cur_field == self.cur_field)
         self.coords = self.count_coords()
         self.new_coords = self.coords
     def count_coords(self):
@@ -34,6 +33,16 @@ class Player():
         return (x, y)
     def change_new_pos(self, offset):
         self.new_coords = GlobalFuncs.count_new_pos(self.new_coords, offset)
+    def move_forward(self, points):
+        self.cur_field += points
+        if self.cur_field > 39:
+            self.cur_field -= 40
+        self.count_players_on_one_field()
+        self.new_coords = self.count_coords()
+    def count_players_on_one_field(self):
+        self.game_piece_order = -1
+        for player in Globals.PLAYERS:
+            self.game_piece_order += int(player.cur_field == self.cur_field)
     def render(self):
         self.coords = GlobalFuncs.slight_animation_count_pos(self.new_coords, self.coords, 10, 50)
         Globals.screen.blit(self.game_piece, self.coords)
