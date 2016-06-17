@@ -106,6 +106,8 @@ class MenuItem():
             return self.group
         if 'SELECTOR' in self.type:
             return self.selector.action()
+        elif self.type == 'ingame_start_game' and self.text.rect.x != 547:
+            return None
         elif self.type == 'main_sysexit':
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys'):

@@ -13,6 +13,7 @@ class Player():
         draw.rect(self.game_piece, self.color, Rect((0, 0), (16, 16)))
         draw.rect(self.game_piece, Globals.COLORS['black'], Rect((0, 0), (16, 16)), 1)
         self.game_piece.blit(Globals.FONTS['ubuntu_11'].render(self.name[0], True, Globals.COLORS['black']), (4, 1))
+        self.speed_limit = 50
     def initialize_coords(self, number):
         self.game_piece_order = 0
         for i in range(number):
@@ -44,5 +45,5 @@ class Player():
         for player in Globals.PLAYERS:
             self.game_piece_order += int(player.cur_field == self.cur_field)
     def render(self):
-        self.coords = GlobalFuncs.slight_animation_count_pos(self.new_coords, self.coords, 10, 50)
+        self.coords = GlobalFuncs.slight_animation_count_pos(self.new_coords, self.coords, 10, self.speed_limit)
         Globals.screen.blit(self.game_piece, self.coords)

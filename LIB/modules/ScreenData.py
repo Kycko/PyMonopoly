@@ -185,24 +185,16 @@ class MainScreen():
                 return key
         return None
     def render(self, cur_key):
-#        print('PICS:')
         for key in self.pics['order']:
-#            print(key)
             self.pics[key].render()
         for obj in self.objects.values():
-#            print('OBJ')
             obj.render()
         if self.cursor:
-#            print('CURSOR')
             self.cursor.render(self.menuitems)
-#        print('MENUITEMS:')
         for key in self.menuitems.keys():
-#            print(key)
             self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
         for label in self.labels.values():
-#            print('LABEL')
             label.render()
-#        print(Globals.TEMP_VARS)
         Globals.window.blit(Globals.screen, (0, 0))
         pygame.display.flip()
     def events(self, cur_key):
