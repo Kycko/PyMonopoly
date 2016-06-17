@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
 from GlobalFuncs import count_new_pos, slight_animation_count_pos
+from Sprite import Sprite
+from TransparentText import AlphaText
 
 class GameField():
     def __init__(self):
@@ -11,12 +13,12 @@ class GameField():
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
+            Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.cells.append(FieldCell(group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
                                         group_colors,
                                         i,
                                         size,
                                         pos))
-            Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.change_color_for_a_cell(i, 'grey22')
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
@@ -52,6 +54,9 @@ class GameField():
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
+        for cell in self.cells:
+            if cell.step_indicator_visible:
+                cell.step_indicator.render()
         for player in Globals.PLAYERS:
             player.render()
 class FieldCell():
@@ -76,6 +81,8 @@ class FieldCell():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['onboard'][number], True, Globals.COLORS['black'])
         else:
             self.onboard_text = None
+        self.step_indicator = AlphaText(u'●', 'step_indicator', number)
+        self.step_indicator_visible = False
         #--- Position, rect and surface
         self.pos = pos
         self.rect = pygame.Rect((0, 0), size)

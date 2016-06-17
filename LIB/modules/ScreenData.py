@@ -48,6 +48,8 @@ class MainScreen():
                         self.labels[key].rect.x -= 1820
                     for key in ('APPNAME', 'APPVERSION'):
                         self.labels[key].change_new_pos((1820, 0))
+                    for cell in self.objects['gamefield'].cells:
+                        cell.step_indicator.change_new_pos((1820, 0))
                 elif self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
                 elif self.menuitems['exit'].group == 'ingame_start':
@@ -230,9 +232,16 @@ class MainScreen():
         type = self.menuitems[key].action(key)
         if type == 'roll_the_dice':
 #            self.disable_main_menu()
+            for cell in self.objects['gamefield'].cells:
+                cell.step_indicator_visible = False
+                cell.step_indicator.alpha = 5
             dice1, dice2, image = GameMechanics.roll_the_dice()
             self.labels['dices'] = AlphaText(image, 'ingame_dices')
-            Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].move_forward(dice1 + dice2)
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            for i in range(player.cur_field + 1, player.cur_field + dice1 + dice2 + 1):
+                self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
+                self.objects['gamefield'].cells[i-40].step_indicator_visible = True
+            player.move_forward(dice1 + dice2)
             if dice1 != dice2:
                 GameMechanics.change_player()
                 self.objects['cur_turn_highlighter'].move()
@@ -313,6 +322,7 @@ class MainScreen():
                 state = -1
             objects_to_move = [self.pics['gamebackground'], self.objects['gamefield']]
             objects_to_move += [cell for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
+            objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
             objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]
             objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
             for obj in objects_to_move:

@@ -14,6 +14,8 @@ class AlphaText():
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']
+        elif self.group == 'step_indicator':
+            self.font = Globals.FONTS['ume_8']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
         elif self.group == 'ingame_dices':
@@ -59,6 +61,19 @@ class AlphaText():
         if self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
+        elif self.group == 'step_indicator':
+            if number in range(11)+range(20, 31):
+                self.x = Globals.TEMP_VARS['cells_rects'][number].centerx - 4
+            elif number in range(11, 20):
+                self.x = 283
+            elif number in range(31, 40):
+                self.x = 910
+            if number in range(11):
+                self.rect = Rect((0, 679), (0, 0))
+            elif number in range(11, 20)+range(31, 40):
+                self.rect = Rect((0, Globals.TEMP_VARS['cells_rects'][number].centery - 6), (0, 0))
+            elif number in range(20, 31):
+                self.rect = Rect((0, 55), (0, 0))
         elif self.group in ('ingame_main', 'ingame_dices'):
             self.x = 'center'
             self.x_offset = 0
@@ -175,6 +190,9 @@ class AlphaText():
         self.speed_limit = 50
     def change_new_pos(self, offset):
         self.new_pos = (self.new_pos[0] + offset[0], self.new_pos[1] + offset[1])
+    def change_color(self, color):
+        self.color = color
+        self.RErender()
     def choose_selector_color(self, type, num):
         if type == 'volume':
             state = num < Globals.SETTINGS['volume']*10
