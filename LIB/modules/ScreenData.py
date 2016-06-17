@@ -234,9 +234,7 @@ class MainScreen():
             self.labels['dices'] = AlphaText(image, 'ingame_dices')
             Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].move_forward(dice1 + dice2)
             if dice1 != dice2:
-                Globals.TEMP_VARS['cur_turn'] += 1
-                if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS):
-                    Globals.TEMP_VARS['cur_turn'] = 0
+                GameMechanics.change_player()
                 self.objects['cur_turn_highlighter'].move()
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
