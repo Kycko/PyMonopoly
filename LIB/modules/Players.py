@@ -38,12 +38,16 @@ class Player():
         self.cur_field += points
         if self.cur_field > 39:
             self.cur_field -= 40
-        self.count_players_on_one_field()
+        self.game_piece_order = self.count_players_on_one_field()
         self.new_coords = self.count_coords()
     def count_players_on_one_field(self):
-        self.game_piece_order = -1
+        busy = []
         for player in Globals.PLAYERS:
-            self.game_piece_order += int(player.cur_field == self.cur_field)
+            if player.name != self.name and player.cur_field == self.cur_field:
+                busy.append(player.game_piece_order)
+        for i in range(6):
+            if i not in busy:
+                return i
     def render(self):
         self.coords = GlobalFuncs.slight_animation_count_pos(self.new_coords, self.coords, 10, self.speed_limit)
         Globals.screen.blit(self.game_piece, self.coords)

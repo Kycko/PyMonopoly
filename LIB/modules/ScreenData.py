@@ -30,6 +30,8 @@ class MainScreen():
                 if self.menuitems['exit'].group not in ('from_game_return_to_menu', 'ingame_start'):
                     create_players_list()
                 if self.menuitems['exit'].group == 'from_game_return_to_menu':
+                    for player in Globals.PLAYERS:
+                        player.speed_limit = 50
                     self.pics.update({'background'  : Sprite((((Globals.RESOLUTION[0]-1820)/2)-1820, self.pics['gamebackground'].pos[1]), Globals.PICS['background'], 50),
                                       'logo'        : Globals.PICS['logo'],
                                       'order'       : ['background', 'gamebackground', 'logo']})
@@ -304,6 +306,8 @@ class MainScreen():
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
             clear_TEMP_VARS(('cur_game', 'cur_turn'))
+            for player in Globals.PLAYERS:
+                player.speed_limit = 5
         elif type == 'show_menu':
             state = int(self.menuitems['show_menu'].text.symbols == u'↓')
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
