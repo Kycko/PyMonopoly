@@ -231,20 +231,16 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action(key)
         if type == 'roll_the_dice':
-#            self.disable_main_menu()
             for cell in self.objects['gamefield'].cells:
                 cell.step_indicator_visible = False
                 cell.step_indicator.alpha = 5
-            dice1, dice2, image = GameMechanics.roll_the_dice()
-            self.labels['dices'] = AlphaText(image, 'ingame_dices')
+            self.labels['dices'] = AlphaText(GameMechanics.roll_the_dice(), 'ingame_dices')
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            for i in range(player.cur_field + 1, player.cur_field + dice1 + dice2 + 1):
+            for i in range(player.cur_field + 1, player.cur_field + Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'] + 1):
                 self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
                 self.objects['gamefield'].cells[i-40].step_indicator_visible = True
-            player.move_forward(dice1 + dice2)
-            if dice1 != dice2:
-                GameMechanics.change_player()
-                self.objects['cur_turn_highlighter'].move()
+            player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
+            self.change_player()
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -417,6 +413,11 @@ class MainScreen():
             for j in range(i+1, len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True
+    def change_player(self):
+        if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
+            GameMechanics.change_player()
+            self.objects['cur_turn_highlighter'].move()
+        self.new_turn()
     def new_turn(self):
         if Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].human:
             self.menuitems.update({'roll_the_dice' :    MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0),
@@ -425,7 +426,6 @@ class MainScreen():
         else:
             self.disable_main_menu()
     def disable_main_menu(self):
-        for key in self.menuitems.keys():
-            if key in ('roll_the_dice', 'trade'):
-                self.menuitems.pop(key)
+        for key in self.cursor.keys:
+            self.menuitems.pop(key)
         self.cursor = None
