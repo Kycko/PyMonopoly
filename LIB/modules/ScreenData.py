@@ -441,8 +441,8 @@ class MainScreen():
                 text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
         if not cell.owner and (cell.group in range(1, 9) or cell.group in ('railroad', 'service')):
-            self.menuitems.update({'buy_a_cell'          : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
-            'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
+            self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
+                                   'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
             self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
         else:
             self.cursor = None
