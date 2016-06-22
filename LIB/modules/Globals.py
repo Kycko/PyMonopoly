@@ -52,18 +52,21 @@ DIRS['images_etc'] = DIRS['images'] + 'etc/'
 DIRS['sounds'] = DIRS['LIB'] + 'sounds/'
 DIRS['translations'] = DIRS['LIB'] + 'translations/'
 
-FILES = {'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
+FILES = {'font_dejavu'          : DIRS['fonts'] + 'DejaVuSans.ttf',
+         'font_ubuntu'          : DIRS['fonts'] + 'Ubuntu-M.ttf',
          'font_ume'             : DIRS['fonts'] + 'ume-ugo5.ttf',
          'last_game_settings'   : DIRS['settings'] + 'last_game_settings',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
 
-FONTS = {'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
+FONTS = {'dejavu_72'    : pygame.font.Font(FILES['font_dejavu'], 72),
+         'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
          'ubuntu_13'    : pygame.font.Font(FILES['font_ubuntu'], 13),
          'ubuntu_16'    : pygame.font.Font(FILES['font_ubuntu'], 16),
          'ubuntu_20'    : pygame.font.Font(FILES['font_ubuntu'], 20),
          'ubuntu_24'    : pygame.font.Font(FILES['font_ubuntu'], 24),
          'ubuntu_32'    : pygame.font.Font(FILES['font_ubuntu'], 32),
+         'ume_8'        : pygame.font.Font(FILES['font_ume'], 8),
          'ume_12'       : pygame.font.Font(FILES['font_ume'], 12),
          'ume_16'       : pygame.font.Font(FILES['font_ume'], 16),
          'ume_32'       : pygame.font.Font(FILES['font_ume'], 32),

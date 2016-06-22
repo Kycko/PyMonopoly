@@ -106,6 +106,8 @@ class MenuItem():
             return self.group
         if 'SELECTOR' in self.type:
             return self.selector.action()
+        elif self.type == 'ingame_start_game' and self.text.rect.topleft != self.text.new_pos:
+            return None
         elif self.type == 'main_sysexit':
             SYSEXIT()
         elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys'):
@@ -319,8 +321,14 @@ class MainCursor(Cursor):
         self.change_pos(self.keys[0])
         return first_rect
     def make_keys(self, type):
-        if type == 'main_main':
+        if type == 'ingame_continue':
+            self.keys = ['ingame_continue']
+        elif type == 'ingame_buy_or_auction':
+            self.keys = ['buy_a_cell', 'cell_to_an_auction']
+        elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
+        elif type == 'ingame_main':
+            self.keys = ['roll_the_dice', 'trade']
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
@@ -393,12 +401,14 @@ class FieldCellCursor(Cursor):
 class CurTurnHighlighter(Cursor):
     def __init__(self, menuitems):
         self.verts = [menuitems['player'+str(i)].active_zone[1] for i in range(len(Globals.PLAYERS))]
-        Cursor.__init__(self, 80, pygame.Rect((menuitems['player0'].active_zone[0]-162, self.verts[0]), (200, 39)))
+        Cursor.__init__(self, 80, pygame.Rect((menuitems['player'+str(Globals.TEMP_VARS['cur_turn'])].active_zone[0]-162, self.verts[0]), (200, 39)))
         self.draw_rect()
         self.surf.blit(Globals.FONTS['ubuntu_11'].render(Globals.TRANSLATION[40], True, Globals.COLORS['grey']), (2, 0))
         self.new_cords = (self.rect.x-1820, self.rect.y)
     def change_new_pos(self, offset):
-        self.new_cords = (self.new_cords[0]+offset[0], self.new_cords[1]+offset[1])
+        self.new_cords = count_new_pos(self.new_cords, offset)
+    def move(self):
+        self.new_cords = (self.new_cords[0], self.verts[Globals.TEMP_VARS['cur_turn']])
     def render(self):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 10, 50)
         Cursor.render(self)

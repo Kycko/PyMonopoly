@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
 from GlobalFuncs import count_new_pos, slight_animation_count_pos
+from Sprite import Sprite
+from TransparentText import AlphaText
 
 class GameField():
     def __init__(self):
@@ -11,16 +13,15 @@ class GameField():
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
+            Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.cells.append(FieldCell(group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
                                         group_colors,
                                         i,
                                         size,
                                         pos))
-            Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
-            self.change_color_for_a_cell(i, 'grey22')
+            self.change_color_for_a_cell(i, Globals.COLORS['grey22'])
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
-        self.change_new_pos((-1820, 0))
     def count_size_and_pos(self, num):
         if not num % 10:
             size = (80, 80)
@@ -45,29 +46,26 @@ class GameField():
         return size, (x, y)
     def change_new_pos(self, offset):
         self.new_pos = count_new_pos(self.new_pos, offset)
+        for player in Globals.PLAYERS:
+            player.change_new_pos(offset)
     def change_color_for_a_cell(self, num, color):
         self.cells[num].change_color(color)
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
-        counter = []
+        for cell in self.cells:
+            if cell.step_indicator_visible:
+                cell.step_indicator.render()
         for player in Globals.PLAYERS:
-            field = player.cur_field
-            cell = self.cells[field]
-            order = counter.count(field)
-            x = cell.pos[0]+(counter.count(field)%3)*15+self.pos[0]
-            y = cell.pos[1]+self.pos[1]
-            if field <= 10:
-                y += int(field <= 10)*cell.rect.h-((order//3)+1)*15-1
-            else:
-                y += ((order//3))*15
-            if cell.group in (7, 8):
-                x += 19
-            Globals.screen.blit(player.game_piece, (x, y))
-            counter.append(field)
+            player.render()
 class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
+        self.owner = None
+        self.NAME = None
+        self.buildings = 0
+        if number in Globals.TEMP_VARS['onboard_text']['fieldnames'].keys():
+            self.NAME = Globals.TEMP_VARS['onboard_text']['fieldnames'][number]
         #--- Onboard text
         self.number = number
         self.group = Globals.TEMP_VARS['cells_groups'][number]
@@ -88,6 +86,8 @@ class FieldCell():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['onboard'][number], True, Globals.COLORS['black'])
         else:
             self.onboard_text = None
+        self.step_indicator = AlphaText(u'●', 'step_indicator', number)
+        self.step_indicator_visible = False
         #--- Position, rect and surface
         self.pos = pos
         self.rect = pygame.Rect((0, 0), size)
@@ -97,7 +97,7 @@ class FieldCell():
         self.RErender()
     def RErender(self):
         #--- Background
-        pygame.draw.rect(self.surf, Globals.COLORS[self.color], self.rect, 0)
+        pygame.draw.rect(self.surf, self.color, self.rect, 0)
         #--- Group-specific color (for groups 1-8)
         if self.group_color:
             rect = self.rect.copy()
@@ -137,7 +137,10 @@ class FieldCell():
         self.surf.blit(self.group_symbol, (x, y))
         #--- Cell price
         if self.number not in (0, 10) and self.buy_cost:
-            pic = Globals.FONTS['ubuntu_11'].render(str(self.buy_cost), True, Globals.COLORS['black'])
+            temp = self.buy_cost
+            if self.owner:
+                temp = self.rent_costs[self.buildings]
+            pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):
                 x -= 20
