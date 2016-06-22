@@ -19,7 +19,7 @@ class GameField():
                                         i,
                                         size,
                                         pos))
-            self.change_color_for_a_cell(i, 'grey22')
+            self.change_color_for_a_cell(i, Globals.COLORS['grey22'])
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
     def count_size_and_pos(self, num):
@@ -61,6 +61,10 @@ class GameField():
             player.render()
 class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
+        self.owner = None
+        self.NAME = None
+        if number in Globals.TEMP_VARS['onboard_text']['fieldnames'].keys():
+            self.NAME = Globals.TEMP_VARS['onboard_text']['fieldnames'][number]
         #--- Onboard text
         self.number = number
         self.group = Globals.TEMP_VARS['cells_groups'][number]
@@ -92,7 +96,7 @@ class FieldCell():
         self.RErender()
     def RErender(self):
         #--- Background
-        pygame.draw.rect(self.surf, Globals.COLORS[self.color], self.rect, 0)
+        pygame.draw.rect(self.surf, self.color, self.rect, 0)
         #--- Group-specific color (for groups 1-8)
         if self.group_color:
             rect = self.rect.copy()

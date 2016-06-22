@@ -240,7 +240,7 @@ class MainScreen():
                 self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
                 self.objects['gamefield'].cells[i-40].step_indicator_visible = True
             player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
-            self.change_player()
+            self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -350,7 +350,7 @@ class MainScreen():
         self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-new], 'stats_game_name'),
                             'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
-                            'profit'    : AlphaText(Globals.TRANSLATION[10] + '$' + str(data[2]), 'stats_common', 2),
+                            'profit'    : AlphaText(Globals.TRANSLATION[10] + '$ ' + str(data[2]), 'stats_common', 2),
                             'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
         if data[3]['score']:
             for i in range(3, len(data)):
@@ -426,6 +426,23 @@ class MainScreen():
         else:
             self.disable_main_menu()
     def disable_main_menu(self):
+        self.clear_main_menu_entries()
+        self.cursor = None
+    def clear_main_menu_entries(self):
         for key in self.cursor.keys:
             self.menuitems.pop(key)
-        self.cursor = None
+    def player_on_a_new_cell(self, cell):
+        self.clear_main_menu_entries()
+        if cell.NAME:
+            self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
+            if cell.owner:
+                text = Globals.TRANSLATION[45] + cell.owner
+            else:
+                text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
+            self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+        if not cell.owner and (cell.group in range(1, 9) or cell.group in ('railroad', 'service')):
+            self.menuitems.update({'buy_a_cell'          : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
+            'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
+            self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
+        else:
+            self.cursor = None

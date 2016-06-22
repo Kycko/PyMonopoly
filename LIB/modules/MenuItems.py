@@ -106,7 +106,7 @@ class MenuItem():
             return self.group
         if 'SELECTOR' in self.type:
             return self.selector.action()
-        elif self.type == 'ingame_start_game' and self.text.rect.x != 547:
+        elif self.type == 'ingame_start_game' and self.text.rect.topleft != self.text.new_pos:
             return None
         elif self.type == 'main_sysexit':
             SYSEXIT()
@@ -321,7 +321,9 @@ class MainCursor(Cursor):
         self.change_pos(self.keys[0])
         return first_rect
     def make_keys(self, type):
-        if type == 'main_main':
+        if type == 'ingame_buy_or_auction':
+            self.keys = ['buy_a_cell', 'cell_to_an_auction']
+        elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'ingame_main':
             self.keys = ['roll_the_dice', 'trade']

@@ -16,11 +16,13 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
+        elif self.group == 'target_cell_owner':
+            self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
         elif self.group == 'ingame_dices':
             self.font = Globals.FONTS['dejavu_72']
-        elif self.group[:4] in ('inga', 'main') or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player'):
+        elif self.group[:4] in ('inga', 'main') or self.group in ('stats_game_name', 'main_settings_left_MI', 'main_settings_player', 'target_cell_name'):
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
@@ -35,7 +37,9 @@ class AlphaText():
         else:
             self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
-        if self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
+        if self.group == 'target_cell_owner':
+            self.color = Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].color
+        elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif 'volume_SELECTOR' in self.group:
             self.choose_selector_color('volume', number)
@@ -77,7 +81,11 @@ class AlphaText():
         elif self.group in ('ingame_main', 'ingame_dices'):
             self.x = 'center'
             self.x_offset = 0
-            self.rect = Rect((0, 400+35*number), (0, 0))
+            self.rect = Rect((0, 360+35*number), (0, 0))
+        elif self.group[:12] == 'target_cell_':
+            self.x = 'center'
+            self.x_offset = 0
+            self.rect = Rect((0, 430+35*number), (0, 0))
         elif self.group == 'ingame_start':
             self.x = 'center'
             self.x_offset = 1820
@@ -179,8 +187,8 @@ class AlphaText():
         if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds'] and self.group in temp:
             self.rect.y -= 33
     def init_new_pos(self):
-        if self.group == 'show_menu':
-            self.new_pos = self.rect.topleft
+        if self.group[:12] == 'target_cell_':
+            self.new_pos = (self.rect.x, self.rect.y - 70)
         elif self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
@@ -211,7 +219,11 @@ class AlphaText():
             else:
                 self.color = Globals.COLORS['light_red']
     def RErender(self):
+        if self.group == 'target_cell_name':
+            self.font.set_underline(True)
         self.text = self.font.render(self.symbols, True, self.color)
+        if self.group == 'target_cell_name':
+            self.font.set_underline(False)
     def move_text(self):
         self.rect.topleft = slight_animation_count_pos(self.new_pos, self.rect.topleft, 10, self.speed_limit)
     def update_text(self, text, reset_alpha=True):
