@@ -9,12 +9,12 @@ class Player():
         self.color = color
         self.human = human
         self.cur_field = 0
+        self.speed_limit = 50
+    def initialize_coords(self, number):
         self.game_piece = Surface((16, 16))
         draw.rect(self.game_piece, self.color, Rect((0, 0), (16, 16)))
         draw.rect(self.game_piece, Globals.COLORS['black'], Rect((0, 0), (16, 16)), 1)
         self.game_piece.blit(Globals.FONTS['ubuntu_11'].render(self.name[0], True, Globals.COLORS['black']), (4, 1))
-        self.speed_limit = 50
-    def initialize_coords(self, number):
         self.game_piece_order = 0
         for i in range(number):
             self.game_piece_order += int(Globals.PLAYERS[i].cur_field == self.cur_field)

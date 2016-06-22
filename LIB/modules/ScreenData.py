@@ -24,7 +24,7 @@ class MainScreen():
                 self.labels = {'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
                                'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
-                               'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)}
+                               'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2016', 'authors', 1)}
                 self.objects = {}
             else:
                 if self.menuitems['exit'].group not in ('from_game_return_to_menu', 'ingame_start'):
