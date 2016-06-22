@@ -321,7 +321,9 @@ class MainCursor(Cursor):
         self.change_pos(self.keys[0])
         return first_rect
     def make_keys(self, type):
-        if type == 'ingame_buy_or_auction':
+        if type == 'ingame_continue':
+            self.keys = ['ingame_continue']
+        elif type == 'ingame_buy_or_auction':
             self.keys = ['buy_a_cell', 'cell_to_an_auction']
         elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']

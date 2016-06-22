@@ -231,9 +231,6 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action(key)
         if type == 'roll_the_dice':
-            for cell in self.objects['gamefield'].cells:
-                cell.step_indicator_visible = False
-                cell.step_indicator.alpha = 5
             self.labels['dices'] = AlphaText(GameMechanics.roll_the_dice(), 'ingame_dices')
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             for i in range(player.cur_field + 1, player.cur_field + Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'] + 1):
@@ -241,6 +238,13 @@ class MainScreen():
                 self.objects['gamefield'].cells[i-40].step_indicator_visible = True
             player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
             self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
+        elif type == 'ingame_buy_a_cell':
+            self.disable_step_indicators()
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            self.objects['gamefield'].cells[player.cur_field].owner = player.name
+            self.objects['gamefield'].change_color_for_a_cell(player.cur_field, player.color)
+            self.disable_central_labels()
+            self.change_player()
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -299,7 +303,6 @@ class MainScreen():
                                 'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
                                 'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})
             self.new_turn()
-            self.menuitems.pop('start_game')
             self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
                                    'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
                                    'volume_level'   : MenuItem('', 'in_game_volume_SELECTOR', 'volume_in_game'),
@@ -422,8 +425,12 @@ class MainScreen():
         if Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].human:
             self.menuitems.update({'roll_the_dice' :    MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0),
                                    'trade' :            MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)})
-            self.cursor = MainCursor(self.menuitems, 'ingame_main')
-        else:
+            if self.cursor:
+                self.clear_main_menu_entries()
+                self.cursor.screen_switched(self.menuitems, 'ingame_main')
+            else:
+                self.cursor = MainCursor(self.menuitems, 'ingame_main')
+        elif self.cursor:
             self.disable_main_menu()
     def disable_main_menu(self):
         self.clear_main_menu_entries()
@@ -433,6 +440,9 @@ class MainScreen():
             self.menuitems.pop(key)
     def player_on_a_new_cell(self, cell):
         self.clear_main_menu_entries()
+        if cell.group == 'jail':
+            self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue', 'ingame_main', 5)
+            self.cursor.screen_switched(self.menuitems, 'ingame_continue')
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
             if cell.owner:
@@ -446,3 +456,11 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
         else:
             self.cursor = None
+    def disable_step_indicators(self):
+        for cell in self.objects['gamefield'].cells:
+            cell.step_indicator_visible = False
+            cell.step_indicator.alpha = 5
+    def disable_central_labels(self):
+        for key in self.labels.keys():
+            if key[:12] in ('dices', 'target_cell_'):
+                self.labels.pop(key)
