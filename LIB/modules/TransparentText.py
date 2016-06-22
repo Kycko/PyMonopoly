@@ -16,7 +16,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group == 'target_cell_owner':
+        elif self.group in ('target_cell_owner', 'target_cell_info'):
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -85,7 +85,7 @@ class AlphaText():
         elif self.group[:12] == 'target_cell_':
             self.x = 'center'
             self.x_offset = 0
-            self.rect = Rect((0, 430+35*number), (0, 0))
+            self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
         elif self.group == 'ingame_start':
             self.x = 'center'
             self.x_offset = 1820

@@ -38,6 +38,8 @@ class Player():
         self.cur_field += points
         if self.cur_field > 39:
             self.cur_field -= 40
+            self.money += Globals.main_scr.objects['gamefield'].cells[0].buy_cost
+            Globals.main_scr.labels['money_player'+str(Globals.TEMP_VARS['cur_turn'])].update_text(str(self.money))
         self.game_piece_order = self.count_players_on_one_field()
         self.new_coords = self.count_coords()
     def count_players_on_one_field(self):

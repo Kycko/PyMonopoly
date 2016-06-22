@@ -63,6 +63,7 @@ class FieldCell():
     def __init__(self, group_symbol, group_colors, number, size, pos):
         self.owner = None
         self.NAME = None
+        self.buildings = 0
         if number in Globals.TEMP_VARS['onboard_text']['fieldnames'].keys():
             self.NAME = Globals.TEMP_VARS['onboard_text']['fieldnames'][number]
         #--- Onboard text
@@ -136,7 +137,10 @@ class FieldCell():
         self.surf.blit(self.group_symbol, (x, y))
         #--- Cell price
         if self.number not in (0, 10) and self.buy_cost:
-            pic = Globals.FONTS['ubuntu_11'].render(str(self.buy_cost), True, Globals.COLORS['black'])
+            temp = self.buy_cost
+            if self.owner:
+                temp = self.rent_costs[self.buildings]
+            pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):
                 x -= 20

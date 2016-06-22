@@ -239,12 +239,27 @@ class MainScreen():
             player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
             self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
         elif type == 'ingame_buy_a_cell':
-            self.disable_step_indicators()
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            self.objects['gamefield'].cells[player.cur_field].owner = player.name
+            cell = self.objects['gamefield'].cells[player.cur_field]
+            cell.owner = player.name
             self.objects['gamefield'].change_color_for_a_cell(player.cur_field, player.color)
-            self.disable_central_labels()
-            self.change_player()
+            player.money -= Globals.TEMP_VARS['MUST_PAY']
+            cur_turn = Globals.TEMP_VARS['cur_turn']
+            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+        elif type == 'ingame_continue_tax':
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            player.money += Globals.TEMP_VARS['MUST_PAY']
+            self.labels['money_player'+str(Globals.TEMP_VARS['cur_turn'])].update_text(str(player.money))
+        elif type == 'ingame_continue_PAY_RENT':
+            cur_turn = Globals.TEMP_VARS['cur_turn']
+            player = Globals.PLAYERS[cur_turn]
+            cell = self.objects['gamefield'].cells[player.cur_field]
+            player.money -= Globals.TEMP_VARS['MUST_PAY']
+            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+            for i in range(len(Globals.PLAYERS)):
+                if Globals.PLAYERS[i].name == cell.owner:
+                    Globals.PLAYERS[i].money += Globals.TEMP_VARS['MUST_PAY']
+                    self.labels['money_player'+str(i)].update_text(str(Globals.PLAYERS[i].money))
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -341,6 +356,10 @@ class MainScreen():
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
+        if type and (type == 'ingame_buy_a_cell' or type[:16] == 'ingame_continue_'):
+            self.disable_step_indicators()
+            self.disable_central_labels()
+            self.change_player()
     def move_APPINFO(self, offset):
         for obj in (self.pics['logo'], self.labels['APPNAME'], self.labels['APPVERSION']):
             obj.new_pos = count_new_pos(obj.new_pos, offset)
@@ -422,7 +441,11 @@ class MainScreen():
             self.objects['cur_turn_highlighter'].move()
         self.new_turn()
     def new_turn(self):
-        if Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].human:
+        player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+        cell = self.objects['gamefield'].cells[player.cur_field]
+        cell.step_indicator.change_color(player.color)
+        cell.step_indicator_visible = True
+        if player.human:
             self.menuitems.update({'roll_the_dice' :    MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0),
                                    'trade' :            MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)})
             if self.cursor:
@@ -440,22 +463,32 @@ class MainScreen():
             self.menuitems.pop(key)
     def player_on_a_new_cell(self, cell):
         self.clear_main_menu_entries()
-        if cell.group == 'jail':
-            self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue', 'ingame_main', 5)
-            self.cursor.screen_switched(self.menuitems, 'ingame_continue')
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
+        if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
+            self.show_special_cell_info(cell)
+            if cell.group == 'tax':
+                Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+            self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+cell.group, 'ingame_main', 5)
+            self.cursor.screen_switched(self.menuitems, 'ingame_continue')
+        else:
             if cell.owner:
                 text = Globals.TRANSLATION[45] + cell.owner
+                if cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                    type = 'ingame_continue_NO'
+                else:
+                    type = 'ingame_continue_PAY_RENT'
+                    Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
+                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50]+'$ '+str(cell.rent_costs[cell.buildings]), 'target_cell_info', 2)
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
+                self.cursor.screen_switched(self.menuitems, 'ingame_continue')
             else:
                 text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
+                Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+                self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
+                                       'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
+                self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
-        if not cell.owner and (cell.group in range(1, 9) or cell.group in ('railroad', 'service')):
-            self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
-                                   'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
-            self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
-        else:
-            self.cursor = None
     def disable_step_indicators(self):
         for cell in self.objects['gamefield'].cells:
             cell.step_indicator_visible = False
@@ -464,3 +497,10 @@ class MainScreen():
         for key in self.labels.keys():
             if key[:12] in ('dices', 'target_cell_'):
                 self.labels.pop(key)
+    def show_special_cell_info(self, cell):
+        if cell.group == 'tax':
+            text = Globals.TRANSLATION[50] + '$ ' + str(cell.buy_cost)[1:]
+            Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+        else:
+            text = cell.group
+        self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
