@@ -238,6 +238,7 @@ class MainScreen():
                 self.objects['gamefield'].cells[i-40].step_indicator_visible = True
             player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
             self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
+            self.objects['game_log'].add_message(type)
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             cell = self.objects['gamefield'].cells[player.cur_field]
@@ -440,6 +441,7 @@ class MainScreen():
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
             GameMechanics.change_player()
             self.objects['cur_turn_highlighter'].move()
+            self.objects['game_log'].add_message('change_player')
         self.new_turn()
     def new_turn(self):
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
