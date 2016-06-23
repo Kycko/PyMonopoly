@@ -137,6 +137,7 @@ class MainScreen():
                 Globals.TEMP_VARS.pop(key)
             random.shuffle(Globals.PLAYERS)
             Globals.TEMP_VARS['onboard_text'] = read_onboard_text()
+            Globals.TEMP_VARS['rentlabels'] = Globals.TEMP_VARS['onboard_text']['rentlabels']
             Globals.TEMP_VARS['cells_cost'] = FieldCellsData.read_cells_costs()
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
@@ -247,6 +248,7 @@ class MainScreen():
             player.money -= Globals.TEMP_VARS['MUST_PAY']
             cur_turn = Globals.TEMP_VARS['cur_turn']
             self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+            self.menuitems['fieldcell_'+str(player.cur_field)].tooltip.RErender(1)
         elif type == 'ingame_continue_tax':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             player.money += Globals.TEMP_VARS['MUST_PAY']
@@ -328,7 +330,7 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
-            clear_TEMP_VARS(('cur_game', 'cur_turn'))
+            clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
             for player in Globals.PLAYERS:
                 player.speed_limit = 5
         elif type == 'show_menu':

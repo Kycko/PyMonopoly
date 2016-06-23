@@ -160,31 +160,32 @@ class Tooltip():
         #--- Font and color
         font = Globals.FONTS['ubuntu_13']
         #--- Render elements
+        CELL = Globals.main_scr.objects['gamefield'].cells[self.number]
         ##--- Buy cost
         if self.number not in (10, 20):
             color = self.choose_color(0, cell_state)
             self.text.blit(font.render(Globals.TRANSLATION[37], True, color), (0, 18))
-            self.text.blit(font.render(str(Globals.TEMP_VARS['cells_cost'][self.number]), True, color), (font.size(Globals.TRANSLATION[37]+' ')[0], 18))
+            self.text.blit(font.render(str(CELL.buy_cost), True, color), (font.size(Globals.TRANSLATION[37]+' ')[0], 18))
         ##--- Rentlabels
-        if Globals.TEMP_VARS['cells_groups'][self.number] in range(1, 9) + ['railroad', 'service']:
+        if CELL.group in range(1, 9) + ['railroad', 'service']:
             start_string = 6
-            if Globals.TEMP_VARS['cells_groups'][self.number] == 'railroad':
+            if CELL.group == 'railroad':
                 count = 4
-            elif Globals.TEMP_VARS['cells_groups'][self.number] == 'service':
+            elif CELL.group == 'service':
                 count = 2
             else:
                 count = 6 - Globals.TEMP_VARS['cur_game']
                 start_string = 0
             for i in range(count):
                 color = self.choose_color(i+1, cell_state)
-                self.text.blit(font.render(Globals.TEMP_VARS['onboard_text']['rentlabels'][i+start_string], True, color), (0, 45+i*15))
-                string = str(Globals.TEMP_VARS['cells_rent_costs'][self.number][i])
+                self.text.blit(font.render((Globals.TEMP_VARS['rentlabels'][i+start_string]), True, color), (0, 45+i*15))
+                string = str(CELL.rent_costs[i])
                 self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 45+i*15))
             statuses = ('mortrage_cost', 'mortraged')
             for i in range(len(statuses)):
                 color = self.choose_color(statuses[i], cell_state)
                 self.text.blit(font.render(Globals.TRANSLATION[38+i], True, color), (0, 60+(count+i)*15))
-                string = str(int((Globals.TEMP_VARS['cells_cost'][self.number]/2)+((Globals.TEMP_VARS['cells_cost'][self.number]/2)*0.1*i)))
+                string = str(int((CELL.buy_cost/2)+((CELL.buy_cost/2)*0.1*i)))
                 self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 60+(count+i)*15))
     def choose_color(self, cur, needed):
         if cur == needed:
