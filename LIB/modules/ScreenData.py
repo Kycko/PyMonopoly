@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FieldCellsData, GameMechanics, Globals, pygame, random
-from GameObjects import GameField
+from GameObjects import GameField, GameLog
 from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
@@ -314,6 +314,7 @@ class MainScreen():
             for lbl in self.labels.keys():
                 if 'money_player' not in lbl:
                     self.labels.pop(lbl)
+            self.objects['game_log'] = GameLog()
             self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),
                                 'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
                                 'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})

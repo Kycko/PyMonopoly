@@ -16,7 +16,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info'):
+        elif self.group in ('target_cell_owner', 'target_cell_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -39,6 +39,8 @@ class AlphaText():
         #--- Colors
         if self.group == 'target_cell_owner':
             self.color = Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].color
+        elif 'gamelog_message' in self.group:
+            self.choose_switch_color(self.group)
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif 'volume_SELECTOR' in self.group:
@@ -62,7 +64,10 @@ class AlphaText():
         else:
             self.color = Globals.COLORS['white']
         #--- Position
-        if self.group == 'onboard_select_cell':
+        if self.group[:16] == 'gamelog_message_':
+            self.x = 0
+            self.rect = Rect((0, 0+18*number), (0, 0))
+        elif self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
         elif self.group == 'step_indicator':
@@ -218,6 +223,10 @@ class AlphaText():
                 self.color = Globals.COLORS['deep_green']
             else:
                 self.color = Globals.COLORS['light_red']
+        elif type == 'gamelog_message_common':
+            self.color = Globals.COLORS['grey22']
+        elif type == 'gamelog_message_player_switched':
+            self.color = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].color
     def RErender(self):
         if self.group == 'target_cell_name':
             self.font.set_underline(True)

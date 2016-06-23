@@ -148,3 +148,21 @@ class FieldCell():
             if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
                 y -= 20
             self.surf.blit(pic, (x, y))
+class GameLog():
+    def __init__(self):
+        self.messages = [AlphaText('- ' + Globals.TRANSLATION[51], 'gamelog_message_common', 0),
+                         AlphaText('--------- ' + Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name + Globals.TRANSLATION[52] + ' ---------', 'gamelog_message_player_switched', 2)]
+        self.RErender()
+        self.pos = (10, 270)
+        self.new_pos = (10, 170)
+    def change_new_pos(self, offset):
+        self.new_pos = count_new_pos(self.new_pos, offset)
+    def RErender(self):
+        self.surf = pygame.Surface((280, 300), pygame.SRCALPHA)
+        for message in self.messages:
+            self.surf.blit(message.set_alpha(), message.rect.topleft)
+    def render(self):
+        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
+        if self.messages[-1].alpha != 255:
+            self.RErender()
+        Globals.screen.blit(self.surf, self.pos)
