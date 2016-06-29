@@ -159,3 +159,5 @@ def read_onboard_text():
             data[type][int(string[0])] = string[1]
     data['rentlabels'] = read_file(directory + 'rentlabels')
     return data
+def read_gamelog_translation():
+    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/gamelog_messages')

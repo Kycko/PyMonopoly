@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import FieldCellsData, GameMechanics, Globals, pygame, random
 from GameObjects import GameField, GameLog
-from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_onboard_text, read_stats
+from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_gamelog_translation, read_onboard_text, read_stats
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
@@ -249,7 +249,9 @@ class MainScreen():
             cur_turn = Globals.TEMP_VARS['cur_turn']
             self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
             self.menuitems['fieldcell_'+str(player.cur_field)].tooltip.RErender(1)
+            self.objects['game_log'].add_message(type)
         elif type == 'ingame_continue_tax':
+            self.objects['game_log'].add_message(type)
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             player.money += Globals.TEMP_VARS['MUST_PAY']
             self.labels['money_player'+str(Globals.TEMP_VARS['cur_turn'])].update_text(str(player.money))
@@ -263,6 +265,7 @@ class MainScreen():
                 if Globals.PLAYERS[i].name == cell.owner:
                     Globals.PLAYERS[i].money += Globals.TEMP_VARS['MUST_PAY']
                     self.labels['money_player'+str(i)].update_text(str(Globals.PLAYERS[i].money))
+            self.objects['game_log'].add_message(type)
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -309,6 +312,7 @@ class MainScreen():
                     self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
                     self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
         elif type == 'ingame_start_game':
+            Globals.GAMELOG_TRANSLATION = read_gamelog_translation()
             self.pics['logo'].pos = (self.pics['logo'].init_pos[0]-1820, self.pics['logo'].init_pos[1])
             self.pics['logo'].change_new_pos((-300, 0))
             for string in ('background', 'logo'):
@@ -484,7 +488,7 @@ class MainScreen():
                 else:
                     type = 'ingame_continue_PAY_RENT'
                     Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50]+'$ '+str(cell.rent_costs[cell.buildings]), 'target_cell_info', 2)
+                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50]+'$'+str(cell.rent_costs[cell.buildings]), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
             else:

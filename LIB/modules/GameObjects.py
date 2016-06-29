@@ -150,16 +150,22 @@ class FieldCell():
             self.surf.blit(pic, (x, y))
 class GameLog():
     def __init__(self):
-        self.messages = [AlphaText('- ' + Globals.TRANSLATION[51], 'gamelog_message_common', 0)]
+        self.messages = [AlphaText(Globals.GAMELOG_TRANSLATION[0], 'gamelog_message_common', 0)]
         self.add_message('change_player')
         self.RErender()
         self.pos = (10, 170)
         self.new_pos = (10, 70)
     def add_message(self, type):
         if type == 'roll_the_dice':
-            self.messages.append(AlphaText('- ' + Globals.TRANSLATION[53] + str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field), 'gamelog_message_common', len(self.messages)))
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[2].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
         elif type == 'change_player':
-            self.messages.append(AlphaText('--------- ' + Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name + Globals.TRANSLATION[52] + ' ---------', 'gamelog_message_player_switched', len(self.messages)))
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name), 'gamelog_message_player_switched', len(self.messages)))
+        elif type == 'ingame_continue_tax':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])[1:]), 'gamelog_message_common', len(self.messages)))
+        elif type == 'ingame_continue_PAY_RENT':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[4].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])).replace('^', Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner), 'gamelog_message_common', len(self.messages)))
+        elif type == 'ingame_buy_a_cell':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[5].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)).replace('^', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):
