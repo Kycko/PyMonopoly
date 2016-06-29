@@ -19,4 +19,4 @@ Screenshots
 
 ![](http://storage8.static.itmages.ru/i/16/0524/h_1464113257_7037558_4d1a8faf09.png)
 ![](http://storage9.static.itmages.ru/i/16/0524/h_1464113258_5633005_71eceb7062.png)
-![](http://storage1.static.itmages.ru/i/16/0524/h_1464113259_4463379_fe4ec20486.png)
+![](http://storage1.static.itmages.ru/i/16/0623/h_1466696479_4629623_91942c2437.png)
