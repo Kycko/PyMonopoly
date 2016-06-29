@@ -85,7 +85,7 @@ class MenuItem():
             self.move_text()
         if self.group[:4] not in ('main', 'inga'):
             self.cursor.render(state)
-            if self.tooltip and ((Globals.SETTINGS['hotkeys'] and self.HOTKEYS) or (not self.HOTKEYS)):
+            if self.tooltip and ((Globals.SETTINGS['hotkeys'] and self.HOTKEYS) or (not self.HOTKEYS)) and not (self.group == 'onboard_select_cell' and Globals.main_scr.objects['gamefield'].pos[1] != 70):
                 self.tooltip.render(state)
         if 'SELECTOR' in self.type:
             self.selector.render(state)

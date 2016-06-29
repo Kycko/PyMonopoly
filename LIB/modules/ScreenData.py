@@ -338,7 +338,7 @@ class MainScreen():
             self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
             if not state:
                 state = -1
-            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield']]
+            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.objects['game_log']]
             objects_to_move += [cell for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
             objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
             objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]

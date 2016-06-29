@@ -153,16 +153,15 @@ class GameLog():
         self.messages = [AlphaText('- ' + Globals.TRANSLATION[51], 'gamelog_message_common', 0)]
         self.add_message('change_player')
         self.RErender()
-        self.pos = (10, 270)
-        self.new_pos = (10, 170)
+        self.pos = (10, 170)
+        self.new_pos = (10, 70)
     def add_message(self, type):
         if type == 'roll_the_dice':
             self.messages.append(AlphaText('- ' + Globals.TRANSLATION[53] + str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field), 'gamelog_message_common', len(self.messages)))
         elif type == 'change_player':
-            self.messages.append(None)
             self.messages.append(AlphaText('--------- ' + Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name + Globals.TRANSLATION[52] + ' ---------', 'gamelog_message_player_switched', len(self.messages)))
-        if len(self.messages) > 16:
-            count = len(self.messages) - 16
+        if len(self.messages) > 24:
+            count = len(self.messages) - 24
             for i in range(count):
                 self.messages.pop(i)
             for message in self.messages:
@@ -171,7 +170,7 @@ class GameLog():
     def change_new_pos(self, offset):
         self.new_pos = count_new_pos(self.new_pos, offset)
     def RErender(self):
-        self.surf = pygame.Surface((280, 300), pygame.SRCALPHA)
+        self.surf = pygame.Surface((280, 430), pygame.SRCALPHA)
         for message in self.messages:
             if message:
                 message.move_text()
