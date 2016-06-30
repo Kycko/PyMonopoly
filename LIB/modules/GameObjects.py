@@ -166,6 +166,9 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[4].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])).replace('^', Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner), 'gamelog_message_common', len(self.messages)))
         elif type == 'ingame_buy_a_cell':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[5].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)).replace('^', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
+        elif type == 'ingame_continue_gotojail':
+            text = Globals.main_scr.objects['gamefield'].cells[30].NAME
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:]), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):

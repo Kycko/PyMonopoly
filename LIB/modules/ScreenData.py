@@ -234,10 +234,13 @@ class MainScreen():
         if type == 'roll_the_dice':
             self.labels['dices'] = AlphaText(GameMechanics.roll_the_dice(), 'ingame_dices')
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            for i in range(player.cur_field + 1, player.cur_field + Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'] + 1):
+            points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
+            for i in range(player.cur_field + 1, player.cur_field + points + 1):
                 self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
                 self.objects['gamefield'].cells[i-40].step_indicator_visible = True
-            player.move_forward(Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2'])
+            player.move_forward(points)
+            if player.cur_field - points == 10:
+                self.menuitems['fieldcell_10'].tooltip.RErender()
             self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
             self.objects['game_log'].add_message(type)
         elif type == 'ingame_buy_a_cell':
@@ -265,6 +268,12 @@ class MainScreen():
                 if Globals.PLAYERS[i].name == cell.owner:
                     Globals.PLAYERS[i].money += Globals.TEMP_VARS['MUST_PAY']
                     self.labels['money_player'+str(i)].update_text(str(Globals.PLAYERS[i].money))
+            self.objects['game_log'].add_message(type)
+        elif type == 'ingame_continue_gotojail':
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            player.move_forward(20)
+            player.exit_jail_attempts = 3
+            self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
@@ -444,7 +453,8 @@ class MainScreen():
                 if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True
     def change_player(self):
-        if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
+        player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+        if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or (player.exit_jail_attempts and player.cur_field == 10):
             GameMechanics.change_player()
             self.objects['cur_turn_highlighter'].move()
             self.objects['game_log'].add_message('change_player')
@@ -510,6 +520,9 @@ class MainScreen():
         if cell.group == 'tax':
             text = Globals.TRANSLATION[50] + '$ ' + str(cell.buy_cost)[1:]
             Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+        elif cell.group == 'jail':
+            text = Globals.TRANSLATION[51]
+            self.menuitems['fieldcell_10'].tooltip.RErender()
         else:
-            text = cell.group
+            return None
         self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)

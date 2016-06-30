@@ -8,6 +8,7 @@ class Player():
         self.name = name
         self.color = color
         self.human = human
+        self.exit_jail_attempts = None
         self.cur_field = 0
         self.speed_limit = 50
     def initialize_coords(self, number):
