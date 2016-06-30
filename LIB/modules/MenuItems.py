@@ -167,7 +167,7 @@ class Tooltip():
             for player in Globals.PLAYERS:
                 if player.cur_field == 10:
                     line += 1
-                    if player.exit_jail_attempts:
+                    if player.exit_jail_attempts != None:
                         temp = '- ' + player.name + Globals.TRANSLATION[53] + str(player.exit_jail_attempts) + ')'
                         color = Globals.COLORS['light_green']
                     else:

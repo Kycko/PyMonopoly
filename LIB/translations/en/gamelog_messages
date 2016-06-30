@@ -1,7 +1,9 @@
 - Your game begins!
 %'s turn
-- Moved to field %
-- Paid $% to the bank
-- Paid $% to ^
-- Purchased field % for $^
+- Moves to field %
+- Pais $% to the bank
+- Pais $% to ^
+- Purchases field % for $^
 - Goes %
+- Receives $% for passing through field 0
+- Remains on field 10. Attempts left: %

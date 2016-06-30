@@ -231,18 +231,27 @@ class MainScreen():
                 SYSEXIT()
     def action_call(self, key):
         type = self.menuitems[key].action(key)
-        if type == 'roll_the_dice':
+        if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
             self.labels['dices'] = AlphaText(GameMechanics.roll_the_dice(), 'ingame_dices')
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
-            for i in range(player.cur_field + 1, player.cur_field + points + 1):
-                self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
-                self.objects['gamefield'].cells[i-40].step_indicator_visible = True
-            player.move_forward(points)
-            if player.cur_field - points == 10:
+            if not (type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']):
+                for i in range(player.cur_field + 1, player.cur_field + points + 1):
+                    self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
+                    self.objects['gamefield'].cells[i-40].step_indicator_visible = True
+                player.move_forward(points)
+                if player.cur_field - points == 10:
+                    self.menuitems['fieldcell_10'].tooltip.RErender()
+                self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
+                self.objects['game_log'].add_message('roll_the_dice')
+            else:
+                self.clear_main_menu_entries()
+                player.exit_jail_attempts -= 1
+                self.objects['game_log'].add_message('roll_the_dice_to_exit_jail')
+                self.labels['target_cell_owner'] = AlphaText(Globals.TRANSLATION[54] + str(player.exit_jail_attempts), 'target_cell_owner', 1)
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
+                self.cursor.screen_switched(self.menuitems, 'ingame_continue')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-            self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
-            self.objects['game_log'].add_message(type)
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             cell = self.objects['gamefield'].cells[player.cur_field]
@@ -271,7 +280,7 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            player.move_forward(20)
+            player.move_forward(20, False)
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
@@ -454,7 +463,9 @@ class MainScreen():
                     return True
     def change_player(self):
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-        if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or (player.exit_jail_attempts and player.cur_field == 10):
+        if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
+            if player.cur_field != 10:
+                player.exit_jail_attempts = None
             GameMechanics.change_player()
             self.objects['cur_turn_highlighter'].move()
             self.objects['game_log'].add_message('change_player')
@@ -465,8 +476,11 @@ class MainScreen():
         cell.step_indicator.change_color(player.color)
         cell.step_indicator_visible = True
         if player.human:
-            self.menuitems.update({'roll_the_dice' :    MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0),
-                                   'trade' :            MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)})
+            if player.cur_field == 10 and player.exit_jail_attempts != None:
+                self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
+            else:
+                self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
+            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)
             if self.cursor:
                 self.clear_main_menu_entries()
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
@@ -497,14 +511,17 @@ class MainScreen():
                     type = 'ingame_continue_NO'
                 else:
                     type = 'ingame_continue_PAY_RENT'
-                    Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50]+'$'+str(cell.rent_costs[cell.buildings]), 'target_cell_info', 2)
+                    if cell.group == 'service':
+                        Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * int(cell.rent_costs[cell.buildings][1:])
+                    else:
+                        Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
+                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
             else:
                 text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
                 Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
-                self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47]+'($ '+str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
+                self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47] + str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
                                        'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
                 self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
@@ -518,7 +535,7 @@ class MainScreen():
                 self.labels.pop(key)
     def show_special_cell_info(self, cell):
         if cell.group == 'tax':
-            text = Globals.TRANSLATION[50] + '$ ' + str(cell.buy_cost)[1:]
+            text = Globals.TRANSLATION[50] + str(cell.buy_cost)[1:]
             Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
         elif cell.group == 'jail':
             text = Globals.TRANSLATION[51]

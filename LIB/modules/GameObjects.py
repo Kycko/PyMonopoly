@@ -169,6 +169,10 @@ class GameLog():
         elif type == 'ingame_continue_gotojail':
             text = Globals.main_scr.objects['gamefield'].cells[30].NAME
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:]), 'gamelog_message_common', len(self.messages)))
+        elif type == 'money_for_start_passing':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
+        elif type == 'roll_the_dice_to_exit_jail':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts)), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):
