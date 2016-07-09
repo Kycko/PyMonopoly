@@ -487,13 +487,12 @@ class MainScreen():
             if self.cursor:
                 self.clear_main_menu_entries()
             if player.cur_field == 10 and player.exit_jail_attempts != None:
+                self.menuitems['pay_money_to_exit_jail'] = MenuItem(Globals.TRANSLATION[55]+str(self.objects['gamefield'].cells[10].buy_cost), 'pay_money_to_exit_jail', 'ingame_main', int(player.exit_jail_attempts > 0))
                 if player.exit_jail_attempts:
                     self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
-                else:
-                    self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[55]+str(self.objects['gamefield'].cells[10].buy_cost), 'pay_money_to_exit_jail', 'ingame_main', 0)
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
-            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)
+            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1+int(player.cur_field == 10 and player.exit_jail_attempts in range(1, 4)))
             if self.cursor:
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:
