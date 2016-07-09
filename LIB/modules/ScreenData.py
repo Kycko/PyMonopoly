@@ -252,15 +252,23 @@ class MainScreen():
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+        elif type == 'pay_money_to_exit_jail':
+            cur_turn = Globals.TEMP_VARS['cur_turn']
+            player = Globals.PLAYERS[cur_turn]
+            CELL = self.objects['gamefield'].cells[10]
+            player.money -= CELL.buy_cost
+            player.exit_jail_attempts = None
+            CELL.RErender()
+            self.menuitems['fieldcell_10'].tooltip.RErender()
+            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+            self.objects['game_log'].add_message(type)
+            self.new_turn()
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            cell = self.objects['gamefield'].cells[player.cur_field]
-            cell.owner = player.name
-            self.objects['gamefield'].change_color_for_a_cell(player.cur_field, player.color)
+            self.change_owner_for_a_cell(player)
             player.money -= Globals.TEMP_VARS['MUST_PAY']
             cur_turn = Globals.TEMP_VARS['cur_turn']
             self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
-            self.menuitems['fieldcell_'+str(player.cur_field)].tooltip.RErender(1)
             self.objects['game_log'].add_message(type)
         elif type == 'ingame_continue_tax':
             self.objects['game_log'].add_message(type)
@@ -476,13 +484,17 @@ class MainScreen():
         cell.step_indicator.change_color(player.color)
         cell.step_indicator_visible = True
         if player.human:
+            if self.cursor:
+                self.clear_main_menu_entries()
             if player.cur_field == 10 and player.exit_jail_attempts != None:
-                self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
+                if player.exit_jail_attempts:
+                    self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
+                else:
+                    self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[55]+str(self.objects['gamefield'].cells[10].buy_cost), 'pay_money_to_exit_jail', 'ingame_main', 0)
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
             self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)
             if self.cursor:
-                self.clear_main_menu_entries()
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:
                 self.cursor = MainCursor(self.menuitems, 'ingame_main')
@@ -515,6 +527,8 @@ class MainScreen():
                         Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * int(cell.rent_costs[cell.buildings][1:])
                     else:
                         Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
+                        if not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]:
+                            Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
@@ -543,3 +557,23 @@ class MainScreen():
         else:
             return None
         self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+    def change_owner_for_a_cell(self, player):
+        cell = self.objects['gamefield'].cells[player.cur_field]
+        cell.owner = player.name
+        cell.color = player.color
+        cells = self.check_group_owners(cell.group, player.name)
+        for group_cell in cells:
+            if group_cell.group in ('service', 'railroad'):
+                group_cell.buildings = len(cells) - 1
+            self.objects['gamefield'].RErender_a_cell(group_cell.number)
+            self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
+    def check_group_owners(self, group, player):
+        data = []
+        counter = 0
+        for cell in self.objects['gamefield'].cells:
+            if cell.group == group:
+                counter += 1
+                if cell.owner == player:
+                    data.append(cell)
+        self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
+        return data

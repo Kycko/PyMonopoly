@@ -11,6 +11,7 @@ class GameField():
         self.cells = []
         Globals.TEMP_VARS['cells_rects'] = []
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
+        self.groups_monopolies = {}
         for i in range(40):
             size, pos = self.count_size_and_pos(i)
             Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
@@ -19,7 +20,9 @@ class GameField():
                                         i,
                                         size,
                                         pos))
-            self.change_color_for_a_cell(i, Globals.COLORS['grey22'])
+            if self.cells[i].group not in self.groups_monopolies.keys():
+                self.groups_monopolies[self.cells[i].group] = False
+            self.RErender_a_cell(i)
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
     def count_size_and_pos(self, num):
@@ -48,8 +51,8 @@ class GameField():
         self.new_pos = count_new_pos(self.new_pos, offset)
         for player in Globals.PLAYERS:
             player.change_new_pos(offset)
-    def change_color_for_a_cell(self, num, color):
-        self.cells[num].change_color(color)
+    def RErender_a_cell(self, num):
+        self.cells[num].RErender(self.groups_monopolies[self.cells[num].group])
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
@@ -92,10 +95,8 @@ class FieldCell():
         self.pos = pos
         self.rect = pygame.Rect((0, 0), size)
         self.surf = pygame.Surface(size)
-    def change_color(self, color):
-        self.color = color
-        self.RErender()
-    def RErender(self):
+        self.color = Globals.COLORS['grey22']
+    def RErender(self, monopolied_cell = False):
         #--- Background
         pygame.draw.rect(self.surf, self.color, self.rect, 0)
         #--- Group-specific color (for groups 1-8)
@@ -140,6 +141,8 @@ class FieldCell():
             temp = self.buy_cost
             if self.owner:
                 temp = self.rent_costs[self.buildings]
+                if monopolied_cell and self.group != 'service':
+                    temp = temp * 2
             pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):
@@ -173,6 +176,9 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
         elif type == 'roll_the_dice_to_exit_jail':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts)), 'gamelog_message_common', len(self.messages)))
+        elif type == 'pay_money_to_exit_jail':
+            CELL = Globals.main_scr.objects['gamefield'].cells[10]
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')', 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):

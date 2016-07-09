@@ -193,7 +193,10 @@ class Tooltip():
                 for i in range(count):
                     color = self.choose_color(i+1, cell_state)
                     self.text.blit(font.render((Globals.TEMP_VARS['rentlabels'][i+start_string]), True, color), (0, 45+i*15))
-                    string = str(CELL.rent_costs[i])
+                    if cell_state == 1 and i == 0 and Globals.main_scr.objects['gamefield'].groups_monopolies[CELL.group]:
+                        string = '(x2) ' + str(2 * CELL.rent_costs[i])
+                    else:
+                        string = str(CELL.rent_costs[i])
                     self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 45+i*15))
                 statuses = ('mortrage_cost', 'mortraged')
                 for i in range(len(statuses)):
