@@ -353,7 +353,7 @@ class MainCursor(Cursor):
         elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'ingame_main':
-            self.keys = [key for key in ('roll_the_dice', 'pay_money_to_exit_jail') if key in Globals.main_scr.menuitems.keys()] + ['trade']
+            self.keys = [key for key in ('roll_the_dice', 'pay_money_to_exit_jail', 'use_card_to_exit_jail') if key in Globals.main_scr.menuitems.keys()] + ['trade']
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':

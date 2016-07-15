@@ -249,11 +249,16 @@ class MainScreen():
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-        elif type == 'pay_money_to_exit_jail':
-            cur_turn = Globals.TEMP_VARS['cur_turn']
-            player = Globals.PLAYERS[cur_turn]
+        elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             CELL = self.objects['gamefield'].cells[10]
-            self.change_player_money(player, -CELL.buy_cost)
+            if type == 'pay_money_to_exit_jail':
+                self.change_player_money(player, -CELL.buy_cost)
+            else:
+                vid = player.free_jail_cards.pop[0]
+                self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS.pop('free_jail_obj_'+vid))
+                print('chests: ' + str(len(self.objects['gamefield'].chests_and_chances['chests'])))
+                print('chances: ' + str(len(self.objects['gamefield'].chests_and_chances['chances'])))
             player.exit_jail_attempts = None
             CELL.RErender()
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -284,10 +289,12 @@ class MainScreen():
                 self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message('chest_income')
             elif obj[0].type == 'free_jail':
-                obj.pop(0)
+                Globals.TEMP_VARS['free_jail_obj_'+type[16:]] = obj.pop(0)
                 player.free_jail_cards.append(type[16:])
                 self.objects['game_log'].add_message('chest_free_jail')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+                print('chests: ' + str(len(self.objects['gamefield'].chests_and_chances['chests'])))
+                print('chances: ' + str(len(self.objects['gamefield'].chests_and_chances['chances'])))
             if obj[0].type != 'free_jail':
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
@@ -494,9 +501,11 @@ class MainScreen():
                 self.menuitems['pay_money_to_exit_jail'] = MenuItem(Globals.TRANSLATION[55]+str(self.objects['gamefield'].cells[10].buy_cost), 'pay_money_to_exit_jail', 'ingame_main', int(player.exit_jail_attempts > 0))
                 if player.exit_jail_attempts:
                     self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
+                if player.free_jail_cards:
+                    self.menuitems['use_card_to_exit_jail'] = MenuItem(Globals.TRANSLATION[57]+' ('+str(len(player.free_jail_cards))+')', 'use_card_to_exit_jail', 'ingame_main', 1+int(player.exit_jail_attempts > 0))
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
-            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1+int(player.cur_field == 10 and player.exit_jail_attempts in range(1, 4)))
+            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1+bool(player.cur_field == 10 and player.free_jail_cards)+int(player.cur_field == 10 and player.exit_jail_attempts in range(1, 4)))
             if self.cursor:
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:
