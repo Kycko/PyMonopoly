@@ -161,3 +161,5 @@ def read_onboard_text():
     return data
 def read_gamelog_translation():
     return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/gamelog_messages')
+def read_chests_and_chances_translation(type):
+    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/' + get_gamename() + '/' + type)

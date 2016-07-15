@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import count_new_pos, slight_animation_count_pos
+from GlobalFuncs import count_new_pos, slight_animation_count_pos, read_chests_and_chances_translation
+from random import shuffle
 from Sprite import Sprite
 from TransparentText import AlphaText
 
@@ -23,6 +24,13 @@ class GameField():
             if self.cells[i].group not in self.groups_monopolies.keys():
                 self.groups_monopolies[self.cells[i].group] = False
             self.RErender_a_cell(i)
+        self.chests_and_chances = {}
+        for type in ('chests', 'chances'):
+            data = FieldCellsData.make_chests_and_chances(type)
+            text = read_chests_and_chances_translation(type)
+            self.chests_and_chances[type] = [ChestOrChance(data[i], text[i]) for i in range(len(data))]
+        for type in ('chests', 'chances'):
+            shuffle(self.chests_and_chances[type])
         self.pos = (2120, 70)
         self.new_pos = (2120, 70)
     def count_size_and_pos(self, num):
@@ -174,6 +182,10 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:]), 'gamelog_message_common', len(self.messages)))
         elif type == 'money_for_start_passing':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
+        elif type == 'chest_income':
+            self.messages.append(AlphaText('- ' + Globals.GAMELOG_TRANSLATION[(3, 7)[Globals.TEMP_VARS['MUST_PAY'] > 0]].split()[1] + ' $' + str(Globals.TEMP_VARS['MUST_PAY']).lstrip('-'), 'gamelog_message_common', len(self.messages)))
+        elif type == 'chest_free_jail':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[9], 'gamelog_message_common', len(self.messages)))
         elif type == 'roll_the_dice_to_exit_jail':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts)), 'gamelog_message_common', len(self.messages)))
         elif type == 'pay_money_to_exit_jail':
@@ -199,3 +211,11 @@ class GameLog():
         if self.messages[-1].alpha != 255:
             self.RErender()
         Globals.screen.blit(self.surf, self.pos)
+class ChestOrChance():
+    def __init__(self, type, text):
+        self.modifier = type.split()[1:]
+        if self.modifier:
+            for i in range(len(self.modifier)):
+                self.modifier[i] = int(self.modifier[i])
+        self.type = type.split()[0]
+        self.text = text

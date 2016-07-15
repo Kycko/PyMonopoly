@@ -276,6 +276,20 @@ class MainScreen():
                 if Globals.PLAYERS[i].name == cell.owner:
                     self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
+        elif type in ('ingame_continue_chest', 'ingame_continue_chance'):
+            obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            if obj[0].type == 'income':
+                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
+                self.objects['game_log'].add_message('chest_income')
+            elif obj[0].type == 'free_jail':
+                obj.pop(0)
+                player.free_jail_cards.append(type[16:])
+                self.objects['game_log'].add_message('chest_free_jail')
+                self.menuitems['fieldcell_10'].tooltip.RErender()
+            if obj[0].type != 'free_jail':
+                obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             player.move_forward(20, False)
@@ -501,8 +515,6 @@ class MainScreen():
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
             self.show_special_cell_info(cell)
-            if cell.group == 'tax':
-                Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
             self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+cell.group, 'ingame_main', 5)
             self.cursor.screen_switched(self.menuitems, 'ingame_continue')
         else:
@@ -540,6 +552,8 @@ class MainScreen():
         if cell.group == 'tax':
             text = Globals.TRANSLATION[50] + str(cell.buy_cost)[1:]
             Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+        elif cell.group in ('chest', 'chance'):
+            text = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0].text
         elif cell.group == 'jail':
             text = Globals.TRANSLATION[51]
             self.menuitems['fieldcell_10'].tooltip.RErender()

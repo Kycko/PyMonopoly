@@ -164,6 +164,7 @@ class Tooltip():
         ##--- Jail info
         if self.number == 10:
             line = 0
+            jailcards = []
             for player in Globals.PLAYERS:
                 if player.cur_field == 10:
                     line += 1
@@ -174,6 +175,12 @@ class Tooltip():
                         temp = '- ' + player.name + Globals.TRANSLATION[52]
                         color = Globals.COLORS['grey22']
                     self.text.blit(font.render(temp, True, color), (0, 18*line))
+                if player.free_jail_cards:
+                    jailcards.append(player)
+            if jailcards:
+                for player in jailcards:
+                    line += 1
+                    self.text.blit(font.render(Globals.TRANSLATION[56] + player.name, True, player.color), (0, 18*line))
         else:
             ##--- Buy cost
             if self.number != 20:

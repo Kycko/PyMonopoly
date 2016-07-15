@@ -150,3 +150,14 @@ def read_cells_rent_costs():
                 35  : (25, 50, 100, 200),
                 37  : (35, 175, 500, 1100, 1300, 1500),
                 39  : (50, 200, 600, 1400, 1700, 2000)}
+def make_chests_and_chances(type):
+    if type == 'chests':
+        if Globals.TEMP_VARS['cur_game']:
+            return None
+        else:
+            return ['goto 0', 'repair 40 115', 'birthday 10', 'income 100', 'income 10', 'income -50', 'free_jail', 'goto_jail', 'income -50', 'income 100', 'income 50', 'income 20', 'income -100', 'income 200', 'income 25', 'income 100']
+    else:
+        if Globals.TEMP_VARS['cur_game']:
+            return None
+        else:
+            return ['goto_service', 'goto -3', 'goto 0', 'goto_railroad', 'repair 25 100', 'goto 11', 'goto_jail', 'goto 39', 'goto_railroad', 'income 150', 'income -15', 'goto 5', 'goto 24', 'income 50', 'pay_each 50', 'free_jail']
