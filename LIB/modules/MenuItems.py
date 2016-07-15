@@ -418,8 +418,8 @@ class FieldCellCursor(Cursor):
             Cursor.render(self)
 class CurTurnHighlighter(Cursor):
     def __init__(self, menuitems):
-        self.verts = [menuitems['player'+str(i)].active_zone[1] for i in range(len(Globals.PLAYERS))]
-        Cursor.__init__(self, 80, pygame.Rect((menuitems['player'+str(Globals.TEMP_VARS['cur_turn'])].active_zone[0]-162, self.verts[0]), (200, 39)))
+        self.verts = [menuitems['player_'+Globals.PLAYERS[i].name].active_zone[1] for i in range(len(Globals.PLAYERS))]
+        Cursor.__init__(self, 80, pygame.Rect((menuitems['player_'+Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name].active_zone[0]-162, self.verts[0]), (200, 39)))
         self.draw_rect()
         self.surf.blit(Globals.FONTS['ubuntu_11'].render(Globals.TRANSLATION[40], True, Globals.COLORS['grey']), (2, 0))
         self.new_cords = (self.rect.x-1820, self.rect.y)

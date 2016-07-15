@@ -40,8 +40,7 @@ class Player():
         if self.cur_field > 39:
             self.cur_field -= 40
             if take_money_for_a_start:
-                self.money += Globals.main_scr.objects['gamefield'].cells[0].buy_cost
-                Globals.main_scr.labels['money_player'+str(Globals.TEMP_VARS['cur_turn'])].update_text(str(self.money))
+                Globals.main_scr.change_player_money(self, Globals.main_scr.objects['gamefield'].cells[0].buy_cost)
                 Globals.main_scr.objects['game_log'].add_message('money_for_start_passing')
         self.game_piece_order = self.count_players_on_one_field()
         self.new_coords = self.count_coords()

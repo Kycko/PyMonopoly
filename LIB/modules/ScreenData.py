@@ -147,12 +147,9 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                if Globals.TEMP_VARS['cur_game']:
-                    Globals.PLAYERS[i].money = 20000
-                else:
-                    Globals.PLAYERS[i].money = 1500
-                self.menuitems.update({'player'+str(i)  : MenuItem(u'●', 'pl_info_tab_'+str(i), 'pl_info_tab', i)})
-                self.labels.update({'money_player'+str(i)   : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
+                self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
             self.objects['cur_turn_highlighter'] = CurTurnHighlighter(self.menuitems)
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
@@ -256,35 +253,28 @@ class MainScreen():
             cur_turn = Globals.TEMP_VARS['cur_turn']
             player = Globals.PLAYERS[cur_turn]
             CELL = self.objects['gamefield'].cells[10]
-            player.money -= CELL.buy_cost
+            self.change_player_money(player, -CELL.buy_cost)
             player.exit_jail_attempts = None
             CELL.RErender()
             self.menuitems['fieldcell_10'].tooltip.RErender()
-            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
             self.objects['game_log'].add_message(type)
             self.new_turn()
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             self.change_owner_for_a_cell(player)
-            player.money -= Globals.TEMP_VARS['MUST_PAY']
-            cur_turn = Globals.TEMP_VARS['cur_turn']
-            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+            self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
         elif type == 'ingame_continue_tax':
             self.objects['game_log'].add_message(type)
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            player.money += Globals.TEMP_VARS['MUST_PAY']
-            self.labels['money_player'+str(Globals.TEMP_VARS['cur_turn'])].update_text(str(player.money))
+            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
         elif type == 'ingame_continue_PAY_RENT':
             cur_turn = Globals.TEMP_VARS['cur_turn']
             player = Globals.PLAYERS[cur_turn]
             cell = self.objects['gamefield'].cells[player.cur_field]
-            player.money -= Globals.TEMP_VARS['MUST_PAY']
-            self.labels['money_player'+str(cur_turn)].update_text(str(player.money))
+            self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
             for i in range(len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].name == cell.owner:
-                    Globals.PLAYERS[i].money += Globals.TEMP_VARS['MUST_PAY']
-                    self.labels['money_player'+str(i)].update_text(str(Globals.PLAYERS[i].money))
+                    self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
@@ -576,3 +566,6 @@ class MainScreen():
                     data.append(cell)
         self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
         return data
+    def change_player_money(self, player, money):
+        player.money += money
+        self.labels['money_player_'+player.name].update_text(str(player.money))
