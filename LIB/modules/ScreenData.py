@@ -239,7 +239,7 @@ class MainScreen():
                 player.move_forward(points)
                 if player.cur_field - points == 10:
                     self.menuitems['fieldcell_10'].tooltip.RErender()
-                self.player_on_a_new_cell(Globals.main_scr.objects['gamefield'].cells[player.cur_field])
+                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('roll_the_dice')
             else:
                 self.clear_main_menu_entries()
@@ -286,6 +286,15 @@ class MainScreen():
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
                 self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message('chest_income')
+            elif obj[0].type == 'goto':
+                if obj[0].modifier[0] < 0:
+                    player.move_forward(obj[0].modifier[0])
+                else:
+                    player.move_to(obj[0].modifier[0])
+                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                self.objects['game_log'].add_message('chest_goto')
+                obj.append(obj.pop(0))
+                return None
             elif obj[0].type == 'free_jail':
                 Globals.TEMP_VARS['free_jail_obj_'+type[16:]] = obj.pop(0)
                 player.free_jail_cards.append(type[16:])
@@ -295,10 +304,10 @@ class MainScreen():
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            steps = 10-player.cur_field
-            if steps < 0:
-                steps += 40
-            player.move_forward(steps, False)
+            if player.cur_field != 30:
+                obj = self.objects['gamefield'].chests_and_chances[self.objects['gamefield'].cells[player.cur_field].group + 's']
+                obj.append(obj.pop(0))
+            player.move_to(10, False)
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)

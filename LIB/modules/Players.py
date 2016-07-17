@@ -36,6 +36,11 @@ class Player():
         return (x, y)
     def change_new_pos(self, offset):
         self.new_coords = GlobalFuncs.count_new_pos(self.new_coords, offset)
+    def move_to(self, cell_num, take_money_for_a_start=True):
+        points = cell_num - Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+        if points < 0:
+            points += 40
+        self.move_forward(points, take_money_for_a_start)
     def move_forward(self, points, take_money_for_a_start=True):
         self.cur_field += points
         if self.cur_field > 39:
