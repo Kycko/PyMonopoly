@@ -257,8 +257,6 @@ class MainScreen():
             else:
                 vid = player.free_jail_cards.pop(0)
                 self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS.pop('free_jail_obj_'+vid))
-                print('chests: ' + str(len(self.objects['gamefield'].chests_and_chances['chests'])))
-                print('chances: ' + str(len(self.objects['gamefield'].chests_and_chances['chances'])))
             player.exit_jail_attempts = None
             CELL.RErender()
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -293,8 +291,6 @@ class MainScreen():
                 player.free_jail_cards.append(type[16:])
                 self.objects['game_log'].add_message('chest_free_jail')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-                print('chests: ' + str(len(self.objects['gamefield'].chests_and_chances['chests'])))
-                print('chances: ' + str(len(self.objects['gamefield'].chests_and_chances['chances'])))
             if obj[0].type != 'free_jail':
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
