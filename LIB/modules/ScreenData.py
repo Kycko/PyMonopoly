@@ -524,7 +524,10 @@ class MainScreen():
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
             self.show_special_cell_info(cell)
-            self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+cell.group, 'ingame_main', 5)
+            if cell.group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[cell.group + 's'][0].type == 'goto_jail':
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
+            else:
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+cell.group, 'ingame_main', 5)
             self.cursor.screen_switched(self.menuitems, 'ingame_continue')
         else:
             if cell.owner:
