@@ -175,7 +175,7 @@ class Tooltip():
                         temp = '- ' + player.name + Globals.TRANSLATION[52]
                         color = Globals.COLORS['grey22']
                     self.text.blit(font.render(temp, True, color), (0, 18*line))
-                if player.free_jail_cards:
+                for i in player.free_jail_cards:
                     jailcards.append(player)
             if jailcards:
                 for player in jailcards:

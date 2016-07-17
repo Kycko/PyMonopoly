@@ -255,7 +255,7 @@ class MainScreen():
             if type == 'pay_money_to_exit_jail':
                 self.change_player_money(player, -CELL.buy_cost)
             else:
-                vid = player.free_jail_cards.pop[0]
+                vid = player.free_jail_cards.pop(0)
                 self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS.pop('free_jail_obj_'+vid))
                 print('chests: ' + str(len(self.objects['gamefield'].chests_and_chances['chests'])))
                 print('chances: ' + str(len(self.objects['gamefield'].chests_and_chances['chances'])))
@@ -299,7 +299,10 @@ class MainScreen():
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            player.move_forward(20, False)
+            steps = 10-player.cur_field
+            if steps < 0:
+                steps += 40
+            player.move_forward(steps, False)
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
