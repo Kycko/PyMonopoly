@@ -293,7 +293,7 @@ class MainScreen():
                     else:
                         player.move_to(obj[0].modifier[0])
                 else:
-                    player.move_to(obj[0].type[5:])
+                    player.move_to_chance(obj[0].type[5:])
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('chest_goto')
                 obj.append(obj.pop(0))
@@ -549,10 +549,14 @@ class MainScreen():
                 else:
                     type = 'ingame_continue_PAY_RENT'
                     if cell.group == 'service':
-                        Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * int(cell.rent_costs[cell.buildings][1:])
+                        if cell.step_indicator_visible:
+                            state = int(cell.rent_costs[cell.buildings][1:])
+                        else:
+                            state = 10
+                        Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                     else:
                         Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                        if not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]:
+                        if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible):
                             Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)

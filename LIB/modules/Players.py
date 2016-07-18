@@ -36,28 +36,33 @@ class Player():
         return (x, y)
     def change_new_pos(self, offset):
         self.new_coords = GlobalFuncs.count_new_pos(self.new_coords, offset)
-    def move_to(self, cell_num, take_money_for_a_start=True):
-        if cell_num in ('railroad', 'service'):
-            if cell_num == 'railroad':
-                fields = (5, 15, 25, 35)
-            else:
-                fields = (12, 28)
-            while self.cur_field not in fields:
-                self.cur_field += 1
-                if self.cur_field == 37:
-                    self.cur_field = 5
+    def move_to_chance(self, type):
+        if type == 'railroad':
+            fields = (5, 15, 25, 35)
         else:
-            points = cell_num - Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-            if points < 0:
-                points += 40
+            fields = (12, 28)
+        while self.cur_field not in fields:
+            self.cur_field += 1
+            if self.cur_field == 37:
+                self.cur_field = 5
+                self.take_money_for_a_start(True)
+        self.move_ending()
+    def move_to(self, cell_num, take_money_for_a_start=True):
+        points = cell_num - Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+        if points < 0:
+            points += 40
         self.move_forward(points, take_money_for_a_start)
     def move_forward(self, points, take_money_for_a_start=True):
         self.cur_field += points
         if self.cur_field > 39:
             self.cur_field -= 40
-            if take_money_for_a_start:
-                Globals.main_scr.change_player_money(self, Globals.main_scr.objects['gamefield'].cells[0].buy_cost)
-                Globals.main_scr.objects['game_log'].add_message('money_for_start_passing')
+            self.take_money_for_a_start(take_money_for_a_start)
+        self.move_ending()
+    def take_money_for_a_start(self, take_money):
+        if take_money:
+            Globals.main_scr.change_player_money(self, Globals.main_scr.objects['gamefield'].cells[0].buy_cost)
+            Globals.main_scr.objects['game_log'].add_message('money_for_start_passing')
+    def move_ending(self):
         self.game_piece_order = self.count_players_on_one_field()
         self.new_coords = self.count_coords()
     def count_players_on_one_field(self):
