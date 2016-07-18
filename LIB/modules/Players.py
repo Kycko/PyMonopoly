@@ -37,9 +37,19 @@ class Player():
     def change_new_pos(self, offset):
         self.new_coords = GlobalFuncs.count_new_pos(self.new_coords, offset)
     def move_to(self, cell_num, take_money_for_a_start=True):
-        points = cell_num - Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-        if points < 0:
-            points += 40
+        if cell_num in ('railroad', 'service'):
+            if cell_num == 'railroad':
+                fields = (5, 15, 25, 35)
+            else:
+                fields = (12, 28)
+            while self.cur_field not in fields:
+                self.cur_field += 1
+                if self.cur_field == 37:
+                    self.cur_field = 5
+        else:
+            points = cell_num - Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+            if points < 0:
+                points += 40
         self.move_forward(points, take_money_for_a_start)
     def move_forward(self, points, take_money_for_a_start=True):
         self.cur_field += points

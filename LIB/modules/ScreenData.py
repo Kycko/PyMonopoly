@@ -286,11 +286,14 @@ class MainScreen():
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
                 self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message('chest_income')
-            elif obj[0].type == 'goto':
-                if obj[0].modifier[0] < 0:
-                    player.move_forward(obj[0].modifier[0])
+            elif obj[0].type[:4] == 'goto':
+                if obj[0].type == 'goto':
+                    if obj[0].modifier[0] < 0:
+                        player.move_forward(obj[0].modifier[0])
+                    else:
+                        player.move_to(obj[0].modifier[0])
                 else:
-                    player.move_to(obj[0].modifier[0])
+                    player.move_to(obj[0].type[5:])
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('chest_goto')
                 obj.append(obj.pop(0))
