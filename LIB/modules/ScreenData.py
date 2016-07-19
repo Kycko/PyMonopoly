@@ -556,7 +556,10 @@ class MainScreen():
                         Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                     else:
                         Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                        if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible):
+                        for i in self.objects['gamefield'].chests_and_chances['chances']:
+                            print(i.type)
+                        print()
+                        if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type == 'goto_railroad'):
                             Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)

@@ -149,7 +149,7 @@ class FieldCell():
             temp = self.buy_cost
             if self.owner:
                 temp = self.rent_costs[self.buildings]
-                if monopolied_cell and self.group != 'service':
+                if monopolied_cell and self.group in range(9):
                     temp = temp * 2
             pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
