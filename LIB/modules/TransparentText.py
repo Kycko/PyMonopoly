@@ -16,7 +16,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -41,6 +41,8 @@ class AlphaText():
             self.color = Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].color
         elif 'gamelog_message' in self.group:
             self.choose_switch_color(self.group)
+        elif self.group == 'birthday_info':
+            self.color = Globals.TEMP_VARS['pay_birthday'][0].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif 'volume_SELECTOR' in self.group:
@@ -91,6 +93,10 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
+        elif self.group == 'birthday_info':
+            self.x = 'center'
+            self.x_offset = 0
+            self.rect = Rect((0, 330), (0, 0))
         elif self.group == 'ingame_start':
             self.x = 'center'
             self.x_offset = 1820

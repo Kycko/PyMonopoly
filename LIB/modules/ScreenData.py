@@ -303,6 +303,15 @@ class MainScreen():
                 player.free_jail_cards.append(type[16:])
                 self.objects['game_log'].add_message('chest_free_jail')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+            elif obj[0].type == 'birthday':
+                self.disable_central_labels()
+                if self.cursor:
+                    self.clear_main_menu_entries()
+                Globals.TEMP_VARS['pay_birthday'] = [i for i in Globals.PLAYERS if i.name != player.name]
+                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                obj.append(obj.pop(0))
+                self.pay_birthday_next_player()
+                return None
             if obj[0].type != 'free_jail':
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
@@ -314,6 +323,11 @@ class MainScreen():
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
+        elif type and 'pay_birthday' in type:
+            self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
+            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
+            Globals.TEMP_VARS['pay_birthday'].pop(0)
+            self.pay_birthday_next_player()
         elif type == 'stats_switch':
             self.make_stats_screen(self.labels['game_name'].symbols)
         elif type == 'main_settings_language':
@@ -514,10 +528,10 @@ class MainScreen():
                     self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43]+' ('+str(player.exit_jail_attempts)+')', 'roll_the_dice_to_exit_jail', 'ingame_main', 0)
                 if player.free_jail_cards:
                     self.menuitems['use_card_to_exit_jail'] = MenuItem(Globals.TRANSLATION[57]+' ('+str(len(player.free_jail_cards))+')', 'use_card_to_exit_jail', 'ingame_main', 1+int(player.exit_jail_attempts > 0))
-                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1+bool(player.cur_field == 10 and player.free_jail_cards)+int(player.cur_field == 10 and player.exit_jail_attempts in range(1, 4)))
+                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu_'+player.name, 'ingame_main', 1+bool(player.cur_field == 10 and player.free_jail_cards)+int(player.cur_field == 10 and player.exit_jail_attempts in range(1, 4)))
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
-                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', 1)
+                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu_'+player.name, 'ingame_main', 1)
             if self.cursor:
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:
@@ -535,6 +549,9 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
+            for i in self.objects['gamefield'].chests_and_chances['chests']:
+                print(i.type)
+            print('')
             self.show_special_cell_info(cell)
             if cell.group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[cell.group + 's'][0].type == 'goto_jail':
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
@@ -556,9 +573,6 @@ class MainScreen():
                         Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                     else:
                         Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                        for i in self.objects['gamefield'].chests_and_chances['chances']:
-                            print(i.type)
-                        print()
                         if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type == 'goto_railroad'):
                             Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
@@ -614,3 +628,19 @@ class MainScreen():
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
+    def pay_birthday_next_player(self):
+        if Globals.TEMP_VARS['pay_birthday']:
+            player = Globals.TEMP_VARS['pay_birthday'][0]
+            text = Globals.TRANSLATION[58].replace('%', player.name)
+            text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
+            text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
+            self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
+            self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player.name, 'ingame_main', 3)})
+            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu_'+player.name, 'ingame_main', 4)
+            self.cursor.screen_switched(self.menuitems, 'ingame_main')
+        else:
+            Globals.TEMP_VARS.pop('pay_birthday')
+            self.labels.pop('target_cell_info')
+            self.objects['game_log'].add_message('birthday')
+            self.disable_step_indicators()
+            self.change_player()

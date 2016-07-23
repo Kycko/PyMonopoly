@@ -193,6 +193,8 @@ class GameLog():
         elif type == 'pay_money_to_exit_jail':
             CELL = Globals.main_scr.objects['gamefield'].cells[10]
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')', 'gamelog_message_common', len(self.messages)))
+        elif type == 'birthday':
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):
