@@ -642,4 +642,5 @@ class MainScreen():
             Globals.TEMP_VARS.pop('pay_birthday')
             self.labels.pop('target_cell_info')
             self.objects['game_log'].add_message('birthday')
+            self.disable_step_indicators()
             self.change_player()

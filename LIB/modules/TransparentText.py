@@ -96,7 +96,7 @@ class AlphaText():
         elif self.group == 'birthday_info':
             self.x = 'center'
             self.x_offset = 0
-            self.rect = Rect((0, 430), (0, 0))
+            self.rect = Rect((0, 330), (0, 0))
         elif self.group == 'ingame_start':
             self.x = 'center'
             self.x_offset = 1820
