@@ -93,7 +93,8 @@ def create_init_file(type):
         data = ['0\n' if x<3 else 'None 0 01.01.01 0\n' for x in range(10)]
         data = data + data
     elif type == 'settings':
-        data = ('0\n', 'Player 1\n', '255\n', '30\n', '30\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        color = Globals.PLAYERS_COLORS[2]
+        data = ('0\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
