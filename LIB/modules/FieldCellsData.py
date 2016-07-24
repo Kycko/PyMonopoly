@@ -153,11 +153,11 @@ def read_cells_rent_costs():
 def make_chests_and_chances(type):
     if type == 'chests':
         if Globals.TEMP_VARS['cur_game']:
-            return None
+            return ['free_jail', 'goto 34', 'goto 12', 'goto 12', 'goto 39', 'income -1000', 'goto 6', 'income 20000', 'income 10000', 'income 10000', 'income 5000', 'income -1000', 'income 20000', 'take chance', 'income -20000', 'income 10000', 'income 1000', 'goto -3', 'income -5000', 'goto 14', 'income 20000', 'goto_forward 2', 'income 20000', 'repair 5000 10000', 'goto 0', 'goto_jail', 'income -20000', 'goto 9', 'goto 39', 'income -5000', 'goto 24', 'income -1000', 'goto 4', 'goto -3', 'income -5000', 'goto 14', 'income 10000', 'goto_forward 2', 'income 20000', 'repair 5000 10000', 'income 20000', 'goto_jail', 'income -20000', 'goto 9', 'income -20000', 'income -5000', 'goto 24', 'income -1000']
         else:
             return ['goto 0', 'repair 40 115', 'birthday 10', 'income 100', 'income 10', 'income -50', 'free_jail', 'goto_jail', 'income -50', 'income 100', 'income 50', 'income 20', 'income -100', 'income 200', 'income 25', 'income 100']
     else:
         if Globals.TEMP_VARS['cur_game']:
-            return None
+            return ['']
         else:
             return ['goto_service', 'goto -3', 'goto 0', 'goto_railroad', 'repair 25 100', 'goto 11', 'goto_jail', 'goto 39', 'goto_railroad', 'income 150', 'income -15', 'goto 5', 'goto 24', 'income 50', 'pay_each 50', 'free_jail']
