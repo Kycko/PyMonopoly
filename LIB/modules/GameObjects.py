@@ -167,8 +167,8 @@ class GameLog():
         self.pos = (10, 170)
         self.new_pos = (10, 70)
     def add_message(self, type):
-        if type == 'roll_the_dice':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[2].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
+        if type in ('roll_the_dice', 'chest_goto'):
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
         elif type == 'change_player':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name), 'gamelog_message_player_switched', len(self.messages)))
         elif type == 'ingame_continue_tax':
@@ -184,8 +184,6 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
         elif type == 'chest_income':
             self.messages.append(AlphaText('- ' + Globals.GAMELOG_TRANSLATION[(3, 7)[Globals.TEMP_VARS['MUST_PAY'] > 0]].split()[1] + ' $' + str(Globals.TEMP_VARS['MUST_PAY']).lstrip('-'), 'gamelog_message_common', len(self.messages)))
-        elif type == 'chest_goto':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[10].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
         elif type == 'chest_free_jail':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[9], 'gamelog_message_common', len(self.messages)))
         elif type == 'roll_the_dice_to_exit_jail':
@@ -193,8 +191,8 @@ class GameLog():
         elif type == 'pay_money_to_exit_jail':
             CELL = Globals.main_scr.objects['gamefield'].cells[10]
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')', 'gamelog_message_common', len(self.messages)))
-        elif type == 'birthday':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
+        elif type in ('birthday', 'pay_each'):
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):

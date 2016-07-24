@@ -312,6 +312,14 @@ class MainScreen():
                 obj.append(obj.pop(0))
                 self.pay_birthday_next_player()
                 return None
+            elif obj[0].type == 'pay_each':
+                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                for i in Globals.PLAYERS:
+                    if i.name == player.name:
+                        self.change_player_money(player, -obj[0].modifier[0] * (len(Globals.PLAYERS)-1))
+                    else:
+                        self.change_player_money(i, obj[0].modifier[0])
+                self.objects['game_log'].add_message('pay_each')
             if obj[0].type != 'free_jail':
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
@@ -549,7 +557,7 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chests']:
+            for i in self.objects['gamefield'].chests_and_chances['chances']:
                 print(i.type)
             print('')
             self.show_special_cell_info(cell)
