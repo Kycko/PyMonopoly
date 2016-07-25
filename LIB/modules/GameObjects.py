@@ -171,8 +171,8 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
         elif type == 'change_player':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name), 'gamelog_message_player_switched', len(self.messages)))
-        elif type == 'ingame_continue_tax':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])[1:]), 'gamelog_message_common', len(self.messages)))
+        elif type in ('ingame_continue_tax', 'ingame_continue_income'):
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3 + 10*(type[16:] == 'income')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])[(type[16:] == 'tax'):]), 'gamelog_message_common', len(self.messages)))
         elif type == 'ingame_continue_PAY_RENT':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[4].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])).replace('^', Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner), 'gamelog_message_common', len(self.messages)))
         elif type == 'ingame_buy_a_cell':

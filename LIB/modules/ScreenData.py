@@ -267,7 +267,7 @@ class MainScreen():
             self.change_owner_for_a_cell(player)
             self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
-        elif type == 'ingame_continue_tax':
+        elif type in ('ingame_continue_tax', 'ingame_continue_income'):
             self.objects['game_log'].add_message(type)
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
         elif type == 'ingame_continue_PAY_RENT':
@@ -320,6 +320,11 @@ class MainScreen():
                     else:
                         self.change_player_money(i, obj[0].modifier[0])
                 self.objects['game_log'].add_message('pay_each')
+            elif obj[0].type == 'take_chance':
+                Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = True
+                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                obj.append(obj.pop(0))
+                return None
             if obj[0].type != 'free_jail':
                 obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
@@ -405,6 +410,7 @@ class MainScreen():
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
             clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
+            Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
             for player in Globals.PLAYERS:
                 player.speed_limit = 5
         elif type == 'show_menu':
@@ -557,15 +563,21 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chances']:
+            for i in self.objects['gamefield'].chests_and_chances['chests']:
                 print(i.type)
             print('')
             self.show_special_cell_info(cell)
-            if cell.group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[cell.group + 's'][0].type == 'goto_jail':
+            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
+                group = 'chance'
+            else:
+                group = cell.group
+            if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
             else:
-                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+cell.group, 'ingame_main', 5)
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+group, 'ingame_main', 5)
             self.cursor.screen_switched(self.menuitems, 'ingame_continue')
+            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
+                Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
         else:
             if cell.owner:
                 text = Globals.TRANSLATION[45] + cell.owner
@@ -602,11 +614,15 @@ class MainScreen():
             if key[:12] in ('dices', 'target_cell_'):
                 self.labels.pop(key)
     def show_special_cell_info(self, cell):
-        if cell.group == 'tax':
-            text = Globals.TRANSLATION[50] + str(cell.buy_cost)[1:]
+        if cell.group in ('tax', 'income'):
+            text = Globals.TRANSLATION[50 + 9*(cell.group == 'income')] + str(cell.buy_cost)[(cell.group == 'tax'):]
             Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
         elif cell.group in ('chest', 'chance'):
-            text = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0].text
+            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
+                group = 'chances'
+            else:
+                group = cell.group + 's'
+            text = self.objects['gamefield'].chests_and_chances[group][0].text
         elif cell.group == 'jail':
             text = Globals.TRANSLATION[51]
             self.menuitems['fieldcell_10'].tooltip.RErender()
