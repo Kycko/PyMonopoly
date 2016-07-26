@@ -256,7 +256,7 @@ class MainScreen():
                 self.change_player_money(player, -CELL.buy_cost)
             else:
                 vid = player.free_jail_cards.pop(0)
-                self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS.pop('free_jail_obj_'+vid))
+                self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             player.exit_jail_attempts = None
             CELL.RErender()
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -299,7 +299,7 @@ class MainScreen():
                 obj.append(obj.pop(0))
                 return None
             elif obj[0].type == 'free_jail':
-                Globals.TEMP_VARS['free_jail_obj_'+type[16:]] = obj.pop(0)
+                Globals.TEMP_VARS['free_jail_obj'] = obj.pop(0)
                 player.free_jail_cards.append(type[16:])
                 self.objects['game_log'].add_message('chest_free_jail')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -563,7 +563,7 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chests']:
+            for i in self.objects['gamefield'].chests_and_chances['chances']:
                 print(i.type)
             print('')
             self.show_special_cell_info(cell)

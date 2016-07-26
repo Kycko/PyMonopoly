@@ -184,8 +184,8 @@ class GameLog():
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
         elif type == 'chest_income':
             self.messages.append(AlphaText('- ' + Globals.GAMELOG_TRANSLATION[(3, 7)[Globals.TEMP_VARS['MUST_PAY'] > 0]].split()[1] + ' $' + str(Globals.TEMP_VARS['MUST_PAY']).lstrip('-'), 'gamelog_message_common', len(self.messages)))
-        elif type == 'chest_free_jail':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[9], 'gamelog_message_common', len(self.messages)))
+        elif type in ('chest_free_jail', 'use_card_to_exit_jail'):
+            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[9 + 5*(type == 'use_card_to_exit_jail')], 'gamelog_message_common', len(self.messages)))
         elif type == 'roll_the_dice_to_exit_jail':
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts)), 'gamelog_message_common', len(self.messages)))
         elif type == 'pay_money_to_exit_jail':
