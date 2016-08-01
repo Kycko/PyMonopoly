@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # PyMonopoly
 Famous monopoly board game. In active development, so currently there's no ability to play
 
