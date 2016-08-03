@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import Globals
 from Players import Player
-from os import listdir, mkdir
-from pygame import Color, display, mixer
-from random import randrange
-from sys import exit as SYSEXIT
+from os      import listdir, mkdir
+from pygame  import Color, display, mixer
+from random  import randrange
+from sys     import exit as SYSEXIT
+from locale  import getdefaultlocale
 
 #--- Common
 def change_color_alpha(color, alpha):
@@ -88,16 +89,22 @@ def check_files():
     for FILE in ('stats', 'settings', 'last_game_settings'):
         if FILE not in DB:
             create_init_file(FILE)
+
 def create_init_file(type):
     if type == 'stats':
         data = ['0\n' if x<3 else 'None 0 01.01.01 0\n' for x in range(10)]
         data = data + data
     elif type == 'settings':
         color = Globals.PLAYERS_COLORS[2]
-        data = ('0\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        if getdefaultlocale ()[0] == 'ru_RU':
+          locale = 1
+        else:
+          locale = 0
+        data = (str(locale) + '\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
+
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
     return {'language'  : int(SETTINGS[0]),
