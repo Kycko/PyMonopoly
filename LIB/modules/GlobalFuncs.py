@@ -125,6 +125,7 @@ def save_settings():
              str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
 def read_translation(lang):
+    print (lang)
     return read_file(Globals.DIRS['translations'] + lang + '/main')
 def read_stats(game):
     array = read_file(Globals.FILES['stats'])
@@ -152,7 +153,7 @@ def save_last_game_settings():
             data.append('AI\n')
     write_to_file(Globals.FILES['last_game_settings'], data)
 def read_onboard_text():
-    directory = Globals.DIRS['translations']+Globals.LANGUAGES[Globals.SETTINGS['language']][0]+'/'+get_gamename()+'/'
+    directory = Globals.DIRS['translations']+Globals.SETTINGS['language']+'/'+get_gamename()+'/'
     data = {}
     for type in ('fieldnames', 'onboard'):
         raw = read_file(directory + type)
@@ -163,6 +164,6 @@ def read_onboard_text():
     data['rentlabels'] = read_file(directory + 'rentlabels')
     return data
 def read_gamelog_translation():
-    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/gamelog_messages')
+    return read_file(Globals.DIRS['translations'] + Globals.SETTINGS['language'] + '/gamelog_messages')
 def read_chests_and_chances_translation(type):
-    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/' + get_gamename() + '/' + type)
+    return read_file(Globals.DIRS['translations'] + Globals.SETTINGS['language'] + '/' + get_gamename() + '/' + type)
