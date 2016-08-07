@@ -449,7 +449,7 @@ class MainScreen():
             obj.new_pos = count_new_pos(obj.new_pos, offset)
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
-        new = not(6-Globals.TRANSLATION.index(current))
+        new = 6-Globals.TRANSLATION.index(current)
         data = read_stats(new)
         if data[1]:
             data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
@@ -471,7 +471,7 @@ class MainScreen():
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
-        self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.LANGUAGES[Globals.SETTINGS['language']][1]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
+        self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.TRANSLATION[60]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
                           'player'      : MenuItem(Globals.PLAYERS[0].name, 'main_settings_player', 'main_settings_player', 0),
                           'hotkeys'     : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['hotkeys'])]+u' ›', 'main_settings_hotkeys', 'main_settings_left_MI', 2),
                           'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
@@ -497,7 +497,7 @@ class MainScreen():
                             'color'     : AlphaText(Globals.TRANSLATION[23], 'settings_left', 2)})
     def init_avail_colors_and_names(self):
         Globals.TEMP_VARS['avail_colors'] = list(Globals.PLAYERS_COLORS)
-        Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/names')
+        Globals.TEMP_VARS['avail_names'] = read_file(Globals.DIRS['translations'] + Globals.SETTINGS['language'] + '/names')
         for player in Globals.PLAYERS:
             if player.color in Globals.TEMP_VARS['avail_colors']:
                 Globals.TEMP_VARS['avail_colors'].remove(player.color)

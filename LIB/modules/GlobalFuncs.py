@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import Globals
-from Players import Player
+from locale import getdefaultlocale
 from os import listdir, mkdir
+from Players import Player
 from pygame import Color, display, mixer
 from random import randrange
 from sys import exit as SYSEXIT
@@ -94,13 +95,16 @@ def create_init_file(type):
         data = data + data
     elif type == 'settings':
         color = Globals.PLAYERS_COLORS[2]
-        data = ('0\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        locale = getdefaultlocale()[0][:2]
+        if locale not in (listdir(Globals.DIRS['translations'])):
+            locale = 'en'
+        data = (locale+'\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
-    return {'language'  : int(SETTINGS[0]),
+    return {'language'  : SETTINGS[0],
             'pl_name'   : SETTINGS[1],
             'pl_color'  : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
             'fav_game'  : int(SETTINGS[5]),
@@ -110,7 +114,7 @@ def read_settings():
             'volume'    : float(SETTINGS[9]),
             'block'     : bool(int(SETTINGS[10]))}
 def save_settings():
-    array = [str(Globals.SETTINGS['language']) + '\n',
+    array = [Globals.SETTINGS['language'] + '\n',
              Globals.SETTINGS['pl_name'] + '\n',
              str(Globals.SETTINGS['pl_color'][0]) + '\n',
              str(Globals.SETTINGS['pl_color'][1]) + '\n',
@@ -122,15 +126,20 @@ def save_settings():
              str(Globals.SETTINGS['volume']) + '\n',
              str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
+def choose_next_language():
+    avail_languages = listdir(Globals.DIRS['translations'])
+    avail_languages.sort()
+    index = avail_languages.index(Globals.SETTINGS['language']) + 1
+    if index == len(avail_languages):
+        index = 0
+    Globals.SETTINGS['language'] = avail_languages[index]
+    Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
 def read_translation(lang):
-    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[lang][0] + '/main')
+    return read_file(Globals.DIRS['translations'] + lang + '/main')
 def read_stats(game):
     array = read_file(Globals.FILES['stats'])
     #--- 0: monopoly, 10: manager
-    if game:
-        line = 0
-    else:
-        line = 10
+    line = 10*game
     for i in range(line, line+10):
         if i < line+3:
             array[i] = int(array[i])
@@ -142,15 +151,10 @@ def read_stats(game):
                         'recent'    : bool(int(temp[3]))}
     return array[line:line+10]
 def save_last_game_settings():
-    data = []
-    for i in range(1, len(Globals.PLAYERS)):
-        if Globals.PLAYERS[i].human:
-            data.append('human\n')
-        else:
-            data.append('AI\n')
+    data = [('AI\n', 'human\n')[Globals.PLAYERS[i].human] for i in range(1, len(Globals.PLAYERS))]
     write_to_file(Globals.FILES['last_game_settings'], data)
 def read_onboard_text():
-    directory = Globals.DIRS['translations']+Globals.LANGUAGES[Globals.SETTINGS['language']][0]+'/'+get_gamename()+'/'
+    directory = Globals.DIRS['translations']+Globals.SETTINGS['language']+'/'+get_gamename()+'/'
     data = {}
     for type in ('fieldnames', 'onboard'):
         raw = read_file(directory + type)
@@ -161,6 +165,6 @@ def read_onboard_text():
     data['rentlabels'] = read_file(directory + 'rentlabels')
     return data
 def read_gamelog_translation():
-    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/gamelog_messages')
+    return read_file(Globals.DIRS['translations'] + Globals.SETTINGS['language'] + '/gamelog_messages')
 def read_chests_and_chances_translation(type):
-    return read_file(Globals.DIRS['translations'] + Globals.LANGUAGES[Globals.SETTINGS['language']][0] + '/' + get_gamename() + '/' + type)
+    return read_file(Globals.DIRS['translations'] + Globals.SETTINGS['language'] + '/' + get_gamename() + '/' + type)
