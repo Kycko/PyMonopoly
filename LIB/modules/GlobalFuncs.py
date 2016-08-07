@@ -127,15 +127,11 @@ def save_settings():
              str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
 def read_translation(lang):
-    print (lang)
     return read_file(Globals.DIRS['translations'] + lang + '/main')
 def read_stats(game):
     array = read_file(Globals.FILES['stats'])
     #--- 0: monopoly, 10: manager
-    if game:
-        line = 0
-    else:
-        line = 10
+    line = 10*game
     for i in range(line, line+10):
         if i < line+3:
             array[i] = int(array[i])
@@ -147,12 +143,7 @@ def read_stats(game):
                         'recent'    : bool(int(temp[3]))}
     return array[line:line+10]
 def save_last_game_settings():
-    data = []
-    for i in range(1, len(Globals.PLAYERS)):
-        if Globals.PLAYERS[i].human:
-            data.append('human\n')
-        else:
-            data.append('AI\n')
+    data = [('AI\n', 'human\n')[Globals.PLAYERS[i].human] for i in range(1, len(Globals.PLAYERS))]
     write_to_file(Globals.FILES['last_game_settings'], data)
 def read_onboard_text():
     directory = Globals.DIRS['translations']+Globals.SETTINGS['language']+'/'+get_gamename()+'/'

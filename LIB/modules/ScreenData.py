@@ -449,7 +449,7 @@ class MainScreen():
             obj.new_pos = count_new_pos(obj.new_pos, offset)
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
-        new = not(6-Globals.TRANSLATION.index(current))
+        new = 6-Globals.TRANSLATION.index(current)
         data = read_stats(new)
         if data[1]:
             data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
