@@ -95,10 +95,10 @@ def create_init_file(type):
         data = data + data
     elif type == 'settings':
         color = Globals.PLAYERS_COLORS[2]
-        locale = getdefaultlocale()[0][:2]+'\n'
+        locale = getdefaultlocale()[0][:2]
         if locale not in (listdir(Globals.DIRS['translations'])):
             locale = 'en'
-        data = (locale, 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        data = (locale+'\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
@@ -114,7 +114,7 @@ def read_settings():
             'volume'    : float(SETTINGS[9]),
             'block'     : bool(int(SETTINGS[10]))}
 def save_settings():
-    array = [str(Globals.SETTINGS['language']) + '\n',
+    array = [Globals.SETTINGS['language'] + '\n',
              Globals.SETTINGS['pl_name'] + '\n',
              str(Globals.SETTINGS['pl_color'][0]) + '\n',
              str(Globals.SETTINGS['pl_color'][1]) + '\n',
