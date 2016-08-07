@@ -95,7 +95,7 @@ def create_init_file(type):
         data = data + data
     elif type == 'settings':
         color = Globals.PLAYERS_COLORS[2]
-        locale = getdefaultlocale()[0][3:].lower()+'\n'
+        locale = getdefaultlocale()[0][:2].lower()+'\n'
         data = (locale, 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
