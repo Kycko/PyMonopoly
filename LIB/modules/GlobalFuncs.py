@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import Globals
-from Players import Player
+from locale import getdefaultlocale
 from os import listdir, mkdir
+from Players import Player
 from pygame import Color, display, mixer
 from random import randrange
 from sys import exit as SYSEXIT
-from locale import getdefaultlocale
 
 #--- Common
 def change_color_alpha(color, alpha):
