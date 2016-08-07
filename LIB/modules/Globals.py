@@ -81,9 +81,6 @@ PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
           'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
 
-LANGUAGES = (('en', u'English'),
-             ('ru', u'Русский'))
-
 TEMP_VARS = {}
 #--- Restore files, read settings and translation, create players list
 check_files()

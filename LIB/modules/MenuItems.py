@@ -128,13 +128,12 @@ class MenuItem():
             return None
         elif key != 'exit' and 'main_new_edit_player' in self.type:
             Globals.TEMP_VARS['edit_player'] = int(self.type[len(self.type)-1])
-        elif self.type in ('main_settings_language', 'main_settings_fav_game'):
-            Globals.SETTINGS[self.type[14:]] = int(not(Globals.SETTINGS[self.type[14:]]))
-            if self.type == 'main_settings_fav_game':
-                self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›')
-                return None
-            else:
-                Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
+        elif self.type == 'main_settings_fav_game':
+            Globals.SETTINGS['fav_game'] = int(not(Globals.SETTINGS['fav_game']))
+            self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›')
+            return None
+        elif self.type == 'main_settings_language':
+            choose_next_language()
         elif self.type == 'onboard_select_cell' or 'pl_info_tab' in self.type:
             return None
         return self.type

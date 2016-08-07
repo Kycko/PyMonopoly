@@ -126,6 +126,14 @@ def save_settings():
              str(Globals.SETTINGS['volume']) + '\n',
              str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
+def choose_next_language():
+    avail_languages = listdir(Globals.DIRS['translations'])
+    avail_languages.sort()
+    index = avail_languages.index(Globals.SETTINGS['language']) + 1
+    if index == len(avail_languages):
+        index = 0
+    Globals.SETTINGS['language'] = avail_languages[index]
+    Globals.TRANSLATION = read_translation(Globals.SETTINGS['language'])
 def read_translation(lang):
     return read_file(Globals.DIRS['translations'] + lang + '/main')
 def read_stats(game):

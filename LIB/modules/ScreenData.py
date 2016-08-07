@@ -471,7 +471,7 @@ class MainScreen():
         self.objects = {'game_name_UL'  : Line(self.labels['game_name'], 'bottom', 2),
                         'bestslbl_UL'   : Line(self.labels['bestslbl'], 'bottom', 2)}
     def make_settings_screen(self):
-        self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.SETTINGS['language']+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
+        self.menuitems = {'language'    : MenuItem(u'‹ '+Globals.TRANSLATION[60]+u' ›', 'main_settings_language', 'main_settings_left_MI', 0),
                           'player'      : MenuItem(Globals.PLAYERS[0].name, 'main_settings_player', 'main_settings_player', 0),
                           'hotkeys'     : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['hotkeys'])]+u' ›', 'main_settings_hotkeys', 'main_settings_left_MI', 2),
                           'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
