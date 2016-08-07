@@ -10,7 +10,7 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
-VERSION = '0.5.1-dev'
+VERSION = '0.5.2-dev'
 RESOLUTION = check_user_monitor(1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
@@ -27,6 +27,7 @@ COLORS = {'black'               : pygame.Color('black'),
           'grey22'              : pygame.Color(200, 200, 200),
           'grey63'              : pygame.Color(95, 95, 95),
           'magenta'             : pygame.Color('magenta'),
+          'light_magenta'        : pygame.Color(210, 71, 140),
           'deep_magenta'        : pygame.Color(210, 59, 128),
           'orange'              : pygame.Color(223, 138, 55),
           'pink'                : pygame.Color(254, 126, 185),
@@ -39,8 +40,8 @@ COLORS = {'black'               : pygame.Color('black'),
           'deep_yellow'         : pygame.Color(235, 221, 57)}
 
 PLAYERS_COLORS = (COLORS['light_blue'],
-                  COLORS['magenta'],
-                  COLORS['red'],
+                  COLORS['light_magenta'],
+                  COLORS['red27'],
                   COLORS['light_green'],
                   COLORS['light_brown'],
                   COLORS['yellow'])
@@ -80,9 +81,6 @@ PICS = {'appicon'               : DIRS['images'] + 'appicon.png',
 
 SOUNDS = {'music'               : pygame.mixer.music.load(DIRS['sounds'] + 'music.ogg'),
           'button-pressed'      : pygame.mixer.Sound(DIRS['sounds'] + 'button-pressed.wav')}
-
-LANGUAGES = (('en', u'English'),
-             ('ru', u'Русский'))
 
 TEMP_VARS = {}
 #--- Restore files, read settings and translation, create players list
