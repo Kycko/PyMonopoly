@@ -453,7 +453,7 @@ class MainScreen():
         data = read_stats(new)
         if data[1]:
             data[1] = str(data[1]) + ' ('+str(round(data[1]*100/data[0], 2))+' %)'
-        self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[6-new], 'stats_game_name'),
+        self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[5+new], 'stats_game_name'),
                             'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
                             'profit'    : AlphaText(Globals.TRANSLATION[10] + '$ ' + str(data[2]), 'stats_common', 2),
