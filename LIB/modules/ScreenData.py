@@ -563,14 +563,11 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chances']:
+            for i in self.objects['gamefield'].chests_and_chances['chests']:
                 print(i.type)
             print('')
             self.show_special_cell_info(cell)
-            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
-                group = 'chance'
-            else:
-                group = cell.group
+            group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
             if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
             else:
