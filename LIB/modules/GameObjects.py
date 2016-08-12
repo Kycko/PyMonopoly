@@ -205,9 +205,8 @@ class GameLog():
     def RErender(self):
         self.surf = pygame.Surface((280, 430), pygame.SRCALPHA)
         for message in self.messages:
-            if message:
-                message.move_text()
-                self.surf.blit(message.set_alpha(), message.rect.topleft)
+            message.move_text()
+            self.surf.blit(message.set_alpha(), message.rect.topleft)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         if self.messages[-1].alpha != 255:
