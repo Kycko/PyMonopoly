@@ -68,10 +68,7 @@ def add_new_player(human):
 def create_players_list():
     Globals.PLAYERS = [Player(Globals.SETTINGS['pl_name'], Globals.SETTINGS['pl_color'], True)]
 def get_gamename():
-    if Globals.TEMP_VARS['cur_game']:
-        return 'manager'
-    else:
-        return 'monopoly'
+    return ('monopoly', 'manager')[Globals.TEMP_VARS['cur_game']]
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
