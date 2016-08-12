@@ -239,6 +239,8 @@ class MainScreen():
                 player.move_forward(points)
                 if player.cur_field - points == 10:
                     self.menuitems['fieldcell_10'].tooltip.RErender()
+                if type == 'roll_the_dice_to_exit_jail':
+                    player.exit_jail_attempts = None
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('roll_the_dice')
             else:
@@ -525,8 +527,6 @@ class MainScreen():
     def change_player(self):
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
-            if player.cur_field != 10:
-                player.exit_jail_attempts = None
             GameMechanics.change_player()
             self.objects['cur_turn_highlighter'].move()
             self.objects['game_log'].add_message('change_player')
