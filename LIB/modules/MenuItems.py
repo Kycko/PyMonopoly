@@ -346,13 +346,13 @@ class MainCursor(Cursor):
         return first_rect
     def make_keys(self, type):
         if type == 'ingame_continue':
-            self.keys = ['ingame_continue']
+            self.keys_generator(('ingame_continue', 'trade'))
         elif type == 'ingame_buy_or_auction':
-            self.keys = ['buy_a_cell', 'cell_to_an_auction']
+            self.keys_generator(('buy_a_cell', 'cell_to_an_auction', 'trade'))
         elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'ingame_main':
-            self.keys = [key for key in ('roll_the_dice', 'pay_money_to_exit_jail', 'use_card_to_exit_jail') if key in Globals.main_scr.menuitems.keys()] + ['trade']
+            self.keys_generator(('roll_the_dice', 'pay_money_to_exit_jail', 'use_card_to_exit_jail', 'trade'))
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
@@ -369,6 +369,8 @@ class MainCursor(Cursor):
                 self.keys.insert(0, 'game')
         elif type == 'game_start':
             self.keys = ['start_game', 'exit']
+    def keys_generator(self, keys):
+        self.keys = [key for key in keys if key in Globals.main_scr.menuitems.keys()]
     def add_rm_keys(self, add, key, index=None, cords=None):
         if add:
             self.keys.insert(index, key)
