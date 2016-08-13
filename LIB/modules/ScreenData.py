@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FieldCellsData, GameMechanics, Globals, pygame, random
-from GameObjects import GameField, GameLog
+from GameObjects import GameField, GameLog, TradeSummary
 from GlobalFuncs import *
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
@@ -338,6 +338,36 @@ class MainScreen():
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
+        elif type and 'enter_the_trade_menu' in type:
+            if type == 'enter_the_trade_menu':
+                Globals.TEMP_VARS['trading'] = {}
+                Globals.TEMP_VARS['trading']['trader'] = {}
+                temp_var = Globals.TEMP_VARS['trading']['trader']
+                if 'pay_birthday' in Globals.TEMP_VARS.keys():
+                    self.labels['target_cell_info'].change_new_pos((0, -80))
+                    temp_var['info'] = Globals.TEMP_VARS['pay_birthday'][0]
+                else:
+                    self.disable_central_labels()
+                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
+                    temp_var['info'] = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                self.objects['trade_summary'] = TradeSummary()
+                if 'end_turn' in self.menuitems.keys():
+                    back_type = 'end_turn'
+                else:
+                    back_type = 'new_turn'
+                self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_' + back_type, 'ingame_main', 8)
+                self.clear_main_menu_entries(('return'))
+                counter = 0
+                for i in range(len(Globals.PLAYERS)):
+                    if Globals.PLAYERS[i].name != temp_var['info'].name:
+                        counter += 1
+                        self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
+                self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
+        elif type and type[:7] == 'return_':
+            self.objects.pop('trade_summary')
+            Globals.TEMP_VARS.pop('trading')
+            if type == 'return_end_turn':
+                self.ask_to_end_turn()
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -421,6 +451,8 @@ class MainScreen():
             if not state:
                 state = -1
             objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.objects['game_log']]
+            if 'trade_summary' in self.objects.keys():
+                objects_to_move += [self.objects['trade_summary']]
             objects_to_move += [cell for cell in self.menuitems.values() if cell.type == 'onboard_select_cell']
             objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
             objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]
@@ -449,9 +481,10 @@ class MainScreen():
         for key in self.labels.keys():
             if key not in exception:
                 self.labels.pop(key)
-    def clear_main_menu_entries(self):
+    def clear_main_menu_entries(self, exception=()):
         for key in self.cursor.keys:
-            self.menuitems.pop(key)
+            if key not in exception:
+                self.menuitems.pop(key)
     def disable_main_menu(self):
         self.clear_main_menu_entries()
         self.cursor = None
@@ -602,6 +635,9 @@ class MainScreen():
         self.objects['game_log'].add_message('change_player')
         self.new_turn()
     def new_turn(self):
+        for key in Globals.TEMP_VARS.keys():
+            print(key)
+        print('')
         self.show_step_indicator_under_player()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if player.human:
@@ -628,9 +664,9 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chests']:
-                print(i.type)
-            print('')
+            # for i in self.objects['gamefield'].chests_and_chances['chests']:
+            #     print(i.type)
+            # print('')
             self.show_special_cell_info(cell)
             group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
             if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
@@ -688,13 +724,13 @@ class MainScreen():
         self.labels['money_player_'+player.name].update_text(str(player.money))
     def pay_birthday_next_player(self):
         if Globals.TEMP_VARS['pay_birthday']:
-            player = Globals.TEMP_VARS['pay_birthday'][0]
-            text = Globals.TRANSLATION[58].replace('%', player.name)
+            player_name = Globals.TEMP_VARS['pay_birthday'][0].name
+            text = Globals.TRANSLATION[58].replace('%', player_name)
             text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
             self.clear_main_menu_entries()
-            self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player.name, 'ingame_main', 3)})
+            self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player_name, 'ingame_main', 3)})
             self.show_property_management_menuitems(4)
             self.cursor.screen_switched(self.menuitems, 'ingame_main')
         else:

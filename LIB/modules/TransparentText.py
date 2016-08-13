@@ -26,7 +26,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl') or 'stats_table' in self.group or 'ERROR' in self.group:
+        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'music_and_sound_switches':
             self.font = Globals.FONTS['ume_16']
@@ -41,8 +41,12 @@ class AlphaText():
             self.color = Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].color
         elif 'gamelog_message' in self.group:
             self.choose_switch_color(self.group)
+        elif 'ingame_enter_the_trade_menu_' in self.group:
+            self.color = self.find_color_of_player(self.group[28:])
         elif self.group == 'birthday_info':
             self.color = Globals.TEMP_VARS['pay_birthday'][0].color
+        elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
+            self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif 'volume_SELECTOR' in self.group:
@@ -69,6 +73,9 @@ class AlphaText():
         if self.group[:16] == 'gamelog_message_':
             self.x = 0
             self.rect = Rect((0, 0+18*number), (0, 0))
+        if self.group[:14] == 'trade_summary_':
+            self.x = 0
+            self.rect = Rect((0, 0), (0, 0))
         elif self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
@@ -85,7 +92,7 @@ class AlphaText():
                 self.rect = Rect((0, Globals.TEMP_VARS['cells_rects'][number].centery - 6), (0, 0))
             elif number in range(20, 31):
                 self.rect = Rect((0, 55), (0, 0))
-        elif self.group in ('ingame_main', 'ingame_dices'):
+        elif self.group[:28] in ('ingame_main', 'ingame_dices', 'ingame_enter_the_trade_menu_'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 360+35*number), (0, 0))
@@ -233,6 +240,10 @@ class AlphaText():
             self.color = Globals.COLORS['grey22']
         elif type == 'gamelog_message_player_switched':
             self.color = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].color
+    def find_color_of_player(self, player_name):
+        for player in Globals.PLAYERS:
+            if player.name == player_name:
+                return player.color
     def RErender(self):
         if self.group == 'target_cell_name':
             self.font.set_underline(True)

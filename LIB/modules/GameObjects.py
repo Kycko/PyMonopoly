@@ -159,13 +159,23 @@ class FieldCell():
             if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
                 y -= 20
             self.surf.blit(pic, (x, y))
-class GameLog():
+class InfoWindow():
+    def __init__(self, pos, new_pos):
+        self.RErender()
+        self.pos = pos
+        self.new_pos = new_pos
+    def change_new_pos(self, offset):
+        self.new_pos = count_new_pos(self.new_pos, offset)
+    def RErender(self):
+        self.surf = pygame.Surface((280, 430), pygame.SRCALPHA)
+    def render(self):
+        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
+        Globals.screen.blit(self.surf, self.pos)
+class GameLog(InfoWindow):
     def __init__(self):
         self.messages = [AlphaText(Globals.GAMELOG_TRANSLATION[0], 'gamelog_message_common', 0)]
         self.add_message('change_player')
-        self.RErender()
-        self.pos = (10, 170)
-        self.new_pos = (10, 70)
+        InfoWindow.__init__(self, (10, 170), (10, 70))
     def add_message(self, type):
         if type in ('roll_the_dice', 'chest_goto'):
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
@@ -200,18 +210,29 @@ class GameLog():
             for message in self.messages:
                 if message:
                     message.change_new_pos((0, -18*count))
-    def change_new_pos(self, offset):
-        self.new_pos = count_new_pos(self.new_pos, offset)
     def RErender(self):
-        self.surf = pygame.Surface((280, 430), pygame.SRCALPHA)
+        InfoWindow.RErender(self)
         for message in self.messages:
             message.move_text()
             self.surf.blit(message.set_alpha(), message.rect.topleft)
     def render(self):
-        self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         if self.messages[-1].alpha != 255:
             self.RErender()
-        Globals.screen.blit(self.surf, self.pos)
+        InfoWindow.render(self)
+class TradeSummary(InfoWindow):
+    def __init__(self):
+        self.text = {'trader'       : {},
+                     'trading_with' : {}}
+        self.text['trader']['info'] = AlphaText(Globals.TEMP_VARS['trading']['trader']['info'].name, 'trade_summary_trader_name', 0)
+        pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1] + 100)
+        new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
+        InfoWindow.__init__(self, pos, new_pos)
+    def render(self):
+        InfoWindow.RErender(self)
+        for person in ('trader', 'trading_with'):
+            if 'info' in self.text[person].keys():
+                self.surf.blit(self.text[person]['info'].set_alpha(), (140 - self.text[person]['info'].text.get_width()/2, 0))
+        InfoWindow.render(self)
 class ChestOrChance():
     def __init__(self, type, text):
         self.modifier = type.split()[1:]
