@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import FieldCellsData, GameMechanics, Globals, pygame, random
 from GameObjects import GameField, GameLog
-from GlobalFuncs import add_new_player, clear_TEMP_VARS, count_new_pos, create_players_list, read_file, read_gamelog_translation, read_onboard_text, read_stats
+from GlobalFuncs import *
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
@@ -543,6 +543,11 @@ class MainScreen():
         else:
             return None
         self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+    def show_property_management_menuitems(self, type, number):
+        IFs = (type == 'show_always',
+               type == 'SOMETHING_ELSE :)')
+        if True in IFs and check_if_anybody_owns_fieldcells():
+            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
@@ -595,7 +600,7 @@ class MainScreen():
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
             number = len([key for key in ('pay_money_to_exit_jail', 'roll_the_dice', 'use_card_to_exit_jail') if key in self.menuitems.keys()])
-            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
+            self.show_property_management_menuitems('show_always', number)
             if self.cursor:
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:

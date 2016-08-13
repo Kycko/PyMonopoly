@@ -69,6 +69,13 @@ def create_players_list():
     Globals.PLAYERS = [Player(Globals.SETTINGS['pl_name'], Globals.SETTINGS['pl_color'], True)]
 def get_gamename():
     return ('monopoly', 'manager')[Globals.TEMP_VARS['cur_game']]
+def check_if_anybody_owns_fieldcells():
+    for player in Globals.PLAYERS:
+        if player.free_jail_cards:
+            return True
+    for cell in Globals.main_scr.objects['gamefield'].cells:
+        if cell.owner:
+            return True
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
