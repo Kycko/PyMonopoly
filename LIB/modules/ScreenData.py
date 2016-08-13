@@ -8,6 +8,7 @@ from TransparentText import AlphaText
 from sys import exit as SYSEXIT
 
 class MainScreen():
+    #--- Common
     def __init__(self):
         self.switch_screen('main_main', None)
     def switch_screen(self, type, key):
@@ -163,15 +164,25 @@ class MainScreen():
                 if 'SELECTOR' in item.type:
                     for dot in item.selector.items:
                         dot.new_pos = (dot.new_pos[0]-1820, dot.new_pos[1])
-    def clear_labels(self, exception):
-        for key in self.labels.keys():
-            if key not in exception:
-                self.labels.pop(key)
     def mainloop(self):
         while True:
             cur_key = self.check_mouse_pos(pygame.mouse.get_pos())
             self.render(cur_key)
             self.events(cur_key)
+    def render(self, cur_key):
+        for key in self.pics['order']:
+            self.pics[key].render()
+        for obj in self.objects.values():
+            obj.render()
+        if self.cursor:
+            self.cursor.render(self.menuitems)
+        for key in self.menuitems.keys():
+            self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
+        for label in self.labels.values():
+            label.render()
+        Globals.window.blit(Globals.screen, (0, 0))
+        pygame.display.flip()
+    #--- Mouse and keyboard events
     def check_mouse_pos(self, mp):
         key = self.find_hovering_menuitem(mp)
         if self.cursor and key != self.cursor.active_key and key in self.cursor.keys:
@@ -186,19 +197,6 @@ class MainScreen():
                             self.menuitems[key].selector.apply_new_active(i)
                 return key
         return None
-    def render(self, cur_key):
-        for key in self.pics['order']:
-            self.pics[key].render()
-        for obj in self.objects.values():
-            obj.render()
-        if self.cursor:
-            self.cursor.render(self.menuitems)
-        for key in self.menuitems.keys():
-            self.menuitems[key].render(cur_key == key or self.cursor and self.cursor.active_key == key)
-        for label in self.labels.values():
-            label.render()
-        Globals.window.blit(Globals.screen, (0, 0))
-        pygame.display.flip()
     def events(self, cur_key):
         for e in pygame.event.get():
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1 and cur_key:
@@ -226,6 +224,7 @@ class MainScreen():
                             self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
+    #--- Menu actions
     def action_call(self, key):
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -449,9 +448,29 @@ class MainScreen():
             self.disable_step_indicators()
             self.disable_central_labels()
             self.change_player()
+    #--- Cleaning and moving
+    def clear_labels(self, exception):
+        for key in self.labels.keys():
+            if key not in exception:
+                self.labels.pop(key)
+    def clear_main_menu_entries(self):
+        for key in self.cursor.keys:
+            self.menuitems.pop(key)
+    def disable_main_menu(self):
+        self.clear_main_menu_entries()
+        self.cursor = None
+    def disable_central_labels(self):
+        for key in self.labels.keys():
+            if key[:12] in ('dices', 'target_cell_'):
+                self.labels.pop(key)
+    def disable_step_indicators(self):
+        for cell in self.objects['gamefield'].cells:
+            cell.step_indicator_visible = False
+            cell.step_indicator.alpha = 5
     def move_APPINFO(self, offset):
         for obj in (self.pics['logo'], self.labels['APPNAME'], self.labels['APPVERSION']):
             obj.new_pos = count_new_pos(obj.new_pos, offset)
+    #--- Creating specific objects
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
         new = 6-Globals.TRANSLATION.index(current)
@@ -508,6 +527,23 @@ class MainScreen():
                 Globals.TEMP_VARS['avail_colors'].remove(player.color)
             if player.name in Globals.TEMP_VARS['avail_names']:
                 Globals.TEMP_VARS['avail_names'].remove(player.name)
+    def show_special_cell_info(self, cell):
+        if cell.group in ('tax', 'income'):
+            text = Globals.TRANSLATION[50 + 9*(cell.group == 'income')] + str(cell.buy_cost)[(cell.group == 'tax'):]
+            Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
+        elif cell.group in ('chest', 'chance'):
+            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
+                group = 'chances'
+            else:
+                group = cell.group + 's'
+            text = self.objects['gamefield'].chests_and_chances[group][0].text
+        elif cell.group == 'jail':
+            text = Globals.TRANSLATION[51]
+            self.menuitems['fieldcell_10'].tooltip.RErender()
+        else:
+            return None
+        self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+    #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
             status = self.check_doubles_for_players()
@@ -524,6 +560,17 @@ class MainScreen():
             for j in range(i+1, len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].color == Globals.PLAYERS[j].color or Globals.PLAYERS[i].name == Globals.PLAYERS[j].name:
                     return True
+    def check_group_owners(self, group, player):
+        data = []
+        counter = 0
+        for cell in self.objects['gamefield'].cells:
+            if cell.group == group:
+                counter += 1
+                if cell.owner == player:
+                    data.append(cell)
+        self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
+        return data
+    #--- Game mechanics
     def change_player(self):
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
@@ -555,12 +602,6 @@ class MainScreen():
                 self.cursor = MainCursor(self.menuitems, 'ingame_main')
         elif self.cursor:
             self.disable_main_menu()
-    def disable_main_menu(self):
-        self.clear_main_menu_entries()
-        self.cursor = None
-    def clear_main_menu_entries(self):
-        for key in self.cursor.keys:
-            self.menuitems.pop(key)
     def player_on_a_new_cell(self, cell):
         self.clear_main_menu_entries()
         if cell.NAME:
@@ -605,30 +646,6 @@ class MainScreen():
                                        'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
                 self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
-    def disable_step_indicators(self):
-        for cell in self.objects['gamefield'].cells:
-            cell.step_indicator_visible = False
-            cell.step_indicator.alpha = 5
-    def disable_central_labels(self):
-        for key in self.labels.keys():
-            if key[:12] in ('dices', 'target_cell_'):
-                self.labels.pop(key)
-    def show_special_cell_info(self, cell):
-        if cell.group in ('tax', 'income'):
-            text = Globals.TRANSLATION[50 + 9*(cell.group == 'income')] + str(cell.buy_cost)[(cell.group == 'tax'):]
-            Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
-        elif cell.group in ('chest', 'chance'):
-            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
-                group = 'chances'
-            else:
-                group = cell.group + 's'
-            text = self.objects['gamefield'].chests_and_chances[group][0].text
-        elif cell.group == 'jail':
-            text = Globals.TRANSLATION[51]
-            self.menuitems['fieldcell_10'].tooltip.RErender()
-        else:
-            return None
-        self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
     def change_owner_for_a_cell(self, player):
         cell = self.objects['gamefield'].cells[player.cur_field]
         cell.owner = player.name
@@ -639,16 +656,6 @@ class MainScreen():
                 group_cell.buildings = len(cells) - 1
             self.objects['gamefield'].RErender_a_cell(group_cell.number)
             self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
-    def check_group_owners(self, group, player):
-        data = []
-        counter = 0
-        for cell in self.objects['gamefield'].cells:
-            if cell.group == group:
-                counter += 1
-                if cell.owner == player:
-                    data.append(cell)
-        self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
-        return data
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
