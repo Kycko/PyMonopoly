@@ -366,7 +366,6 @@ class MainScreen():
                         self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
         elif type and type[:7] == 'return_':
-            self.disable_central_labels()
             self.objects.pop('trade_summary')
             Globals.TEMP_VARS.pop('trading')
             if type == 'return_end_turn':
@@ -376,6 +375,7 @@ class MainScreen():
             elif type == 'return_new_turn':
                 self.new_turn()
             elif type == 'return_player_on_a_new_cell':
+                self.disable_central_labels()
                 self.labels['dices'] = GameMechanics.show_dices_picture()
                 field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
@@ -646,9 +646,8 @@ class MainScreen():
         self.objects['game_log'].add_message('change_player')
         self.new_turn()
     def new_turn(self):
-        # for key in Globals.TEMP_VARS.keys():
-        #     print(key)
-        # print('')
+        # self.DEBUGGER_show_TEMP_VARS_keys()
+        self.disable_central_labels()
         self.show_step_indicator_under_player()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if player.human:
@@ -671,13 +670,11 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
+        self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chests']:
-                print(i.type)
-            print('')
             self.show_special_cell_info(cell)
             group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
             if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
@@ -741,7 +738,10 @@ class MainScreen():
             text = Globals.TRANSLATION[58].replace('%', player_name)
             text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
-            self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
+            if 'return' in self.menuitems.keys():
+                self.labels['target_cell_info'].change_new_pos((0, 80))
+            else:
+                self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
             self.clear_main_menu_entries()
             self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player_name, 'ingame_main', 3)})
             self.show_property_management_menuitems(4)
@@ -750,3 +750,26 @@ class MainScreen():
             Globals.TEMP_VARS.pop('pay_birthday')
             self.objects['game_log'].add_message('birthday')
             self.ask_to_end_turn()
+    #--- DEBUGGING
+    def DEBUGGER_chests_and_chances(self):
+        DEBUG = self.objects['gamefield'].chests_and_chances
+        print('')
+        for i in range(14, -1, -1):
+            DEBUG_OUTPUT = ''
+            for DEBUG_TYPE in ('chests', 'chances'):
+                DEBUG_OUTPUT += DEBUG[DEBUG_TYPE][i].type
+                DEBUG_OUTPUT += ' ' * (15-len(DEBUG[DEBUG_TYPE][i].type))
+                if DEBUG[DEBUG_TYPE][i].modifier:
+                    DEBUG_OUTPUT += str(DEBUG[DEBUG_TYPE][i].modifier[0])
+                    DEBUG_OUTPUT += ' '*(8-len(str(DEBUG[DEBUG_TYPE][i].modifier[0])))
+                else:
+                    DEBUG_OUTPUT += 'NONE    '
+                DEBUG_OUTPUT += '|   '
+            DEBUG_OUTPUT += ('NEXT', str(i))[bool(i)]
+            print(DEBUG_OUTPUT)
+        print('---------------------------------------------------')
+        print('CHESTS                     CHANCES')
+    def DEBUGGER_show_TEMP_VARS_keys(self):
+        for key in Globals.TEMP_VARS.keys():
+            print(key)
+        print('')
