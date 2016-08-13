@@ -347,6 +347,8 @@ class MainCursor(Cursor):
     def make_keys(self, type):
         if type == 'ingame_continue':
             self.keys_generator(('ingame_continue', 'trade'))
+        elif type == 'ingame_end_turn':
+            self.keys_generator(('end_turn', 'trade'))
         elif type == 'ingame_buy_or_auction':
             self.keys_generator(('buy_a_cell', 'cell_to_an_auction', 'trade'))
         elif type == 'main_main':

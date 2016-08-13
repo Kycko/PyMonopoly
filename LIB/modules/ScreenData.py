@@ -238,8 +238,6 @@ class MainScreen():
                 player.move_forward(points)
                 if player.cur_field - points == 10:
                     self.menuitems['fieldcell_10'].tooltip.RErender()
-                if type == 'roll_the_dice_to_exit_jail':
-                    player.exit_jail_attempts = None
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('roll_the_dice')
             else:
@@ -250,6 +248,8 @@ class MainScreen():
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+        elif type == 'ingame_end_turn':
+            self.change_player()
         elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             CELL = self.objects['gamefield'].cells[10]
@@ -268,9 +268,11 @@ class MainScreen():
             self.change_owner_for_a_cell(player)
             self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
+            self.ask_to_end_turn()
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
             self.objects['game_log'].add_message(type)
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
+            self.ask_to_end_turn()
         elif type == 'ingame_continue_PAY_RENT':
             cur_turn = Globals.TEMP_VARS['cur_turn']
             player = Globals.PLAYERS[cur_turn]
@@ -280,6 +282,7 @@ class MainScreen():
                 if Globals.PLAYERS[i].name == cell.owner:
                     self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
+            self.ask_to_end_turn()
         elif type in ('ingame_continue_chest', 'ingame_continue_chance'):
             obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
@@ -287,6 +290,7 @@ class MainScreen():
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
                 self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message('chest_income')
+                self.ask_to_end_turn()
             elif obj[0].type[:4] == 'goto':
                 type = obj[0].type[5:]
                 if not type:
@@ -297,24 +301,22 @@ class MainScreen():
                     player.move_to_chance(type)
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                 self.objects['game_log'].add_message('chest_goto')
-                obj.append(obj.pop(0))
-                return None
             elif obj[0].type == 'free_jail':
                 Globals.TEMP_VARS['free_jail_obj'] = obj.pop(0)
                 player.free_jail_cards.append(type[16:])
                 self.objects['game_log'].add_message('chest_free_jail')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-                self.change_player_after_action_call(type)
+                self.ask_to_end_turn()
                 return None
+            elif obj[0].type == 'repair':
+                self.ask_to_end_turn()
             elif obj[0].type == 'birthday':
                 self.disable_central_labels()
                 if self.cursor:
                     self.clear_main_menu_entries()
                 Globals.TEMP_VARS['pay_birthday'] = [i for i in Globals.PLAYERS if i.name != player.name]
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
-                obj.append(obj.pop(0))
                 self.pay_birthday_next_player()
-                return None
             elif obj[0].type == 'pay_each':
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
                 for i in Globals.PLAYERS:
@@ -323,11 +325,10 @@ class MainScreen():
                     else:
                         self.change_player_money(i, obj[0].modifier[0])
                 self.objects['game_log'].add_message('pay_each')
+                self.ask_to_end_turn()
             elif obj[0].type == 'take_chance':
                 Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = True
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
-                obj.append(obj.pop(0))
-                return None
             obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
@@ -338,6 +339,7 @@ class MainScreen():
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
+            self.ask_to_end_turn()
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -439,15 +441,11 @@ class MainScreen():
                     obj.change_new_pos(offset)
         elif type == 'main_main' and 'show_menu' in self.menuitems.keys() and self.menuitems['show_menu'].text.symbols == u'↓':
             return None
+        elif type and type[:16] == 'ingame_continue_':
+            self.ask_to_end_turn()
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
-        self.change_player_after_action_call(type)
-    def change_player_after_action_call(self, type):
-        if type and (type == 'ingame_buy_a_cell' or type[:16] == 'ingame_continue_'):
-            self.disable_step_indicators()
-            self.disable_central_labels()
-            self.change_player()
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():
@@ -543,6 +541,12 @@ class MainScreen():
         else:
             return None
         self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+    def show_step_indicator_under_player(self):
+        self.disable_step_indicators()
+        player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+        cell = self.objects['gamefield'].cells[player.cur_field]
+        cell.step_indicator.change_color(player.color)
+        cell.step_indicator_visible = True
     def show_property_management_menuitems(self, number, condition=True):
         if condition and check_if_anybody_owns_fieldcells():
             self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
@@ -574,18 +578,26 @@ class MainScreen():
         self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
         return data
     #--- Game mechanics
-    def change_player(self):
+    def ask_to_end_turn(self):
+        self.disable_central_labels()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
-            GameMechanics.change_player()
-            self.objects['cur_turn_highlighter'].move()
-            self.objects['game_log'].add_message('change_player')
+            if player.cur_field != 10:
+                player.exit_jail_attempts = None
+            self.show_step_indicator_under_player()
+            self.clear_main_menu_entries()
+            self.menuitems['end_turn'] = MenuItem(Globals.TRANSLATION[61], 'ingame_end_turn', 'ingame_main', 0)
+            self.cursor.screen_switched(self.menuitems, 'ingame_end_turn')
+        else:
+            self.new_turn()
+    def change_player(self):
+        GameMechanics.change_player()
+        self.objects['cur_turn_highlighter'].move()
+        self.objects['game_log'].add_message('change_player')
         self.new_turn()
     def new_turn(self):
+        self.show_step_indicator_under_player()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-        cell = self.objects['gamefield'].cells[player.cur_field]
-        cell.step_indicator.change_color(player.color)
-        cell.step_indicator_visible = True
         if player.human:
             if self.cursor:
                 self.clear_main_menu_entries()
@@ -680,7 +692,5 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, 'ingame_main')
         else:
             Globals.TEMP_VARS.pop('pay_birthday')
-            self.labels.pop('target_cell_info')
             self.objects['game_log'].add_message('birthday')
-            self.disable_step_indicators()
-            self.change_player()
+            self.ask_to_end_turn()
