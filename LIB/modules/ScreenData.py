@@ -229,7 +229,7 @@ class MainScreen():
     def action_call(self, key):
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
-            self.labels['dices'] = AlphaText(GameMechanics.roll_the_dice(), 'ingame_dices')
+            self.labels['dices'] = GameMechanics.roll_the_dice()
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
             if not (type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']):
@@ -375,6 +375,7 @@ class MainScreen():
             elif type == 'return_new_turn':
                 self.new_turn()
             elif type == 'return_player_on_a_new_cell':
+                self.labels['dices'] = GameMechanics.show_dices_picture()
                 field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
                 self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
         elif type and 'pay_birthday' in type:
