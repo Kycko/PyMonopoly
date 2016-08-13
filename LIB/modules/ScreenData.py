@@ -207,7 +207,8 @@ class MainScreen():
                 elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and self.cursor:
                     self.action_call(self.cursor.active_key)
                 elif e.key == pygame.K_ESCAPE:
-                    self.action_call('exit')
+                    actionKEY = ('exit', 'return')['return' in self.menuitems.keys()]
+                    self.action_call(actionKEY)
                 elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and self.menuitems and self.cursor and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 elif self.menuitems and ('main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player'):
@@ -353,8 +354,10 @@ class MainScreen():
                 self.objects['trade_summary'] = TradeSummary()
                 if 'end_turn' in self.menuitems.keys():
                     back_type = 'end_turn'
-                else:
+                elif 'roll_the_dice' in self.menuitems.keys():
                     back_type = 'new_turn'
+                else:
+                    back_type = 'player_on_a_new_cell'
                 self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_' + back_type, 'ingame_main', 8)
                 self.clear_main_menu_entries(('return'))
                 counter = 0
@@ -364,10 +367,16 @@ class MainScreen():
                         self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
         elif type and type[:7] == 'return_':
+            self.disable_central_labels()
             self.objects.pop('trade_summary')
             Globals.TEMP_VARS.pop('trading')
             if type == 'return_end_turn':
                 self.ask_to_end_turn()
+            elif type == 'return_new_turn':
+                self.new_turn()
+            elif type == 'return_player_on_a_new_cell':
+                field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+                self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
