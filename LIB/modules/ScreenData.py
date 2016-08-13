@@ -338,6 +338,7 @@ class MainScreen():
             self.ask_to_end_turn()
         elif type and 'enter_the_trade_menu' in type:
             if type == 'enter_the_trade_menu':
+                self.save_step_indicators_state()
                 Globals.TEMP_VARS['trading'] = {}
                 Globals.TEMP_VARS['trading']['trader'] = {}
                 temp_var = Globals.TEMP_VARS['trading']['trader']
@@ -366,6 +367,7 @@ class MainScreen():
                         self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
         elif type and type[:7] == 'return_':
+            self.restore_step_indicators_state()
             self.objects.pop('trade_summary')
             Globals.TEMP_VARS.pop('trading')
             if type == 'return_end_turn':
@@ -507,6 +509,9 @@ class MainScreen():
         for cell in self.objects['gamefield'].cells:
             cell.step_indicator_visible = False
             cell.step_indicator.alpha = 5
+    def save_step_indicators_state(self):
+        Globals.TEMP_VARS['save_step_indicators_state'] = [cell.number for cell in self.objects['gamefield'].cells if cell.step_indicator_visible]
+        self.disable_step_indicators()
     def move_APPINFO(self, offset):
         for obj in (self.pics['logo'], self.labels['APPNAME'], self.labels['APPVERSION']):
             obj.new_pos = count_new_pos(obj.new_pos, offset)
@@ -589,6 +594,11 @@ class MainScreen():
         cell = self.objects['gamefield'].cells[player.cur_field]
         cell.step_indicator.change_color(player.color)
         cell.step_indicator_visible = True
+    def restore_step_indicators_state(self):
+        self.disable_step_indicators()
+        for i in Globals.TEMP_VARS['save_step_indicators_state']:
+            self.objects['gamefield'].cells[i].step_indicator_visible = True
+        Globals.TEMP_VARS.pop('save_step_indicators_state')
     def show_property_management_menuitems(self, number, condition=True):
         if condition:
             if check_if_anybody_can_trade():
