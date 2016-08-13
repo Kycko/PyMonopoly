@@ -331,9 +331,6 @@ class MainScreen():
             obj.append(obj.pop(0))
         elif type == 'ingame_continue_gotojail':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if player.cur_field != 30:
-                obj = self.objects['gamefield'].chests_and_chances[self.objects['gamefield'].cells[player.cur_field].group + 's']
-                obj.append(obj.pop(0))
             player.move_to(10, False)
             player.exit_jail_attempts = 3
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -354,6 +351,8 @@ class MainScreen():
                 self.objects['trade_summary'] = TradeSummary()
                 if 'end_turn' in self.menuitems.keys():
                     back_type = 'end_turn'
+                elif 'pay_birthday' in Globals.TEMP_VARS.keys():
+                    back_type = 'pay_birthday'
                 elif 'roll_the_dice' in self.menuitems.keys():
                     back_type = 'new_turn'
                 else:
@@ -372,6 +371,8 @@ class MainScreen():
             Globals.TEMP_VARS.pop('trading')
             if type == 'return_end_turn':
                 self.ask_to_end_turn()
+            elif type == 'return_pay_birthday':
+                self.pay_birthday_next_player()
             elif type == 'return_new_turn':
                 self.new_turn()
             elif type == 'return_player_on_a_new_cell':
@@ -645,9 +646,9 @@ class MainScreen():
         self.objects['game_log'].add_message('change_player')
         self.new_turn()
     def new_turn(self):
-        for key in Globals.TEMP_VARS.keys():
-            print(key)
-        print('')
+        # for key in Globals.TEMP_VARS.keys():
+        #     print(key)
+        # print('')
         self.show_step_indicator_under_player()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if player.human:
@@ -674,19 +675,21 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            # for i in self.objects['gamefield'].chests_and_chances['chests']:
-            #     print(i.type)
-            # print('')
+            for i in self.objects['gamefield'].chests_and_chances['chests']:
+                print(i.type)
+            print('')
             self.show_special_cell_info(cell)
             group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
             if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
+                obj = self.objects['gamefield'].chests_and_chances[group + 's']
+                obj.append(obj.pop(0))
             else:
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+group, 'ingame_main', 5)
             property_management_number = 6
             if cell.group in ('chest', 'chance'):
                 obj = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0]
-                property_management_condition = obj.type == 'income' and obj.modifier[0] < 0
+                property_management_condition = (obj.type == 'income' and obj.modifier[0] < 0) or obj.type == 'pay_each'
             else:
                 property_management_condition = cell.group == 'tax'
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
