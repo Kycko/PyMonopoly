@@ -76,6 +76,8 @@ def check_if_anybody_can_trade():
     for cell in Globals.main_scr.objects['gamefield'].cells:
         if cell.owner:
             return True
+def check_if_player_can_trade(player):
+    return bool(player.free_jail_cards) or check_if_player_owns_fieldcells(player.name)
 def check_if_player_owns_fieldcells(player_name):
     for cell in Globals.main_scr.objects['gamefield'].cells:
         if cell.owner == player_name:
