@@ -543,10 +543,8 @@ class MainScreen():
         else:
             return None
         self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
-    def show_property_management_menuitems(self, type, number):
-        IFs = (type == 'show_always',
-               type == 'SOMETHING_ELSE :)')
-        if True in IFs and check_if_anybody_owns_fieldcells():
+    def show_property_management_menuitems(self, number, condition=True):
+        if condition and check_if_anybody_owns_fieldcells():
             self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
     #--- Various verifications
     def check_error(self, type):
@@ -600,7 +598,7 @@ class MainScreen():
             else:
                 self.menuitems['roll_the_dice'] = MenuItem(Globals.TRANSLATION[43], 'roll_the_dice', 'ingame_main', 0)
             number = len([key for key in ('pay_money_to_exit_jail', 'roll_the_dice', 'use_card_to_exit_jail') if key in self.menuitems.keys()])
-            self.show_property_management_menuitems('show_always', number)
+            self.show_property_management_menuitems(number)
             if self.cursor:
                 self.cursor.screen_switched(self.menuitems, 'ingame_main')
             else:
@@ -612,7 +610,7 @@ class MainScreen():
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
-            for i in self.objects['gamefield'].chests_and_chances['chances']:
+            for i in self.objects['gamefield'].chests_and_chances['chests']:
                 print(i.type)
             print('')
             self.show_special_cell_info(cell)
@@ -621,9 +619,13 @@ class MainScreen():
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
             else:
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+group, 'ingame_main', 5)
-            self.cursor.screen_switched(self.menuitems, 'ingame_continue')
-            if Globals.TEMP_VARS['take_chance_when_player_is_on_chest']:
-                Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
+            property_management_number = 6
+            if cell.group in ('chest', 'chance'):
+                obj = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0]
+                property_management_condition = obj.type == 'income' and obj.modifier[0] < 0
+            else:
+                property_management_condition = cell.group == 'tax'
+            Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
         else:
             if cell.owner:
                 text = Globals.TRANSLATION[45] + cell.owner
@@ -643,14 +645,16 @@ class MainScreen():
                             Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
-                self.cursor.screen_switched(self.menuitems, 'ingame_continue')
             else:
                 text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
                 Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
                 self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47] + str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
                                        'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
-                self.cursor.screen_switched(self.menuitems, 'ingame_buy_or_auction')
+            property_management_number = 7
+            property_management_condition = not(cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
+        self.show_property_management_menuitems(property_management_number, property_management_condition)
+        self.cursor.screen_switched(self.menuitems, ('ingame_buy_or_auction', 'ingame_continue')['ingame_continue' in self.menuitems.keys()])
     def change_owner_for_a_cell(self, player):
         cell = self.objects['gamefield'].cells[player.cur_field]
         cell.owner = player.name
@@ -672,7 +676,7 @@ class MainScreen():
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
             self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player.name, 'ingame_main', 3)})
-            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu_'+player.name, 'ingame_main', 4)
+            self.show_property_management_menuitems(4)
             self.cursor.screen_switched(self.menuitems, 'ingame_main')
         else:
             Globals.TEMP_VARS.pop('pay_birthday')
