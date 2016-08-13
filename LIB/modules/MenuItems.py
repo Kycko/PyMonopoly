@@ -346,15 +346,15 @@ class MainCursor(Cursor):
         return first_rect
     def make_keys(self, type):
         if type == 'ingame_continue':
-            self.keys_generator(('ingame_continue', 'trade'))
+            self.keys_generator(('ingame_continue', 'trade', 'manage_property'))
         elif type == 'ingame_end_turn':
-            self.keys_generator(('end_turn', 'trade'))
+            self.keys_generator(('end_turn', 'trade', 'manage_property'))
         elif type == 'ingame_buy_or_auction':
-            self.keys_generator(('buy_a_cell', 'cell_to_an_auction', 'trade'))
+            self.keys_generator(('buy_a_cell', 'cell_to_an_auction', 'trade', 'manage_property'))
         elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'ingame_main':
-            self.keys_generator(('roll_the_dice', 'pay_money_to_exit_jail', 'use_card_to_exit_jail', 'trade'))
+            self.keys_generator(('roll_the_dice', 'pay_money_to_exit_jail', 'use_card_to_exit_jail', 'trade', 'manage_property'))
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':

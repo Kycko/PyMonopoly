@@ -312,8 +312,6 @@ class MainScreen():
                 self.ask_to_end_turn()
             elif obj[0].type == 'birthday':
                 self.disable_central_labels()
-                if self.cursor:
-                    self.clear_main_menu_entries()
                 Globals.TEMP_VARS['pay_birthday'] = [i for i in Globals.PLAYERS if i.name != player.name]
                 Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
                 self.pay_birthday_next_player()
@@ -548,8 +546,15 @@ class MainScreen():
         cell.step_indicator.change_color(player.color)
         cell.step_indicator_visible = True
     def show_property_management_menuitems(self, number, condition=True):
-        if condition and check_if_anybody_owns_fieldcells():
-            self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
+        if condition:
+            if check_if_anybody_can_trade():
+                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
+            if 'pay_birthday' in Globals.TEMP_VARS.keys():
+                player_name = Globals.TEMP_VARS['pay_birthday'][0].name
+            else:
+                player_name = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+            if check_if_player_owns_fieldcells(player_name):
+                self.menuitems['manage_property'] = MenuItem(Globals.TRANSLATION[62], 'enter_the_property_management', 'ingame_main', number+1)
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
@@ -587,6 +592,7 @@ class MainScreen():
             self.show_step_indicator_under_player()
             self.clear_main_menu_entries()
             self.menuitems['end_turn'] = MenuItem(Globals.TRANSLATION[61], 'ingame_end_turn', 'ingame_main', 0)
+            self.show_property_management_menuitems(1)
             self.cursor.screen_switched(self.menuitems, 'ingame_end_turn')
         else:
             self.new_turn()
@@ -687,6 +693,7 @@ class MainScreen():
             text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
+            self.clear_main_menu_entries()
             self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player.name, 'ingame_main', 3)})
             self.show_property_management_menuitems(4)
             self.cursor.screen_switched(self.menuitems, 'ingame_main')
