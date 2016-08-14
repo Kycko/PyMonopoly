@@ -339,17 +339,14 @@ class MainScreen():
         elif type and 'enter_the_trade_menu' in type:
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
-            if type == 'enter_the_trade_menu':
+            if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
                 self.save_step_indicators_state()
                 Globals.TEMP_VARS['trading'] = {}
                 Globals.TEMP_VARS['trading']['trader'] = {}
                 temp_var = Globals.TEMP_VARS['trading']['trader']
                 if 'pay_birthday' in Globals.TEMP_VARS.keys():
                     self.labels['target_cell_info'].change_new_pos((0, -80))
-                    temp_var['info'] = Globals.TEMP_VARS['pay_birthday'][0]
-                else:
-                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
-                    temp_var['info'] = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                temp_var['info'] = self.trader_for_cur_player_or_for_birthday()
                 self.objects['trade_summary'] = TradeSummary()
                 if 'end_turn' in self.menuitems.keys():
                     back_type = 'end_turn'
@@ -360,6 +357,9 @@ class MainScreen():
                 else:
                     back_type = 'player_on_a_new_cell'
                 self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_' + back_type, 'ingame_main', 8)
+            if type == 'enter_the_trade_menu':
+                if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
                 self.clear_main_menu_entries(('return'))
                 counter = 0
                 for i in range(len(Globals.PLAYERS)):
@@ -626,13 +626,14 @@ class MainScreen():
         Globals.TEMP_VARS.pop('save_step_indicators_state')
     def show_property_management_menuitems(self, number, condition=True):
         if condition:
+            trader_name = self.trader_for_cur_player_or_for_birthday()
             if check_if_anybody_can_trade():
-                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], 'enter_the_trade_menu', 'ingame_main', number)
-            if 'pay_birthday' in Globals.TEMP_VARS.keys():
-                player_name = Globals.TEMP_VARS['pay_birthday'][0].name
-            else:
-                player_name = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
-            if check_if_player_owns_fieldcells(player_name):
+                if len(Globals.PLAYERS) == 2:
+                    type = 'enter_the_trade_menu_' + find_player_obj_by_name(trader_name, True).name
+                else:
+                    type = 'enter_the_trade_menu'
+                self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], type, 'ingame_main', number)
+            if check_if_player_owns_fieldcells(trader_name):
                 self.menuitems['manage_property'] = MenuItem(Globals.TRANSLATION[62], 'enter_the_property_management', 'ingame_main', number+1)
     #--- Various verifications
     def check_error(self, type):
@@ -661,6 +662,11 @@ class MainScreen():
                     data.append(cell)
         self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
         return data
+    def trader_for_cur_player_or_for_birthday(self):
+        if 'pay_birthday' in Globals.TEMP_VARS:
+            return Globals.TEMP_VARS['pay_birthday'][0]
+        else:
+            return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
     #--- Game mechanics
     def ask_to_end_turn(self):
         self.disable_central_labels()

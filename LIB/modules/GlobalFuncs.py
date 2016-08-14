@@ -82,9 +82,9 @@ def check_if_player_owns_fieldcells(player_name):
     for cell in Globals.main_scr.objects['gamefield'].cells:
         if cell.owner == player_name:
             return True
-def find_player_obj_by_name(name):
+def find_player_obj_by_name(name, return_DUEL_rival=False):
     for player in Globals.PLAYERS:
-        if player.name == name:
+        if (return_DUEL_rival and player.name != name) or (not return_DUEL_rival and player.name == name):
             return player
 #--- Hardware related
 def check_user_monitor(x, y):
