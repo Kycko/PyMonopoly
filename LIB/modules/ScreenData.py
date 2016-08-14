@@ -369,43 +369,35 @@ class MainScreen():
                         if trader or trading_with:
                             counter += 1
                             self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
+                self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
             else:
                 Globals.TEMP_VARS['trading']['tradingwith'] = {}
                 Globals.TEMP_VARS['trading']['tradingwith']['info'] = find_player_obj_by_name(type[21:])
                 self.objects['trade_summary'].init_second()
-                self.clear_main_menu_entries(('return'))
-                temp_var = Globals.TEMP_VARS['trading']
-                counter = 0
-                trader = check_if_player_owns_fieldcells(temp_var['trader']['info'].name)
-                trading_with = check_if_player_owns_fieldcells(temp_var['tradingwith']['info'].name)
-                if trader or trading_with:
-                    counter += 1
-                    self.menuitems['trading_choose_fields'] = MenuItem(Globals.TRANSLATION[65], 'trading_choose_fields', 'ingame_main', counter)
-                for i in range(2):
-                    counter += 1
-                    operation = ('trading_offer_money', 'trading_ask_for_money')[i]
-                    self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(66, 67)[i]], operation, 'ingame_main', counter)
-                for key in ('trader', 'tradingwith'):
-                    if temp_var[key]['info'].free_jail_cards:
-                        counter += 1
-                        operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
-                        self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
-            self.cursor.screen_switched(self.menuitems, ('trading_main_menu', 'choose_player_to_trade')[type == 'enter_the_trade_menu'])
+                self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
-            self.restore_step_indicators_state()
-            self.objects.pop('trade_summary')
-            Globals.TEMP_VARS.pop('trading')
-            if type == 'return_end_turn':
-                self.ask_to_end_turn()
-            elif type == 'return_pay_birthday':
-                self.pay_birthday_next_player()
-            elif type == 'return_new_turn':
-                self.new_turn()
-            elif type == 'return_player_on_a_new_cell':
-                self.disable_central_labels()
-                self.labels['dices'] = GameMechanics.show_dices_picture()
-                field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-                self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+            if 'trading_enter_field_num' in self.menuitems.keys() or 'trading_enter_money_sum' in self.menuitems.keys():
+                self.show_main_trading_menu()
+            else:
+                self.restore_step_indicators_state()
+                self.objects.pop('trade_summary')
+                Globals.TEMP_VARS.pop('trading')
+                if type == 'return_end_turn':
+                    self.ask_to_end_turn()
+                elif type == 'return_pay_birthday':
+                    self.pay_birthday_next_player()
+                elif type == 'return_new_turn':
+                    self.new_turn()
+                elif type == 'return_player_on_a_new_cell':
+                    self.disable_central_labels()
+                    self.labels['dices'] = GameMechanics.show_dices_picture()
+                    field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+                    self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+        elif type == 'trading_choose_fields':
+            self.clear_main_menu_entries(('return'))
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70], 'target_cell_info', -3)
+            self.menuitems['trading_enter_field_num'] = MenuItem(Globals.TRANSLATION[71], 'trading_enter_field_num', 'ingame_main', 1)
+            self.cursor.screen_switched(self.menuitems, 'trading_enter_field_num')
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -635,6 +627,27 @@ class MainScreen():
                 self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], type, 'ingame_main', number)
             if check_if_player_owns_fieldcells(trader_name):
                 self.menuitems['manage_property'] = MenuItem(Globals.TRANSLATION[62], 'enter_the_property_management', 'ingame_main', number+1)
+    def show_main_trading_menu(self):
+        if 'target_cell_trading_info' in self.labels.keys():
+            self.labels.pop('target_cell_trading_info')
+        self.clear_main_menu_entries(('return'))
+        temp_var = Globals.TEMP_VARS['trading']
+        counter = 0
+        trader = check_if_player_owns_fieldcells(temp_var['trader']['info'].name)
+        trading_with = check_if_player_owns_fieldcells(temp_var['tradingwith']['info'].name)
+        if trader or trading_with:
+            counter += 1
+            self.menuitems['trading_choose_fields'] = MenuItem(Globals.TRANSLATION[65], 'trading_choose_fields', 'ingame_main', counter)
+        for i in range(2):
+            counter += 1
+            operation = ('trading_offer_money', 'trading_ask_for_money')[i]
+            self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(66, 67)[i]], operation, 'ingame_main', counter)
+        for key in ('trader', 'tradingwith'):
+            if temp_var[key]['info'].free_jail_cards:
+                counter += 1
+                operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
+                self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
+        self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':

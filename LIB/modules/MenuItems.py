@@ -355,6 +355,8 @@ class MainCursor(Cursor):
             self.keys_generator(['choose_player_to_trade_' + player.name for player in Globals.PLAYERS] + ['return'])
         elif type == 'trading_main_menu':
             self.keys_generator(('trading_choose_fields', 'trading_offer_money', 'trading_ask_for_money', 'trading_offer_free_jail', 'trading_ask_for_free_jail', 'return'))
+        elif type == 'trading_enter_field_num':
+            self.keys = ['trading_enter_field_num', 'return']
         elif type == 'main_main':
             self.keys = ['new_game', 'settings', 'stats', 'exit']
         elif type == 'ingame_main':
