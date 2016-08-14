@@ -73,7 +73,7 @@ class AlphaText():
         if self.group[:16] == 'gamelog_message_':
             self.x = 0
             self.rect = Rect((0, 0+18*number), (0, 0))
-        if self.group[:14] == 'trade_summary_':
+        elif self.group[:14] == 'trade_summary_':
             self.x = 0
             self.rect = Rect((0, 0), (0, 0))
         elif self.group == 'onboard_select_cell':

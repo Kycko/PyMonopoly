@@ -337,6 +337,8 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type and 'enter_the_trade_menu' in type:
+            if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                self.disable_central_labels()
             if type == 'enter_the_trade_menu':
                 self.save_step_indicators_state()
                 Globals.TEMP_VARS['trading'] = {}
@@ -346,7 +348,6 @@ class MainScreen():
                     self.labels['target_cell_info'].change_new_pos((0, -80))
                     temp_var['info'] = Globals.TEMP_VARS['pay_birthday'][0]
                 else:
-                    self.disable_central_labels()
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
                     temp_var['info'] = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
                 self.objects['trade_summary'] = TradeSummary()
@@ -368,11 +369,28 @@ class MainScreen():
                         if trader or trading_with:
                             counter += 1
                             self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
-                self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
             else:
                 Globals.TEMP_VARS['trading']['tradingwith'] = {}
                 Globals.TEMP_VARS['trading']['tradingwith']['info'] = find_player_obj_by_name(type[21:])
                 self.objects['trade_summary'].init_second()
+                self.clear_main_menu_entries(('return'))
+                temp_var = Globals.TEMP_VARS['trading']
+                counter = 0
+                trader = check_if_player_owns_fieldcells(temp_var['trader']['info'].name)
+                trading_with = check_if_player_owns_fieldcells(temp_var['tradingwith']['info'].name)
+                if trader or trading_with:
+                    counter += 1
+                    self.menuitems['trading_choose_fields'] = MenuItem(Globals.TRANSLATION[65], 'trading_choose_fields', 'ingame_main', counter)
+                for i in range(2):
+                    counter += 1
+                    operation = ('trading_offer_money', 'trading_ask_for_money')[i]
+                    self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(66, 67)[i]], operation, 'ingame_main', counter)
+                for key in ('trader', 'tradingwith'):
+                    if temp_var[key]['info'].free_jail_cards:
+                        counter += 1
+                        operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
+                        self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
+            self.cursor.screen_switched(self.menuitems, ('trading_main_menu', 'choose_player_to_trade')[type == 'enter_the_trade_menu'])
         elif type and type[:7] == 'return_':
             self.restore_step_indicators_state()
             self.objects.pop('trade_summary')
