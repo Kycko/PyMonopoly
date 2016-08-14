@@ -626,7 +626,7 @@ class MainScreen():
         Globals.TEMP_VARS.pop('save_step_indicators_state')
     def show_property_management_menuitems(self, number, condition=True):
         if condition:
-            trader_name = self.trader_for_cur_player_or_for_birthday()
+            trader_name = self.trader_for_cur_player_or_for_birthday().name
             if check_if_anybody_can_trade():
                 if len(Globals.PLAYERS) == 2:
                     type = 'enter_the_trade_menu_' + find_player_obj_by_name(trader_name, True).name
