@@ -82,6 +82,10 @@ def check_if_player_owns_fieldcells(player_name):
     for cell in Globals.main_scr.objects['gamefield'].cells:
         if cell.owner == player_name:
             return True
+def find_player_obj_by_name(name):
+    for player in Globals.PLAYERS:
+        if player.name == name:
+            return player
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

@@ -16,7 +16,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']

@@ -369,6 +369,10 @@ class MainScreen():
                             counter += 1
                             self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
+            else:
+                Globals.TEMP_VARS['trading']['tradingwith'] = {}
+                Globals.TEMP_VARS['trading']['tradingwith']['info'] = find_player_obj_by_name(type[21:])
+                self.objects['trade_summary'].init_second()
         elif type and type[:7] == 'return_':
             self.restore_step_indicators_state()
             self.objects.pop('trade_summary')

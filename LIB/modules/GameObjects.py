@@ -222,16 +222,35 @@ class GameLog(InfoWindow):
 class TradeSummary(InfoWindow):
     def __init__(self):
         self.text = {'trader'       : {},
-                     'trading_with' : {}}
-        self.text['trader']['info'] = AlphaText(Globals.TEMP_VARS['trading']['trader']['info'].name, 'trade_summary_trader_name', 0)
-        pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1] + 100)
+                     'tradingwith'  : {}}
+        self.make_person_texts('trader')
+        pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
         InfoWindow.__init__(self, pos, new_pos)
+    def init_second(self):
+        self.make_person_texts('tradingwith')
+    def make_person_texts(self, person):
+        obj = self.text[person]
+        for key in ('info', 'splitter'):
+            if key == 'info':
+                text = Globals.TEMP_VARS['trading'][person]['info'].name
+                text_type = 'trade_summary_' + person + '_name'
+            else:
+                text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
+                text_type = 'trade_summary_trader_splitter'
+            obj[key] = AlphaText(text, text_type)
+            y_pos = (100, 129)[person == 'tradingwith'] + 14*(key == 'splitter')
+            obj[key].rect.topleft = (140 - obj[key].text.get_width()/2, y_pos)
+            obj[key].new_pos = (obj[key].rect.x, obj[key].rect.y - 100)
     def render(self):
         InfoWindow.RErender(self)
-        for person in ('trader', 'trading_with'):
-            if 'info' in self.text[person].keys():
-                self.surf.blit(self.text[person]['info'].set_alpha(), (140 - self.text[person]['info'].text.get_width()/2, 0))
+        y_pos = 0
+        for person in ('trader', 'tradingwith'):
+            obj = self.text[person]
+            if 'info' in obj.keys():
+                for key in ('info', 'splitter'):
+                    obj[key].move_text()
+                    self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
         InfoWindow.render(self)
 class ChestOrChance():
     def __init__(self, type, text):
