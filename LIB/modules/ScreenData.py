@@ -238,7 +238,7 @@ class MainScreen():
         elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
             self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
             if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
-                text = Globals.TRANSLATION[73]
+                text = Globals.TRANSLATION[71]
                 if 'money' in KEY:
                     text = text.split('/')[0]
                 self.menuitems['accept'] = MenuItem(text, KEY + 'ACCEPT', 'ingame_main', 7)
@@ -418,7 +418,7 @@ class MainScreen():
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
             all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
-            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70 + all_types.index(type)], 'target_cell_info', -3)
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(70, 72)['money' in type]], 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'trading_input')
