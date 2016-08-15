@@ -86,6 +86,10 @@ def find_player_obj_by_name(name, return_DUEL_rival=False):
     for player in Globals.PLAYERS:
         if (return_DUEL_rival and player.name != name) or (not return_DUEL_rival and player.name == name):
             return player
+def check_substring_in_dict_keys(dict, string):
+    for key in dict.keys():
+        if string in key:
+            return key
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

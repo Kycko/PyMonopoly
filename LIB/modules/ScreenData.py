@@ -212,11 +212,16 @@ class MainScreen():
                 elif e.key in (pygame.K_LEFT, pygame.K_RIGHT) and self.menuitems and self.cursor and 'SELECTOR' in self.menuitems[self.cursor.active_key].type:
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 elif self.menuitems and ('main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player'):
-                    if e.key == pygame.K_BACKSPACE:
-                        self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
-                    elif len(self.labels['name_MI'].symbols) < 15:
-                        self.labels['name_MI'].update_text(self.labels['name_MI'].symbols + e.unicode, False)
-                    self.make_obj_for_enter_name('name_MI')
+                    self.input_handling(e, 'name_MI', 15)
+                elif self.labels and check_substring_in_dict_keys(self.labels, 'trading_input'):
+                    label_key = check_substring_in_dict_keys(self.labels, 'trading_input')
+                    print(label_key)
+                    if label_key == 'trading_input_fields':
+                        max_length = 2
+                    else:
+                        trader = ('trader', 'tradingwith')['ask_for' in label_key]
+                        max_length = len(str(Globals.TEMP_VARS['trading'][trader]['info'].money))
+                    self.input_handling(e, label_key, max_length)
                 elif self.cursor and e.key in self.menuitems[self.cursor.active_key].HOTKEYS:
                         self.action_call(self.cursor.active_key)
                 else:
@@ -225,6 +230,18 @@ class MainScreen():
                             self.action_call(key)
             elif e.type == pygame.QUIT:
                 SYSEXIT()
+    def input_handling(self, e, KEY, max_length):
+        if e.key == pygame.K_BACKSPACE:
+            self.labels[KEY].update_text(self.labels[KEY].symbols[:len(self.labels[KEY].symbols)-1], False)
+            if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
+                self.menuitems.pop('accept')
+                self.cursor.add_rm_keys(False, 'accept')
+        elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
+            self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
+            if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
+                self.menuitems['accept'] = MenuItem(Globals.TRANSLATION[71], KEY, 'ingame_main', 7)
+                self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
+        self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
         type = self.menuitems[key].action(key)
@@ -376,9 +393,10 @@ class MainScreen():
                 self.objects['trade_summary'].init_second()
                 self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
-            if 'trading_input' in self.labels.keys():
+            check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
+            if check_trading:
                 self.objects.pop('text_cursor')
-                self.labels.pop('trading_input')
+                self.labels.pop(check_trading)
                 self.show_main_trading_menu()
             else:
                 self.restore_step_indicators_state()
@@ -398,9 +416,8 @@ class MainScreen():
         elif type == 'trading_choose_fields':
             self.clear_main_menu_entries(('return'))
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70], 'target_cell_info', -3)
-            self.labels['trading_input'] = AlphaText('', 'ingame_main', 1)
-            self.make_obj_for_enter_name('trading_input')
-            # self.menuitems['accept'] = MenuItem(Globals.TRANSLATION[71], 'input_' + type, 'ingame_main', 7)
+            self.labels['trading_input_' + type[15:]] = AlphaText('', 'ingame_main', 1)
+            self.make_obj_for_enter_name('trading_input_' + type[15:])
             self.cursor.screen_switched(self.menuitems, 'trading_input')
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])

@@ -387,6 +387,8 @@ class MainCursor(Cursor):
             index = self.keys.index(key)
             self.keys.pop(index)
             self.cords.pop(index)
+        if key == 'accept':
+            self.change_pos(('return', key)[add])
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
