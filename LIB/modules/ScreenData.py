@@ -215,7 +215,6 @@ class MainScreen():
                     self.input_handling(e, 'name_MI', 15)
                 elif self.labels and check_substring_in_dict_keys(self.labels, 'trading_input'):
                     label_key = check_substring_in_dict_keys(self.labels, 'trading_input')
-                    print(label_key)
                     if label_key == 'trading_input_fields':
                         max_length = 2
                     else:
@@ -239,7 +238,10 @@ class MainScreen():
         elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
             self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
             if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
-                self.menuitems['accept'] = MenuItem(Globals.TRANSLATION[71], KEY + 'ACCEPT', 'ingame_main', 7)
+                text = Globals.TRANSLATION[73]
+                if 'money' in KEY:
+                    text = text.split('/')[0]
+                self.menuitems['accept'] = MenuItem(text, KEY + 'ACCEPT', 'ingame_main', 7)
                 self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
@@ -415,7 +417,8 @@ class MainScreen():
                     self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
-            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70], 'target_cell_info', -3)
+            all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70 + all_types.index(type)], 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'trading_input')
