@@ -232,17 +232,9 @@ class MainScreen():
     def input_handling(self, e, KEY, max_length):
         if e.key == pygame.K_BACKSPACE:
             self.labels[KEY].update_text(self.labels[KEY].symbols[:len(self.labels[KEY].symbols)-1], False)
-            if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
-                self.menuitems.pop('accept')
-                self.cursor.add_rm_keys(False, 'accept')
         elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
             self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
-            if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
-                text = Globals.TRANSLATION[71]
-                if 'money' in KEY:
-                    text = text.split('/')[0]
-                self.menuitems['accept'] = MenuItem(text, KEY + 'ACCEPT', 'ingame_main', 7)
-                self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
+        self.create_trading_input_spec_objects(KEY)
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
@@ -672,6 +664,16 @@ class MainScreen():
                 operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
                 self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
         self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
+    def create_trading_input_spec_objects(self, KEY):
+        if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
+            self.menuitems.pop('accept')
+            self.cursor.add_rm_keys(False, 'accept')
+        if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
+            text = Globals.TRANSLATION[71]
+            if 'money' in KEY:
+                text = text.split('/')[0]
+            self.menuitems['accept'] = MenuItem(text, KEY + 'ACCEPT', 'ingame_main', 7)
+            self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
