@@ -104,7 +104,7 @@ class MainScreen():
             self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
             self.labels.update({'name'      : AlphaText(Globals.TRANSLATION[24], 'settings_left', 1),
                                 'name_MI'   : AlphaText(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player', 0)})
-            self.make_obj_for_enter_name()
+            self.make_obj_for_enter_name('name_MI')
         elif type == 'main_new_game':
             self.init_avail_colors_and_names()
             if key == 'exit':
@@ -216,7 +216,7 @@ class MainScreen():
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols[:len(self.labels['name_MI'].symbols)-1], False)
                     elif len(self.labels['name_MI'].symbols) < 15:
                         self.labels['name_MI'].update_text(self.labels['name_MI'].symbols + e.unicode, False)
-                    self.make_obj_for_enter_name()
+                    self.make_obj_for_enter_name('name_MI')
                 elif self.cursor and e.key in self.menuitems[self.cursor.active_key].HOTKEYS:
                         self.action_call(self.cursor.active_key)
                 else:
@@ -376,7 +376,9 @@ class MainScreen():
                 self.objects['trade_summary'].init_second()
                 self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
-            if 'trading_enter_field_num' in self.menuitems.keys() or 'trading_enter_money_sum' in self.menuitems.keys():
+            if 'trading_input' in self.labels.keys():
+                self.objects.pop('text_cursor')
+                self.labels.pop('trading_input')
                 self.show_main_trading_menu()
             else:
                 self.restore_step_indicators_state()
@@ -396,8 +398,10 @@ class MainScreen():
         elif type == 'trading_choose_fields':
             self.clear_main_menu_entries(('return'))
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[70], 'target_cell_info', -3)
-            self.menuitems['trading_enter_field_num'] = MenuItem(Globals.TRANSLATION[71], 'trading_enter_field_num', 'ingame_main', 1)
-            self.cursor.screen_switched(self.menuitems, 'trading_enter_field_num')
+            self.labels['trading_input'] = AlphaText('', 'ingame_main', 1)
+            self.make_obj_for_enter_name('trading_input')
+            # self.menuitems['accept'] = MenuItem(Globals.TRANSLATION[71], 'input_' + type, 'ingame_main', 7)
+            self.cursor.screen_switched(self.menuitems, 'trading_input')
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -573,8 +577,8 @@ class MainScreen():
         if not Globals.SETTINGS['block']:
             self.menuitems.update({'fav_game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_settings_fav_game', 'main_settings_left_MI', 6)})
             self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 6)})
-    def make_obj_for_enter_name(self):
-        self.objects = {'text_cursor'   : Line(self.labels['name_MI'], 'right', 2, Globals.COLORS['white'])}
+    def make_obj_for_enter_name(self, key):
+        self.objects['text_cursor'] = Line(self.labels[key], 'right', 2, Globals.COLORS['white'])
     def make_playersettings_screen(self):
         self.menuitems = {'name'        : MenuItem(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].name, 'main_settings_player_name', 'main_settings_player', 0),
                           'color'       : MenuItem('', 'main_settings_player_color_SELECTOR', 'main_settings_left_MI', 2)}
