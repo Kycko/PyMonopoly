@@ -191,6 +191,9 @@ class AlphaText():
         elif self.group == 'ERROR_main':
             self.x = Globals.RESOLUTION[0]/2
             self.rect = Rect((0, Globals.RESOLUTION[1]/2), (0, 0))
+        elif self.group == 'ERROR_ingame':
+            self.x = Globals.RESOLUTION[0]/2 - 200
+            self.rect = Rect((0, Globals.RESOLUTION[1]/2 + 50), (0, 0))
         elif self.group == 'authors':
             self.x = 'right'
             self.x_offset = 10

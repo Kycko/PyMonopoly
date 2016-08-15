@@ -234,7 +234,8 @@ class MainScreen():
             self.labels[KEY].update_text(self.labels[KEY].symbols[:len(self.labels[KEY].symbols)-1], False)
         elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
             self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
-        self.create_trading_input_spec_objects(KEY)
+        if check_substring_in_dict_keys(self.labels, 'trading_input'):
+            self.create_trading_input_spec_objects(KEY)
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
@@ -391,6 +392,8 @@ class MainScreen():
             if check_trading:
                 self.objects.pop('text_cursor')
                 self.labels.pop(check_trading)
+                if 'error' in self.labels.keys():
+                    self.labels.pop('error')
                 self.show_main_trading_menu()
             else:
                 self.restore_step_indicators_state()
@@ -665,6 +668,7 @@ class MainScreen():
                 self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
         self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
     def create_trading_input_spec_objects(self, KEY):
+        self.check_error('trading_input')
         if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
@@ -678,14 +682,31 @@ class MainScreen():
     def check_error(self, type):
         if type == 'main_new_game':
             status = self.check_doubles_for_players()
+            data = (32, 'ERROR_main', 'start')
             if status and 'error' not in self.labels.keys():
-                self.labels.update({'error' : AlphaText(Globals.TRANSLATION[32], 'ERROR_main')})
-                self.menuitems['start'].text.color = Globals.COLORS['grey63']
-                self.menuitems['start'].text.RErender()
+                self.show_or_rm_error_msg(True, data[0], data[1], data[2])
             elif not status and 'error' in self.labels.keys():
-                self.labels.pop('error')
-                self.menuitems['start'].text.color = Globals.COLORS['white']
-                self.menuitems['start'].text.RErender()
+                self.show_or_rm_error_msg(False, data[0], data[1], data[2])
+        elif type == 'trading_input':
+            temp = check_substring_in_dict_keys(self.labels, 'trading_input')
+            obj = self.labels[temp].symbols
+            data = (73 + ('money' in temp), 'ERROR_ingame', 'accept')
+            if 'fields' in temp:
+                MAX = 39
+            else:
+                trader = ('trader', 'tradingwith')['ask_for' in temp]
+                MAX = Globals.TEMP_VARS['trading'][trader]['info'].money
+            if obj and int(obj) > MAX and 'error' not in self.labels.keys():
+                self.show_or_rm_error_msg(True, data[0], data[1], data[2])
+            elif obj and int(obj) <= MAX and 'error' in self.labels.keys():
+                self.show_or_rm_error_msg(False, data[0], data[1], data[2])
+    def show_or_rm_error_msg(self, SHOW, lbl_translation_num, lbl_type, menuitem_key):
+        if SHOW:
+            self.labels['error'] = AlphaText(Globals.TRANSLATION[lbl_translation_num], lbl_type)
+        else:
+            self.labels.pop('error')
+        self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
+        self.menuitems[menuitem_key].text.RErender()
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
