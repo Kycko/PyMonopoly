@@ -385,6 +385,8 @@ class MainScreen():
             else:
                 Globals.TEMP_VARS['trading']['tradingwith'] = {}
                 Globals.TEMP_VARS['trading']['tradingwith']['info'] = find_player_obj_by_name(type[21:])
+                for key in ('trader', 'tradingwith'):
+                    Globals.TEMP_VARS['trading'][key].update({'fields' : [], 'money' : 0, 'jail' : []})
                 self.objects['trade_summary'].init_second()
                 self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
@@ -417,6 +419,15 @@ class MainScreen():
             self.labels[type] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'trading_input')
+        elif type == 'trading_input_fields_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+            cell_num = int(self.labels['trading_input_fields'].symbols)
+            cell_obj = self.objects['gamefield'].cells[cell_num]
+            if self.objects['trade_summary'].add_rm_fields(cell_obj):
+                self.labels['trading_input_fields'].update_text('')
+                self.make_obj_for_enter_name('trading_input_fields')
+                self.create_trading_input_spec_objects('trading_input_fields')
+            else:
+                self.show_or_rm_error_msg(True, 75, 'ERROR_ingame', 'accept')
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -676,7 +687,7 @@ class MainScreen():
             text = Globals.TRANSLATION[71]
             if 'money' in KEY:
                 text = text.split('/')[0]
-            self.menuitems['accept'] = MenuItem(text, KEY + 'ACCEPT', 'ingame_main', 7)
+            self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
             self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
     #--- Various verifications
     def check_error(self, type):
@@ -698,7 +709,7 @@ class MainScreen():
                 MAX = Globals.TEMP_VARS['trading'][trader]['info'].money
             if obj and int(obj) > MAX and 'error' not in self.labels.keys():
                 self.show_or_rm_error_msg(True, data[0], data[1], data[2])
-            elif obj and int(obj) <= MAX and 'error' in self.labels.keys():
+            elif (obj and int(obj) <= MAX and 'error' in self.labels.keys()) or (not obj and 'error' in self.labels.keys()):
                 self.show_or_rm_error_msg(False, data[0], data[1], data[2])
     def show_or_rm_error_msg(self, SHOW, lbl_translation_num, lbl_type, menuitem_key):
         if SHOW:

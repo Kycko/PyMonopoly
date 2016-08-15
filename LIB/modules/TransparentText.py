@@ -32,7 +32,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'stats_latest':
             self.font = Globals.FONTS['ume_12']
-        elif self.group in ('newgame_playertype', 'pl_money_info'):
+        elif self.group in ('newgame_playertype', 'pl_money_info') or self.group[:14] == 'trade_summary_':
             self.font = Globals.FONTS['ubuntu_11']
         else:
             self.font = Globals.FONTS['ubuntu_32']

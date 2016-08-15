@@ -221,8 +221,12 @@ class GameLog(InfoWindow):
         InfoWindow.render(self)
 class TradeSummary(InfoWindow):
     def __init__(self):
-        self.text = {'trader'       : {},
-                     'tradingwith'  : {}}
+        self.text = {}
+        for person in ('trader', 'tradingwith'):
+            self.text[person] = {'fields'   : AlphaText('', 'trade_summary_fields'),
+                                 'money'    : AlphaText('', 'trade_summary_fields'),
+                                 'jail'     : AlphaText('', 'trade_summary_fields')}
+            obj = self.text[person]
         self.make_person_texts('trader')
         pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
@@ -239,9 +243,20 @@ class TradeSummary(InfoWindow):
                 text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
                 text_type = 'trade_summary_trader_splitter'
             obj[key] = AlphaText(text, text_type)
-            y_pos = (100, 129)[person == 'tradingwith'] + 14*(key == 'splitter')
-            obj[key].rect.topleft = (140 - obj[key].text.get_width()/2, y_pos)
-            obj[key].new_pos = (obj[key].rect.x, obj[key].rect.y - 100)
+            y_pos = (0, 34)[person == 'tradingwith'] + 14*(key == 'splitter')
+            obj[key].rect.topleft = (100, y_pos)
+            obj[key].new_pos = (0, obj[key].rect.y)
+    def add_rm_fields(self, cell):
+        for key in ('trader', 'tradingwith'):
+            if cell.owner == Globals.TEMP_VARS['trading'][key]['info'].name:
+                temp_var = Globals.TEMP_VARS['trading'][key]['fields']
+                if cell.number in temp_var:
+                    temp_var.remove(cell.number)
+                else:
+                    temp_var.append(cell.number)
+                text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
+                self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
+                return True
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
@@ -249,9 +264,17 @@ class TradeSummary(InfoWindow):
             obj = self.text[person]
             if 'info' in obj.keys():
                 for key in ('info', 'splitter'):
-                    obj[key].move_text()
-                    self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
+                    y_pos = self.render_element(y_pos, obj, key)
+            for key in ('fields', 'money', 'jail'):
+                if obj[key].symbols:
+                    y_pos = self.render_element(y_pos, obj, key)
+            y_pos += 5
         InfoWindow.render(self)
+    def render_element(self, y_pos, obj, key):
+        obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
+        obj[key].move_text()
+        self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
+        return y_pos + (14, 15)[key == 'splitter']
 class ChestOrChance():
     def __init__(self, type, text):
         self.modifier = type.split()[1:]
