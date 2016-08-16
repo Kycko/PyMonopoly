@@ -353,12 +353,10 @@ class MainScreen():
                 self.disable_central_labels()
             if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
                 self.save_step_indicators_state()
-                Globals.TEMP_VARS['trading'] = {}
-                Globals.TEMP_VARS['trading']['trader'] = {}
-                temp_var = Globals.TEMP_VARS['trading']['trader']
                 if 'pay_birthday' in Globals.TEMP_VARS.keys():
                     self.labels['target_cell_info'].change_new_pos((0, -80))
-                temp_var['info'] = self.trader_for_cur_player_or_for_birthday()
+                Globals.TEMP_VARS['trading'] = {}
+                self.make_trading_TEMP_VARS('trader')
                 self.objects['trade_summary'] = TradeSummary()
                 if 'end_turn' in self.menuitems.keys():
                     back_type = 'end_turn'
@@ -373,6 +371,7 @@ class MainScreen():
                 if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
                 self.clear_main_menu_entries(('return'))
+                temp_var = Globals.TEMP_VARS['trading']['trader']
                 counter = 0
                 for i in range(len(Globals.PLAYERS)):
                     if Globals.PLAYERS[i].name != temp_var['info'].name:
@@ -383,10 +382,7 @@ class MainScreen():
                             self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
             else:
-                Globals.TEMP_VARS['trading']['tradingwith'] = {}
-                Globals.TEMP_VARS['trading']['tradingwith']['info'] = find_player_obj_by_name(type[21:])
-                for key in ('trader', 'tradingwith'):
-                    Globals.TEMP_VARS['trading'][key].update({'fields' : [], 'money' : 0, 'jail' : []})
+                self.make_trading_TEMP_VARS('tradingwith', type[21:])
                 self.objects['trade_summary'].init_second()
                 self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
@@ -689,6 +685,12 @@ class MainScreen():
                 text = text.split('/')[0]
             self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
             self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
+    def make_trading_TEMP_VARS(self, key, player=None):
+        if key == 'trader':
+            Globals.TEMP_VARS['trading'][key] = {'info' : self.trader_for_cur_player_or_for_birthday()}
+        else:
+            Globals.TEMP_VARS['trading'][key] = {'info' : find_player_obj_by_name(player)}
+        Globals.TEMP_VARS['trading'][key].update({'fields' : [], 'money' : 0, 'jail' : []})
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
