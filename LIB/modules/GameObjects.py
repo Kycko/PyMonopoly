@@ -226,7 +226,6 @@ class TradeSummary(InfoWindow):
             self.text[person] = {'fields'   : AlphaText('', 'trade_summary_fields'),
                                  'money'    : AlphaText('', 'trade_summary_fields'),
                                  'jail'     : AlphaText('', 'trade_summary_fields')}
-            obj = self.text[person]
         self.make_person_texts('trader')
         pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
@@ -271,6 +270,8 @@ class TradeSummary(InfoWindow):
             y_pos += 5
         InfoWindow.render(self)
     def render_element(self, y_pos, obj, key):
+        if obj[key].alpha == 5:
+            obj[key].rect.topleft((0, y_pos - obj[key].rect.y))
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
