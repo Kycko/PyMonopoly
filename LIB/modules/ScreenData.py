@@ -709,7 +709,10 @@ class MainScreen():
             else:
                 trader = ('trader', 'tradingwith')['ask_for' in temp]
                 MAX = Globals.TEMP_VARS['trading'][trader]['info'].money
-            self.show_or_rm_error_msg((obj and int(obj) > MAX), data[0], data[1], data[2])
+            if obj and int(obj) > MAX:
+                self.show_or_rm_error_msg(True, data[0], data[1], data[2])
+            elif (obj and int(obj) <= MAX and 'error' in self.labels.keys()) or (not obj and 'error' in self.labels.keys()):
+                self.show_or_rm_error_msg(False, data[0], data[1], data[2])
     def show_or_rm_error_msg(self, SHOW, lbl_translation_num, lbl_type, menuitem_key):
         if SHOW:
             self.labels['error'] = AlphaText(Globals.TRANSLATION[lbl_translation_num], lbl_type)

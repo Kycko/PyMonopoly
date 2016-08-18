@@ -271,7 +271,7 @@ class TradeSummary(InfoWindow):
         InfoWindow.render(self)
     def render_element(self, y_pos, obj, key):
         if obj[key].alpha == 5:
-            obj[key].rect.topleft((0, y_pos - obj[key].rect.y))
+            obj[key].rect.topleft = (0, y_pos - obj[key].rect.y)
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
