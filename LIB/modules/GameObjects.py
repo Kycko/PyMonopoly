@@ -256,10 +256,11 @@ class TradeSummary(InfoWindow):
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
                 return True
     def add_rm_money(self, player, money):
-        temp_var = Globals.TEMP_VARS['trading'][player]['money']
-        temp_var = money
-        text = ('', Globals.TRANSLATION[66].split()[1].capitalize() + ': $' + str(money))[bool(temp_var)]
-        self.text[player]['money'].update_text(text)
+        for trader in ('trader', 'tradingwith'):
+            temp_money = (0, money)[trader == player]
+            Globals.TEMP_VARS['trading'][trader]['money'] = temp_money
+            text = ('', Globals.TRANSLATION[66].split()[1].capitalize() + ': $' + str(temp_money))[bool(temp_money)]
+            self.text[trader]['money'].update_text(text)
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
