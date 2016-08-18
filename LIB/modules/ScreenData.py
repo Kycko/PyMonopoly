@@ -383,16 +383,14 @@ class MainScreen():
                 self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
             else:
                 self.make_trading_TEMP_VARS('tradingwith', type[21:])
-                self.objects['trade_summary'].init_second()
+                self.objects['trade_summary'].make_person_texts('tradingwith')
                 self.show_main_trading_menu()
         elif type and type[:7] == 'return_':
+            if 'error' in self.labels.keys():
+                self.labels.pop('error')
             check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
             if check_trading:
-                self.objects.pop('text_cursor')
-                self.labels.pop(check_trading)
-                if 'error' in self.labels.keys():
-                    self.labels.pop('error')
-                self.show_main_trading_menu()
+                self.return_into_main_trading_menu(check_trading)
             else:
                 self.restore_step_indicators_state()
                 self.objects.pop('trade_summary')
@@ -410,6 +408,8 @@ class MainScreen():
                     self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
+            if 'error' in self.labels.keys():
+                self.labels.pop('error')
             all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(70, 72)['money' in type]], 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
@@ -424,8 +424,13 @@ class MainScreen():
                 self.create_trading_input_spec_objects('trading_input_fields')
             else:
                 self.show_or_rm_error_msg(True, 75, 'ERROR_ingame', 'accept')
+        elif type in ('trading_input_offer_money_ACCEPT', 'trading_input_ask_for_money_ACCEPT') and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+            player = ('tradingwith', 'trader')['offer' in type]
+            money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
+            self.objects['trade_summary'].add_rm_money(player, int(self.labels[money_lbl].symbols))
+            self.return_into_main_trading_menu(money_lbl)
         elif type and 'onboard_select_cell' in type:
-            if check_substring_in_dict_keys(self.labels, 'trading_input'):
+            if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
                 self.show_or_rm_error_msg(not status, 75, 'ERROR_ingame', 'accept')
         elif type and 'pay_birthday' in type:
@@ -689,6 +694,10 @@ class MainScreen():
                 text = text.split('/')[0]
             self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
             self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
+    def return_into_main_trading_menu(self, label_key):
+        self.objects.pop('text_cursor')
+        self.labels.pop(label_key)
+        self.show_main_trading_menu()
     def make_trading_TEMP_VARS(self, key, player=None):
         if key == 'trader':
             Globals.TEMP_VARS['trading'][key] = {'info' : self.trader_for_cur_player_or_for_birthday()}
@@ -719,7 +728,7 @@ class MainScreen():
                 self.show_or_rm_error_msg(False, data[0], data[1], data[2])
     def show_or_rm_error_msg(self, SHOW, lbl_translation_num, lbl_type, menuitem_key):
         if SHOW:
-            self.labels['error'] = AlphaText(Globals.TRANSLATION[lbl_translation_num], lbl_type)
+            self.labels['error'] = AlphaText(Globals.TRANSLATION[lbl_translation_num], lbl_type, int('trading_input_fields' in self.menuitems.keys()))
         elif 'error' in self.labels.keys():
             self.labels.pop('error')
         if menuitem_key in self.menuitems.keys():

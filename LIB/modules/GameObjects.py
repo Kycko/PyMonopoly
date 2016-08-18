@@ -230,8 +230,6 @@ class TradeSummary(InfoWindow):
         pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
         InfoWindow.__init__(self, pos, new_pos)
-    def init_second(self):
-        self.make_person_texts('tradingwith')
     def make_person_texts(self, person):
         obj = self.text[person]
         for key in ('info', 'splitter'):
@@ -257,6 +255,11 @@ class TradeSummary(InfoWindow):
                 text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
                 return True
+    def add_rm_money(self, player, money):
+        temp_var = Globals.TEMP_VARS['trading'][player]['money']
+        temp_var = money
+        text = ('', Globals.TRANSLATION[66].split()[1].capitalize() + ': $' + str(money))[bool(temp_var)]
+        self.text[player]['money'].update_text(text)
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
