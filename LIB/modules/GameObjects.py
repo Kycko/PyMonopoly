@@ -253,6 +253,7 @@ class TradeSummary(InfoWindow):
                     temp_var.remove(cell.number)
                 else:
                     temp_var.append(cell.number)
+                    temp_var.sort()
                 text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
                 return True
