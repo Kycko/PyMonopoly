@@ -424,6 +424,10 @@ class MainScreen():
                 self.create_trading_input_spec_objects('trading_input_fields')
             else:
                 self.show_or_rm_error_msg(True, 75, 'ERROR_ingame', 'accept')
+        elif type and 'onboard_select_cell' in type:
+            if check_substring_in_dict_keys(self.labels, 'trading_input'):
+                status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
+                self.show_or_rm_error_msg(not status, 75, 'ERROR_ingame', 'accept')
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -496,7 +500,7 @@ class MainScreen():
                                    'sounds'         : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
             for cell in self.objects['gamefield'].cells:
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
-                    self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell', 'onboard_select_cell', cell.number)
+                    self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
             clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
             for player in Globals.PLAYERS:
@@ -718,8 +722,9 @@ class MainScreen():
             self.labels['error'] = AlphaText(Globals.TRANSLATION[lbl_translation_num], lbl_type)
         elif 'error' in self.labels.keys():
             self.labels.pop('error')
-        self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
-        self.menuitems[menuitem_key].text.RErender()
+        if menuitem_key in self.menuitems.keys():
+            self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
+            self.menuitems[menuitem_key].text.RErender()
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):
