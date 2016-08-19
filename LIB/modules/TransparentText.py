@@ -43,6 +43,8 @@ class AlphaText():
             self.choose_switch_color(self.group)
         elif 'ingame_enter_the_trade_menu_' in self.group:
             self.color = self.find_color_of_player(self.group[28:])
+        elif 'ingame_main_trading_jails' in self.group:
+            self.color = Globals.TEMP_VARS['trading'][self.group[26:]]['info'].color
         elif self.group == 'birthday_info':
             self.color = Globals.TEMP_VARS['pay_birthday'][0].color
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
@@ -92,7 +94,7 @@ class AlphaText():
                 self.rect = Rect((0, Globals.TEMP_VARS['cells_rects'][number].centery - 6), (0, 0))
             elif number in range(20, 31):
                 self.rect = Rect((0, 55), (0, 0))
-        elif self.group[:28] in ('ingame_main', 'ingame_dices', 'ingame_enter_the_trade_menu_'):
+        elif self.group[:28] in ('ingame_main', 'ingame_dices', 'ingame_enter_the_trade_menu_', 'ingame_main_trading_jails_tr'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 360+35*number), (0, 0))

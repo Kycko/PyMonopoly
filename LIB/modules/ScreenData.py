@@ -411,7 +411,7 @@ class MainScreen():
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
             all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
-            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(70, 72)['money' in type]], 'target_cell_info', -3)
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(69, 71)['money' in type]], 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'trading_input')
@@ -423,7 +423,7 @@ class MainScreen():
                 self.make_obj_for_enter_name('trading_input_fields')
                 self.create_trading_input_spec_objects('trading_input_fields')
             else:
-                self.show_or_rm_error_msg(True, 75, 'ERROR_ingame', 'accept')
+                self.show_or_rm_error_msg(True, 74, 'ERROR_ingame', 'accept')
         elif type in ('trading_input_offer_money_ACCEPT', 'trading_input_ask_for_money_ACCEPT') and self.menuitems['accept'].text.color == Globals.COLORS['white']:
             player = ('tradingwith', 'trader')['offer' in type]
             money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
@@ -432,7 +432,12 @@ class MainScreen():
         elif type and 'onboard_select_cell' in type:
             if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
-                self.show_or_rm_error_msg(not status, 75, 'ERROR_ingame', 'accept')
+                self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
+        elif type and 'trading' in type and 'free_jail' in type:
+            person = ('trader', 'tradingwith')['ask_for' in type]
+            self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
+            text, operation = self.generate_trading_jail_text_for_menuitem(person, int(type[-1]))
+            self.menuitems[type].update_text(text)
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -678,18 +683,22 @@ class MainScreen():
             operation = ('trading_input_offer_money', 'trading_input_ask_for_money')[i]
             self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(66, 67)[i]], operation, 'ingame_main', counter)
         for key in ('trader', 'tradingwith'):
-            if temp_var[key]['info'].free_jail_cards:
+            for i in range(len(temp_var[key]['info'].free_jail_cards)):
                 counter += 1
-                operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
-                self.menuitems[operation] = MenuItem(Globals.TRANSLATION[(68, 69)[key == 'tradingwith']] + str(len(temp_var[key]['info'].free_jail_cards)) + ')', operation, 'ingame_main', counter)
+                text, operation = self.generate_trading_jail_text_for_menuitem(key, i)
+                self.menuitems[operation + str(i)] = MenuItem(text, operation + str(i), 'ingame_main_trading_jails_' + key, counter)
         self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
+    def generate_trading_jail_text_for_menuitem(self, key, i):
+        operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
+        text = Globals.TRANSLATION[70].split('/')
+        return text[i in Globals.TEMP_VARS['trading'][key]['jail']].capitalize() + Globals.TRANSLATION[68], operation
     def create_trading_input_spec_objects(self, KEY):
         self.check_error('trading_input')
         if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
         if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
-            text = Globals.TRANSLATION[71]
+            text = Globals.TRANSLATION[70]
             if 'money' in KEY:
                 text = text.split('/')[0]
             self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
@@ -716,7 +725,7 @@ class MainScreen():
         elif type == 'trading_input':
             temp = check_substring_in_dict_keys(self.labels, 'trading_input')
             obj = self.labels[temp].symbols
-            data = (73 + ('money' in temp), 'ERROR_ingame', 'accept')
+            data = (72 + ('money' in temp), 'ERROR_ingame', 'accept')
             if 'fields' in temp:
                 MAX = 39
             else:

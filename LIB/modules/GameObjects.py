@@ -261,6 +261,14 @@ class TradeSummary(InfoWindow):
             Globals.TEMP_VARS['trading'][trader]['money'] = temp_money
             text = ('', Globals.TRANSLATION[66].split()[1].capitalize() + ': $' + str(temp_money))[bool(temp_money)]
             self.text[trader]['money'].update_text(text)
+    def add_rm_jails(self, player, number):
+        temp_var = Globals.TEMP_VARS['trading'][player]['jail']
+        if number in temp_var:
+            temp_var.remove(number)
+        else:
+            temp_var.append(number)
+        text = ('', Globals.TRANSLATION[75] + str(len(temp_var)))[bool(temp_var)]
+        self.text[player]['jail'].update_text(text)
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
