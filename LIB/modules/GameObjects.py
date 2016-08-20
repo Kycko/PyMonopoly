@@ -247,10 +247,7 @@ class TradeSummary(InfoWindow):
         for key in ('trader', 'tradingwith'):
             if cell.owner == Globals.TEMP_VARS['trading'][key]['info'].name:
                 temp_var = Globals.TEMP_VARS['trading'][key]['fields']
-                if cell.number in temp_var:
-                    temp_var.remove(cell.number)
-                else:
-                    temp_var.append(cell.number)
+                if not self.append_or_remove_in_lists(temp_var, cell.number):
                     temp_var.sort()
                 text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
@@ -263,12 +260,16 @@ class TradeSummary(InfoWindow):
             self.text[trader]['money'].update_text(text)
     def add_rm_jails(self, player, number):
         temp_var = Globals.TEMP_VARS['trading'][player]['jail']
-        if number in temp_var:
-            temp_var.remove(number)
-        else:
-            temp_var.append(number)
+        self.append_or_remove_in_lists(temp_var, number)
         text = ('', Globals.TRANSLATION[75] + str(len(temp_var)))[bool(temp_var)]
         self.text[player]['jail'].update_text(text)
+    def append_or_remove_in_lists(self, temp_var, object):
+        if object in temp_var:
+            temp_var.remove(object)
+            return True
+        else:
+            temp_var.append(object)
+            return False
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
