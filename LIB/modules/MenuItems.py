@@ -360,7 +360,7 @@ class MainCursor(Cursor):
             array += ['accept_ALL', 'return']
             self.keys_generator(array)
         elif type == 'ingame_trading_ACCEPT_DECLINE':
-            self.keys = ['ingame_trading_ACCEPT_ALL', 'ingame_trading_DECLINE_ALL']
+            self.keys = ['ingame_trading_ACCEPT_ALL', 'return']
         elif type == 'trading_input':
             self.keys = ['return']
         elif type == 'main_main':

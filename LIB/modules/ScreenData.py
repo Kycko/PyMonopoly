@@ -435,12 +435,14 @@ class MainScreen():
                 self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
                 self.show_trading_OFFER_ALL_button(True)
         elif type == 'ingame_trading_OFFER_ALL':
-            Globals.TEMP_VARS['trading']['returner'] = self.menuitems['return'].type
-            self.clear_main_menu_entries()
+            self.clear_main_menu_entries('return')
             self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request', 1)
-            for i in range(2):
-                temp = ('ingame_trading_ACCEPT_ALL', 'ingame_trading_DECLINE_ALL')[i]
-                self.menuitems[temp] = MenuItem(Globals.TRANSLATION[78 + i], temp, 'ingame_main', 3 + i)
+            self.menuitems['ingame_trading_ACCEPT_ALL'] = MenuItem(Globals.TRANSLATION[78], 'ingame_trading_ACCEPT_ALL', 'ingame_main', 3)
+            temp_pos = self.menuitems['ingame_trading_ACCEPT_ALL'].text.new_pos
+            self.menuitems['return'].text.update_text(Globals.TRANSLATION[79])
+            upper_size = self.menuitems['ingame_trading_ACCEPT_ALL'].text.rect.w
+            down_size = self.menuitems['return'].text.rect.w
+            self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
             self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
