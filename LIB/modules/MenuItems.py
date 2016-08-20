@@ -357,7 +357,7 @@ class MainCursor(Cursor):
             array = ['trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_offer_free_jail', 'trading_ask_for_free_jail']
             for key in ('offer', 'ask_for'):
                 array += ['trading_' + key + '_free_jail' + str(i) for i in range(3)]
-            array += ['return']
+            array += ['accept_ALL', 'return']
             self.keys_generator(array)
         elif type == 'trading_input':
             self.keys = ['return']
@@ -393,6 +393,8 @@ class MainCursor(Cursor):
             self.cords.pop(index)
         if key == 'accept':
             self.change_pos(('return', key)[add])
+        elif key == 'accept_ALL' and not add:
+            self.change_pos('return')
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]
