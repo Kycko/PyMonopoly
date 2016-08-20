@@ -433,13 +433,20 @@ class MainScreen():
             if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
                 self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
-                self.show_trading_ACCEPT_ALL_button(True)
+                self.show_trading_OFFER_ALL_button(True)
+        elif type == 'ingame_trading_OFFER_ALL':
+            self.clear_main_menu_entries()
+            self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request', 1)
+            for i in range(2):
+                temp = ('ingame_trading_ACCEPT_ALL', 'ingame_trading_DECLINE_ALL')[i]
+                self.menuitems[temp] = MenuItem(Globals.TRANSLATION[78 + i], temp, 'ingame_main', 3 + i)
+            self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
             text, operation = self.generate_trading_jail_text_for_menuitem(person, int(type[-1]))
             self.menuitems[type].update_text(text)
-            self.show_trading_ACCEPT_ALL_button(True)
+            self.show_trading_OFFER_ALL_button(True)
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -689,11 +696,11 @@ class MainScreen():
                 counter += 1
                 text, operation = self.generate_trading_jail_text_for_menuitem(key, i)
                 self.menuitems[operation + str(i)] = MenuItem(text, operation + str(i), 'ingame_main_trading_jails_' + key, counter)
-        self.show_trading_ACCEPT_ALL_button()
+        self.show_trading_OFFER_ALL_button()
         self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
-    def show_trading_ACCEPT_ALL_button(self, cursor_key_just_add=False):
+    def show_trading_OFFER_ALL_button(self, cursor_key_just_add=False):
         if 'accept_ALL' not in self.menuitems.keys() and self.check_trading_accept_ability('trader') and self.check_trading_accept_ability('tradingwith') and 'text_cursor' not in self.objects.keys():
-            self.menuitems['accept_ALL'] = MenuItem(Globals.TRANSLATION[76], 'ingame_trading_ACCEPT_ALL', 'ingame_main', 7)
+            self.menuitems['accept_ALL'] = MenuItem(Globals.TRANSLATION[76], 'ingame_trading_OFFER_ALL', 'ingame_main', 7)
             if cursor_key_just_add:
                 self.cursor.add_rm_keys(True, 'accept_ALL', len(self.cursor.keys) - 1, self.menuitems['accept_ALL'].active_zone.move(0, self.menuitems['accept_ALL'].text.new_pos[1] - self.menuitems['accept_ALL'].text.rect.y).topleft)
         elif 'accept_ALL' in self.menuitems.keys():

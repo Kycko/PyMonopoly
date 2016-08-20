@@ -16,7 +16,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter', 'trading_offer_request') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -43,6 +43,8 @@ class AlphaText():
             self.choose_switch_color(self.group)
         elif 'ingame_enter_the_trade_menu_' in self.group:
             self.color = self.find_color_of_player(self.group[28:])
+        elif self.group == 'trading_offer_request':
+            self.color = Globals.TEMP_VARS['trading']['tradingwith']['info'].color
         elif 'ingame_main_trading_jails' in self.group:
             self.color = Globals.TEMP_VARS['trading'][self.group[26:]]['info'].color
         elif self.group == 'birthday_info':
@@ -102,10 +104,10 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
-        elif self.group == 'birthday_info':
+        elif self.group in ('birthday_info', 'trading_offer_request'):
             self.x = 'center'
             self.x_offset = 0
-            self.rect = Rect((0, 430), (0, 0))
+            self.rect = Rect((0, 430-100*number), (0, 0))
         elif self.group == 'ingame_start':
             self.x = 'center'
             self.x_offset = 1820

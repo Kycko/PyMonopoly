@@ -359,6 +359,8 @@ class MainCursor(Cursor):
                 array += ['trading_' + key + '_free_jail' + str(i) for i in range(3)]
             array += ['accept_ALL', 'return']
             self.keys_generator(array)
+        elif type == 'ingame_trading_ACCEPT_DECLINE':
+            self.keys = ['ingame_trading_ACCEPT_ALL', 'ingame_trading_DECLINE_ALL']
         elif type == 'trading_input':
             self.keys = ['return']
         elif type == 'main_main':
