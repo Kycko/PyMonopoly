@@ -245,9 +245,14 @@ class TradeSummary(InfoWindow):
             obj[key].new_pos = (0, obj[key].rect.y)
     def add_rm_fields(self, cell):
         for key in ('trader', 'tradingwith'):
-            if cell.owner == Globals.TEMP_VARS['trading'][key]['info'].name:
+            player = Globals.TEMP_VARS['trading'][key]['info']
+            if cell.owner == player.name:
                 temp_var = Globals.TEMP_VARS['trading'][key]['fields']
-                if not self.append_or_remove_in_lists(temp_var, cell.number):
+                if self.append_or_remove_in_lists(temp_var, cell.number):
+                    cell.step_indicator_visible = False
+                else:
+                    cell.step_indicator.change_color(player.color)
+                    cell.step_indicator_visible = True
                     temp_var.sort()
                 text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))

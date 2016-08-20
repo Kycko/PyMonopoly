@@ -435,6 +435,7 @@ class MainScreen():
                 self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
                 self.show_trading_OFFER_ALL_button(True)
         elif type == 'ingame_trading_OFFER_ALL':
+            Globals.TEMP_VARS['trading']['returner'] = self.menuitems['return'].type
             self.clear_main_menu_entries()
             self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request', 1)
             for i in range(2):
@@ -699,10 +700,11 @@ class MainScreen():
         self.show_trading_OFFER_ALL_button()
         self.cursor.screen_switched(self.menuitems, 'trading_main_menu')
     def show_trading_OFFER_ALL_button(self, cursor_key_just_add=False):
-        if 'accept_ALL' not in self.menuitems.keys() and self.check_trading_accept_ability('trader') and self.check_trading_accept_ability('tradingwith') and 'text_cursor' not in self.objects.keys():
-            self.menuitems['accept_ALL'] = MenuItem(Globals.TRANSLATION[76], 'ingame_trading_OFFER_ALL', 'ingame_main', 7)
-            if cursor_key_just_add:
-                self.cursor.add_rm_keys(True, 'accept_ALL', len(self.cursor.keys) - 1, self.menuitems['accept_ALL'].active_zone.move(0, self.menuitems['accept_ALL'].text.new_pos[1] - self.menuitems['accept_ALL'].text.rect.y).topleft)
+        if self.check_trading_accept_ability('trader') and self.check_trading_accept_ability('tradingwith') and 'text_cursor' not in self.objects.keys():
+            if 'accept_ALL' not in self.menuitems.keys():
+                self.menuitems['accept_ALL'] = MenuItem(Globals.TRANSLATION[76], 'ingame_trading_OFFER_ALL', 'ingame_main', 7)
+                if cursor_key_just_add:
+                    self.cursor.add_rm_keys(True, 'accept_ALL', len(self.cursor.keys) - 1, self.menuitems['accept_ALL'].active_zone.move(0, self.menuitems['accept_ALL'].text.new_pos[1] - self.menuitems['accept_ALL'].text.rect.y).topleft)
         elif 'accept_ALL' in self.menuitems.keys():
             self.menuitems.pop('accept_ALL')
             self.cursor.add_rm_keys(False, 'accept_ALL')
