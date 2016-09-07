@@ -226,13 +226,10 @@ class TradeSummary(InfoWindow):
             self.text[person] = {'fields'   : AlphaText('', 'trade_summary_fields'),
                                  'money'    : AlphaText('', 'trade_summary_fields'),
                                  'jail'     : AlphaText('', 'trade_summary_fields')}
-            obj = self.text[person]
         self.make_person_texts('trader')
         pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
         InfoWindow.__init__(self, pos, new_pos)
-    def init_second(self):
-        self.make_person_texts('tradingwith')
     def make_person_texts(self, person):
         obj = self.text[person]
         for key in ('info', 'splitter'):
@@ -248,15 +245,36 @@ class TradeSummary(InfoWindow):
             obj[key].new_pos = (0, obj[key].rect.y)
     def add_rm_fields(self, cell):
         for key in ('trader', 'tradingwith'):
-            if cell.owner == Globals.TEMP_VARS['trading'][key]['info'].name:
+            player = Globals.TEMP_VARS['trading'][key]['info']
+            if cell.owner == player.name:
                 temp_var = Globals.TEMP_VARS['trading'][key]['fields']
-                if cell.number in temp_var:
-                    temp_var.remove(cell.number)
+                if self.append_or_remove_in_lists(temp_var, cell.number):
+                    cell.step_indicator_visible = False
                 else:
-                    temp_var.append(cell.number)
+                    cell.step_indicator.change_color(player.color)
+                    cell.step_indicator_visible = True
+                    temp_var.sort()
                 text = ('', Globals.TRANSLATION[65].split()[1].capitalize() + ': ')[bool(temp_var)]
                 self.text[key]['fields'].update_text(text + ', '.join([str(i) for i in temp_var]))
                 return True
+    def add_rm_money(self, player, money):
+        for trader in ('trader', 'tradingwith'):
+            temp_money = (0, money)[trader == player]
+            Globals.TEMP_VARS['trading'][trader]['money'] = temp_money
+            text = ('', Globals.TRANSLATION[66].split()[1].capitalize() + ': $' + str(temp_money))[bool(temp_money)]
+            self.text[trader]['money'].update_text(text)
+    def add_rm_jails(self, player, number):
+        temp_var = Globals.TEMP_VARS['trading'][player]['jail']
+        self.append_or_remove_in_lists(temp_var, number)
+        text = ('', Globals.TRANSLATION[75] + str(len(temp_var)))[bool(temp_var)]
+        self.text[player]['jail'].update_text(text)
+    def append_or_remove_in_lists(self, temp_var, object):
+        if object in temp_var:
+            temp_var.remove(object)
+            return True
+        else:
+            temp_var.append(object)
+            return False
     def render(self):
         InfoWindow.RErender(self)
         y_pos = 0
@@ -271,6 +289,8 @@ class TradeSummary(InfoWindow):
             y_pos += 5
         InfoWindow.render(self)
     def render_element(self, y_pos, obj, key):
+        if obj[key].alpha == 15:
+            obj[key].rect.y = y_pos
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
