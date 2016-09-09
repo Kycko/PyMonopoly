@@ -349,7 +349,8 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type and 'enter_the_trade_menu' in type:
-            Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
+            if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
@@ -566,11 +567,11 @@ class MainScreen():
             self.disable_central_labels()
             self.labels['dices'] = GameMechanics.show_dices_picture()
             if Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
-                xxx = cell.owner
+                Globals.TEMP_VARS['xxx'] = cell.owner
                 cell.owner = Globals.TEMP_VARS['cur_field_owner']
-                Globals.TEMP_VARS['cur_field_owner'] = xxx
             self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
-        cell.owner = Globals.TEMP_VARS.pop('cur_field_owner')
+            if 'xxx' in Globals.TEMP_VARS.keys():
+                cell.owner = Globals.TEMP_VARS.pop('xxx')
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():
@@ -804,6 +805,8 @@ class MainScreen():
                 return True
     #--- Game mechanics
     def ask_to_end_turn(self):
+        if 'cur_field_owner' in Globals.TEMP_VARS.keys():
+            Globals.TEMP_VARS.pop('cur_field_owner')
         self.disable_central_labels()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
