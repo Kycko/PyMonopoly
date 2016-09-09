@@ -30,7 +30,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'music_and_sound_switches':
             self.font = Globals.FONTS['ume_16']
-        elif self.group == 'stats_latest':
+        elif self.group in ('stats_latest', 'a_little_cell_number'):
             self.font = Globals.FONTS['ume_12']
         elif self.group in ('newgame_playertype', 'pl_money_info') or self.group[:14] == 'trade_summary_':
             self.font = Globals.FONTS['ubuntu_11']
@@ -83,6 +83,19 @@ class AlphaText():
         elif self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
+        elif self.group == 'a_little_cell_number':
+            if number in range(11)+range(20, 31):
+                self.x = Globals.TEMP_VARS['cells_rects'][number].centerx - 4
+            elif number in range(11, 20):
+                self.x = 383
+            elif number in range(31, 40):
+                self.x = 807
+            if number in range(11):
+                self.rect = Rect((0, 574), (0, 0))
+            elif number in range(11, 20)+range(31, 40):
+                self.rect = Rect((0, Globals.TEMP_VARS['cells_rects'][number].centery - 6), (0, 0))
+            elif number in range(20, 31):
+                self.rect = Rect((0, 152), (0, 0))
         elif self.group == 'step_indicator':
             if number in range(11)+range(20, 31):
                 self.x = Globals.TEMP_VARS['cells_rects'][number].centerx - 4

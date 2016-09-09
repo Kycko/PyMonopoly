@@ -398,6 +398,8 @@ class MainScreen():
             self.clear_main_menu_entries(('return'))
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
+            if type == 'trading_input_fields':
+                self.objects['gamefield'].render_cell_numbers('trade')
             all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(69, 71)['money' in type]], 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
@@ -747,6 +749,8 @@ class MainScreen():
             self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
             self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
     def return_into_main_trading_menu(self, label_key):
+        for cell in self.objects['gamefield'].cells:
+            cell.a_little_number_visible = False
         self.objects.pop('text_cursor')
         self.labels.pop(label_key)
         self.show_main_trading_menu()

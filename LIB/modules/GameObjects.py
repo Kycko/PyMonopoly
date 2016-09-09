@@ -70,12 +70,21 @@ class GameField():
         for field in RErender_fields:
             self.RErender_a_cell(field)
             Globals.main_scr.menuitems['fieldcell_'+str(field)].tooltip.RErender(self.cells[field].buildings+1)
+    def render_cell_numbers(self, type):
+        if type == 'trade':
+            traders = (Globals.TEMP_VARS['trading']['trader']['info'].name,
+                       Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
+            cells = [cell for cell in self.cells if cell.owner in traders]
+        for cell in cells:
+            cell.a_little_number_visible = True
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
         for cell in self.cells:
             if cell.step_indicator_visible:
                 cell.step_indicator.render()
+            if cell.a_little_number_visible:
+                cell.a_little_number.render()
         for player in Globals.PLAYERS:
             player.render()
 class FieldCell():
@@ -105,6 +114,8 @@ class FieldCell():
             self.onboard_text = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['onboard'][number], True, Globals.COLORS['black'])
         else:
             self.onboard_text = None
+        self.a_little_number = AlphaText(str(number), 'a_little_cell_number', number)
+        self.a_little_number_visible = False
         self.step_indicator = AlphaText(u'●', 'step_indicator', number)
         self.step_indicator_visible = False
         #--- Position, rect and surface
