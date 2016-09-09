@@ -440,8 +440,13 @@ class MainScreen():
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
-            text, operation = self.generate_trading_jail_text_for_menuitem(person, int(type[-1]))
-            self.menuitems[type].update_text(text)
+            self.update_trading_jail_text_for_menuitem(person, int(type[-1]))
+            person = ('trader', 'tradingwith')['ask_for' not in type]
+            temp_var = Globals.TEMP_VARS['trading'][person]['jail']
+            while temp_var:
+                num = temp_var[0]
+                self.objects['trade_summary'].add_rm_jails(person, num)
+                self.update_trading_jail_text_for_menuitem(person, num)
             self.show_trading_OFFER_ALL_button(True)
         elif type and 'pay_birthday' in type:
             self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
@@ -728,6 +733,9 @@ class MainScreen():
         operation = ('trading_offer_free_jail', 'trading_ask_for_free_jail')[key == 'tradingwith']
         text = Globals.TRANSLATION[70].split('/')
         return text[i in Globals.TEMP_VARS['trading'][key]['jail']].capitalize() + Globals.TRANSLATION[68], operation
+    def update_trading_jail_text_for_menuitem(self, key, i):
+        text, operation = self.generate_trading_jail_text_for_menuitem(key, i)
+        self.menuitems[operation + str(i)].update_text(text)
     def create_trading_input_spec_objects(self, KEY):
         self.check_error('trading_input')
         if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
