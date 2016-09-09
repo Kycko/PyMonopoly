@@ -432,6 +432,8 @@ class MainScreen():
             self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
             self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
         elif type == 'ingame_trading_ACCEPT_ALL':
+            self.swap_property_to_finish_trading()
+            self.objects['gamefield'].RErender_fieldcell_groups()
             self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
@@ -917,6 +919,18 @@ class MainScreen():
             Globals.TEMP_VARS.pop('pay_birthday')
             self.objects['game_log'].add_message('birthday')
             self.ask_to_end_turn()
+    def swap_property_to_finish_trading(self):
+        Globals.TEMP_VARS['RErender_groups'] = []
+        for i in range(2):
+            temp_keys = ('trader', 'tradingwith')
+            change_from = Globals.TEMP_VARS['trading'][temp_keys[i]]
+            change_to = Globals.TEMP_VARS['trading'][temp_keys[i-1]]
+            for field in change_from['fields']:
+                cell = self.objects['gamefield'].cells[field]
+                if cell.group not in Globals.TEMP_VARS['RErender_groups']:
+                    Globals.TEMP_VARS['RErender_groups'].append(cell.group)
+                cell.owner = change_to['info'].name
+                cell.color = change_to['info'].color
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
         DEBUG = self.objects['gamefield'].chests_and_chances

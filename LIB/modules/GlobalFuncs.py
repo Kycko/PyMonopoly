@@ -12,6 +12,10 @@ def change_color_alpha(color, alpha):
     color -= Globals.COLORS['black']
     color.a = alpha
     return color
+def check_substring_in_dict_keys(dict, string):
+    for key in dict.keys():
+        if string in key:
+            return key
 def clear_TEMP_VARS(exception):
     for key in Globals.TEMP_VARS.keys():
         if key not in exception:
@@ -86,10 +90,20 @@ def find_player_obj_by_name(name, return_DUEL_rival=False):
     for player in Globals.PLAYERS:
         if (return_DUEL_rival and player.name != name) or (not return_DUEL_rival and player.name == name):
             return player
-def check_substring_in_dict_keys(dict, string):
-    for key in dict.keys():
-        if string in key:
-            return key
+def check_group_monopoly(group):
+    fieldcells = Globals.main_scr.objects['gamefield'].cells
+    if group == 'railroad':
+        numbers = [i for i in range(5, 36, 10)]
+    elif group == 'service':
+        numbers = [12, 28]
+    else:
+        numbers = [i for i in range((group-1)*5+1, group*5) if fieldcells[i].group == group]
+    owners = [fieldcells[i].owner for i in numbers]
+    Globals.main_scr.objects['gamefield'].groups_monopolies[group] = owners.count(owners[0]) == len(owners)
+    if group in ('railroad', 'service'):
+        for i in numbers:
+            fieldcells[i].buildings = owners.count(fieldcells[i].owner) - 1
+    return numbers
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

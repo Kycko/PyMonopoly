@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import count_new_pos, slight_animation_count_pos, read_chests_and_chances_translation
+from GlobalFuncs import check_group_monopoly, count_new_pos, slight_animation_count_pos, read_chests_and_chances_translation
 from random import shuffle
 from Sprite import Sprite
 from TransparentText import AlphaText
@@ -62,6 +62,14 @@ class GameField():
     def RErender_a_cell(self, num):
         self.cells[num].RErender(self.groups_monopolies[self.cells[num].group])
         self.surf.blit(self.cells[num].surf, self.cells[num].pos)
+    def RErender_fieldcell_groups(self):
+        RErender_fields = []
+        for group in Globals.TEMP_VARS['RErender_groups']:
+            RErender_fields += check_group_monopoly(group)
+        Globals.TEMP_VARS.pop('RErender_groups')
+        for field in RErender_fields:
+            self.RErender_a_cell(field)
+            Globals.main_scr.menuitems['fieldcell_'+str(field)].tooltip.RErender(self.cells[field].buildings+1)
     def render(self):
         self.pos = slight_animation_count_pos(self.new_pos, self.pos, 10, 50)
         Globals.screen.blit(self.surf, self.pos)
