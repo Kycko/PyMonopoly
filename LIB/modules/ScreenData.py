@@ -272,7 +272,6 @@ class MainScreen():
                 vid = player.free_jail_cards.pop(0)
                 self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             player.exit_jail_attempts = None
-            CELL.RErender()
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
             self.new_turn()
@@ -953,6 +952,9 @@ class MainScreen():
             if change_from['money']:
                 self.change_player_money(change_from['info'], -change_from['money'])
                 self.change_player_money(change_to['info'], change_from['money'])
+            for i in range(len(change_from['jail'])):
+                change_to['info'].free_jail_cards.append(change_from['info'].free_jail_cards.pop(0))
+                self.menuitems['fieldcell_10'].tooltip.RErender()
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
         DEBUG = self.objects['gamefield'].chests_and_chances
