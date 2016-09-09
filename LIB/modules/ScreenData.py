@@ -432,7 +432,7 @@ class MainScreen():
             self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
             self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
         elif type == 'ingame_trading_ACCEPT_ALL':
-            self.return_to_game_from_trading(type)
+            self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
