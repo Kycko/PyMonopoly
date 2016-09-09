@@ -214,7 +214,7 @@ class AlphaText():
     def init_new_pos(self):
         if self.group[:12] == 'target_cell_':
             self.new_pos = (self.rect.x, self.rect.y - 70)
-        elif self.group == 'birthday_info' or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
+        elif self.group in ('trading_offer_request', 'birthday_info') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)

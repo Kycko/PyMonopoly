@@ -392,20 +392,7 @@ class MainScreen():
             if check_trading:
                 self.return_into_main_trading_menu(check_trading)
             else:
-                self.restore_step_indicators_state()
-                self.objects.pop('trade_summary')
-                Globals.TEMP_VARS.pop('trading')
-                if type == 'return_end_turn':
-                    self.ask_to_end_turn()
-                elif type == 'return_pay_birthday':
-                    self.pay_birthday_next_player()
-                elif type == 'return_new_turn':
-                    self.new_turn()
-                elif type == 'return_player_on_a_new_cell':
-                    self.disable_central_labels()
-                    self.labels['dices'] = GameMechanics.show_dices_picture()
-                    field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-                    self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+                self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
             if 'error' in self.labels.keys():
@@ -436,7 +423,7 @@ class MainScreen():
                 self.show_trading_OFFER_ALL_button(True)
         elif type == 'ingame_trading_OFFER_ALL':
             self.clear_main_menu_entries('return')
-            self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request', 1)
+            self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request')
             self.menuitems['ingame_trading_ACCEPT_ALL'] = MenuItem(Globals.TRANSLATION[78], 'ingame_trading_ACCEPT_ALL', 'ingame_main', 3)
             temp_pos = self.menuitems['ingame_trading_ACCEPT_ALL'].text.new_pos
             self.menuitems['return'].text.update_text(Globals.TRANSLATION[79])
@@ -444,6 +431,8 @@ class MainScreen():
             down_size = self.menuitems['return'].text.rect.w
             self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
             self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
+        elif type == 'ingame_trading_ACCEPT_ALL':
+            self.return_to_game_from_trading(type)
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
@@ -558,6 +547,21 @@ class MainScreen():
         elif type:
             self.switch_screen(type, key)
             self.cursor.screen_switched(self.menuitems, type)
+    def return_to_game_from_trading(self, type):
+        self.restore_step_indicators_state()
+        self.objects.pop('trade_summary')
+        Globals.TEMP_VARS.pop('trading')
+        if type == 'return_end_turn':
+            self.ask_to_end_turn()
+        elif type == 'return_pay_birthday':
+            self.pay_birthday_next_player()
+        elif type == 'return_new_turn':
+            self.new_turn()
+        elif type == 'return_player_on_a_new_cell':
+            self.disable_central_labels()
+            self.labels['dices'] = GameMechanics.show_dices_picture()
+            field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+            self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():
