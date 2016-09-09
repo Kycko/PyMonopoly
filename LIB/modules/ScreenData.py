@@ -349,6 +349,7 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type and 'enter_the_trade_menu' in type:
+            Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
@@ -553,6 +554,8 @@ class MainScreen():
         self.restore_step_indicators_state()
         self.objects.pop('trade_summary')
         Globals.TEMP_VARS.pop('trading')
+        field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+        cell = self.objects['gamefield'].cells[field_num]
         if type == 'return_end_turn':
             self.ask_to_end_turn()
         elif type == 'return_pay_birthday':
@@ -562,8 +565,12 @@ class MainScreen():
         elif type == 'return_player_on_a_new_cell':
             self.disable_central_labels()
             self.labels['dices'] = GameMechanics.show_dices_picture()
-            field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+            if Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
+                xxx = cell.owner
+                cell.owner = Globals.TEMP_VARS['cur_field_owner']
+                Globals.TEMP_VARS['cur_field_owner'] = xxx
             self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+        cell.owner = Globals.TEMP_VARS.pop('cur_field_owner')
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():
@@ -866,16 +873,17 @@ class MainScreen():
                     type = 'ingame_continue_NO'
                 else:
                     type = 'ingame_continue_PAY_RENT'
-                    if cell.group == 'service':
-                        if cell.step_indicator_visible:
-                            state = int(cell.rent_costs[cell.buildings][1:])
+                    if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
+                        if cell.group == 'service':
+                            if cell.step_indicator_visible:
+                                state = int(cell.rent_costs[cell.buildings][1:])
+                            else:
+                                state = 10
+                            Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                         else:
-                            state = 10
-                        Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
-                    else:
-                        Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                        if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible):
-                            Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
+                            Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
+                            if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible):
+                                Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
             else:
@@ -931,6 +939,9 @@ class MainScreen():
                     Globals.TEMP_VARS['RErender_groups'].append(cell.group)
                 cell.owner = change_to['info'].name
                 cell.color = change_to['info'].color
+            if change_from['money']:
+                self.change_player_money(change_from['info'], -change_from['money'])
+                self.change_player_money(change_to['info'], change_from['money'])
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
         DEBUG = self.objects['gamefield'].chests_and_chances
