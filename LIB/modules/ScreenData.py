@@ -536,6 +536,7 @@ class MainScreen():
                 objects_to_move += [self.objects['trade_summary']]
             objects_to_move += [cell for cell in self.menuitems.values() if cell.group == 'onboard_select_cell']
             objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
+            objects_to_move += [cell.a_little_number for cell in self.objects['gamefield'].cells]
             objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]
             objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
             for obj in objects_to_move:
