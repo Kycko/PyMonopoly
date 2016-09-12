@@ -34,6 +34,8 @@ class AlphaText():
             self.font = Globals.FONTS['ume_12']
         elif self.group in ('newgame_playertype', 'pl_money_info') or self.group[:14] == 'trade_summary_':
             self.font = Globals.FONTS['ubuntu_11']
+        elif self.group == 'show_prev_trades':
+            self.font = Globals.FONTS['dejavu_36']
         else:
             self.font = Globals.FONTS['ubuntu_32']
         #--- Colors
@@ -51,7 +53,7 @@ class AlphaText():
             self.color = Globals.TEMP_VARS['pay_birthday'][0].color
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
-        elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'pl_money_info'):
+        elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
         elif 'volume_SELECTOR' in self.group:
             self.choose_selector_color('volume', number)
@@ -150,9 +152,9 @@ class AlphaText():
         elif self.group == 'from_game_return_to_menu':
             self.x = Globals.RESOLUTION[0] - 42
             self.rect = Rect((0, -95), (0, 0))
-        elif self.group == 'show_menu':
+        elif self.group in ('show_menu', 'show_prev_trades'):
             self.x = Globals.RESOLUTION[0] - 42
-            self.rect = Rect((0, 6), (0, 0))
+            self.rect = Rect((0, 6 + number*62), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))

@@ -437,7 +437,10 @@ class MainScreen():
         elif type == 'ingame_trading_ACCEPT_ALL':
             self.swap_property_to_finish_trading()
             self.objects['gamefield'].RErender_fieldcell_groups()
+            self.trade_history_append()
             self.return_to_game_from_trading(self.menuitems['return'].type)
+        elif type == 'show_prev_trades':
+            print('')
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
@@ -537,7 +540,7 @@ class MainScreen():
             objects_to_move += [cell for cell in self.menuitems.values() if cell.group == 'onboard_select_cell']
             objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
             objects_to_move += [cell.a_little_number for cell in self.objects['gamefield'].cells]
-            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds')]
+            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds', 'show_prev_trades')]
             objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
             for obj in objects_to_move:
                 obj.change_new_pos((0, state*100))
@@ -761,6 +764,11 @@ class MainScreen():
         else:
             Globals.TEMP_VARS['trading'][key] = {'info' : find_player_obj_by_name(player)}
         Globals.TEMP_VARS['trading'][key].update({'fields' : [], 'money' : 0, 'jail' : []})
+    def trade_history_append(self):
+        if 'show_prev_trades' in self.menuitems.keys():
+            print('append')
+        else:
+            self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':

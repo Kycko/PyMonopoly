@@ -29,6 +29,10 @@ class MenuItem():
             self.cursor = OwnCursor('orange', self.active_zone)
             self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
             self.HOTKEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP)
+        elif self.group == 'show_prev_trades':
+            self.cursor = OwnCursor('orange', self.active_zone)
+            self.tooltip = Tooltip(u'HOTKEYS: Tab', 'left', self.text)
+            self.HOTKEYS = (pygame.K_TAB, None)
         elif self.group == 'volume_in_game':
             self.cursor = OwnCursor('grey', self.active_zone)
             self.tooltip = None
@@ -73,7 +77,7 @@ class MenuItem():
                 self.active_zone.size = (400, self.text.rect.h+6)
         elif self.group == 'onboard_select_cell':
             self.active_zone = self.text.rect
-        elif self.group in ('from_game_return_to_menu', 'show_menu', 'music_and_sound_switches'):
+        elif self.group in ('from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'music_and_sound_switches'):
             self.active_zone = self.text.rect.inflate(20, 10)
         elif self.type == 'in_game_volume_SELECTOR':
             self.active_zone = self.text.rect
