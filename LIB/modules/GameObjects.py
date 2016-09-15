@@ -220,6 +220,10 @@ class GameLog(InfoWindow):
         elif type == 'pay_money_to_exit_jail':
             CELL = Globals.main_scr.objects['gamefield'].cells[10]
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')', 'gamelog_message_common', len(self.messages)))
+        elif type == 'ingame_trading_ACCEPT_ALL':
+            text = Globals.GAMELOG_TRANSLATION[15].replace('1', Globals.TEMP_VARS['trading']['trader']['info'].name)
+            text = text.replace('2', Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
+            self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
         elif type in ('birthday', 'pay_each'):
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:

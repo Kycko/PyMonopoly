@@ -440,6 +440,7 @@ class MainScreen():
         elif type == 'ingame_trading_ACCEPT_ALL':
             self.swap_property_to_finish_trading()
             self.objects['gamefield'].RErender_fieldcell_groups()
+            self.objects['game_log'].add_message(type)
             self.trade_history_append()
             self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type == 'show_prev_trades':
