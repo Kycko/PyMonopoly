@@ -44,7 +44,7 @@ class MainScreen():
                     self.labels.update({'APPNAME'    : AlphaText('PyMonopoly', 'APPNAME'),
                                         'APPVERSION' : AlphaText(Globals.TRANSLATION[4]+Globals.VERSION, 'APPVERSION'),
                                         'resources'  : AlphaText('Thanks to: freemusicarchive.org, openclipart.org', 'authors', 0),
-                                        'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2015', 'authors', 1)})
+                                        'authors'    : AlphaText('Anthony Samartsev & Michael Mozhaev, 2014-2016', 'authors', 1)})
                     for key in ('authors', 'resources'):
                         self.labels[key].rect.x -= 1820
                     for key in ('APPNAME', 'APPVERSION'):

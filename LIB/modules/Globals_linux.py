@@ -10,7 +10,7 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
-VERSION = '0.5.2-dev'
+VERSION = '0.6.0-dev'
 RESOLUTION = check_user_monitor(1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
@@ -61,7 +61,8 @@ FILES = {'font_dejavu'          : DIRS['fonts'] + 'DejaVuSans.ttf',
          'settings'             : DIRS['settings'] + 'settings',
          'stats'                : DIRS['settings'] + 'stats'}
 
-FONTS = {'dejavu_72'    : pygame.font.Font(FILES['font_dejavu'], 72),
+FONTS = {'dejavu_36'    : pygame.font.Font(FILES['font_dejavu'], 36),
+         'dejavu_72'    : pygame.font.Font(FILES['font_dejavu'], 72),
          'ubuntu_11'    : pygame.font.Font(FILES['font_ubuntu'], 11),
          'ubuntu_13'    : pygame.font.Font(FILES['font_ubuntu'], 13),
          'ubuntu_16'    : pygame.font.Font(FILES['font_ubuntu'], 16),
