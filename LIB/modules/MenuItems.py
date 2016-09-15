@@ -27,7 +27,7 @@ class MenuItem():
             self.HOTKEYS = (pygame.K_ESCAPE)
         elif self.group == 'show_menu':
             self.cursor = OwnCursor('orange', self.active_zone)
-            self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'left', self.text)
+            self.tooltip = Tooltip(u'HOTKEYS: PageDown, PageUp', 'downright', self.text)
             self.HOTKEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP)
         elif self.group == 'show_prev_trades':
             self.cursor = OwnCursor('orange', self.active_zone)
@@ -144,19 +144,15 @@ class MenuItem():
 class Tooltip():
     def __init__(self, text, type, obj=None, font='ume_12'):
         self.type = type
-        if type == 'top':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
-            self.move_text(obj.rect)
-            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
-        elif type == 'left':
-            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
-            self.move_text(obj.rect)
-            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
-        elif type == 'fieldcells_info':
+        if type == 'fieldcells_info':
             self.number = text
             self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
             self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-188), (250, 188))
             self.RErender()
+        else:
+            self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
+            self.move_text(obj.rect)
+            self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
     def RErender(self, cell_state=0):
         self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
         self.text.blit(self.NAME, (0, 0))
@@ -226,6 +222,9 @@ class Tooltip():
         elif self.type == 'left':
             x = rect.x - self.rect.w - 15
             y = rect.y + (rect.h - self.rect.h)/2
+        elif self.type == 'downright':
+            x = rect.right - self.rect.w
+            y = rect.bottom + 15
         self.rect.topleft = (x, y)
     def render(self, state):
         if state:
