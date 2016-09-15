@@ -162,7 +162,7 @@ class AlphaText():
             self.rect = Rect((0, 6 - 3*number), (0, 0))
         elif self.group == 'show_prev_trades':
             self.x = Globals.RESOLUTION[0] - 42 - 52*number
-            self.rect = Rect((0, Globals.main_scr.menuitems['show_menu'].text.rect.y - 3*number), (0, 0))
+            self.rect = Rect((0, -25), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))
