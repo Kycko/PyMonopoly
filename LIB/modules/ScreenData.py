@@ -348,6 +348,8 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type and 'enter_the_trade_menu' in type:
+            if 'prev_trade' in self.labels.keys():
+                self.labels.pop('prev_trade')
             if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
@@ -393,6 +395,7 @@ class MainScreen():
             if check_trading:
                 self.return_into_main_trading_menu(check_trading)
             else:
+                self.objects.pop('trade_summary')
                 self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
@@ -440,7 +443,13 @@ class MainScreen():
             self.trade_history_append()
             self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type == 'show_prev_trades':
-            print('')
+            if not 'trading' in Globals.TEMP_VARS.keys():
+                if 'trade_summary' in self.objects.keys():
+                    self.objects.pop('trade_summary')
+                    self.labels.pop('prev_trade')
+                else:
+                    self.objects['trade_summary'] = Globals.TEMP_VARS['prev_trade']
+                    self.labels['prev_trade'] = AlphaText(Globals.TRANSLATION[80], 'last_trade_info')
         elif type and 'trading' in type and 'free_jail' in type:
             person = ('trader', 'tradingwith')['ask_for' in type]
             self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
@@ -537,11 +546,13 @@ class MainScreen():
             objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.objects['game_log']]
             if 'trade_summary' in self.objects.keys():
                 objects_to_move += [self.objects['trade_summary']]
+            elif 'prev_trade' in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS['prev_trade'].change_new_pos((0, state*100))
             objects_to_move += [cell for cell in self.menuitems.values() if cell.group == 'onboard_select_cell']
             objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
             objects_to_move += [cell.a_little_number for cell in self.objects['gamefield'].cells]
-            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds', 'show_prev_trades')]
-            objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds')]
+            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds', 'show_prev_trades') if key in self.menuitems.keys()]
+            objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds', 'prev_trade') if key in self.labels.keys()]
             for obj in objects_to_move:
                 obj.change_new_pos((0, state*100))
         elif type == 'music_and_sound_switches':
@@ -563,7 +574,6 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        self.objects.pop('trade_summary')
         Globals.TEMP_VARS.pop('trading')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
@@ -765,9 +775,11 @@ class MainScreen():
             Globals.TEMP_VARS['trading'][key] = {'info' : find_player_obj_by_name(player)}
         Globals.TEMP_VARS['trading'][key].update({'fields' : [], 'money' : 0, 'jail' : []})
     def trade_history_append(self):
-        if 'show_prev_trades' in self.menuitems.keys():
-            print('append')
-        else:
+        Globals.TEMP_VARS['prev_trade'] = self.objects.pop('trade_summary')
+        temp_var = Globals.TEMP_VARS['prev_trade']
+        temp_var.pos = (temp_var.pos[0], temp_var.pos[1] + 20)
+        temp_var.new_pos = (temp_var.new_pos[0], temp_var.new_pos[1] + 20)
+        if not 'show_prev_trades' in self.menuitems.keys():
             self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
     #--- Various verifications
     def check_error(self, type):

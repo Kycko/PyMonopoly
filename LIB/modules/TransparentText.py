@@ -10,13 +10,15 @@ class AlphaText():
         self.anticolor = Globals.COLORS['white'] - self.color
         self.update_text(text)
         self.init_new_pos()
+        if group == 'last_trade_info':
+            self.alpha = 255
     def init_for_group(self, number):
         #--- Fonts
         if 'SELECTOR' in self.group:
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter', 'trading_offer_request') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -82,6 +84,9 @@ class AlphaText():
         elif self.group[:14] == 'trade_summary_':
             self.x = 0
             self.rect = Rect((0, 0), (0, 0))
+        elif self.group == 'last_trade_info':
+            self.x = 909
+            self.rect = Rect((0, Globals.main_scr.objects['gamefield'].new_pos[1] - 1), (0, 0))
         elif self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
@@ -152,9 +157,12 @@ class AlphaText():
         elif self.group == 'from_game_return_to_menu':
             self.x = Globals.RESOLUTION[0] - 42
             self.rect = Rect((0, -95), (0, 0))
-        elif self.group in ('show_menu', 'show_prev_trades'):
+        elif self.group == 'show_menu':
             self.x = Globals.RESOLUTION[0] - 42 - 52*number
             self.rect = Rect((0, 6 - 3*number), (0, 0))
+        elif self.group == 'show_prev_trades':
+            self.x = Globals.RESOLUTION[0] - 42 - 52*number
+            self.rect = Rect((0, Globals.main_scr.menuitems['show_menu'].text.rect.y - 3*number), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))
@@ -233,6 +241,10 @@ class AlphaText():
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
+        elif self.group == 'last_trade_info':
+            self.new_pos = (self.rect.x, Globals.main_scr.objects['gamefield'].new_pos[1] - 1)
+        elif self.group == 'show_prev_trades':
+            self.new_pos = (self.rect.x, Globals.main_scr.menuitems['show_menu'].text.new_pos[1] - 3)
         else:
             self.new_pos = self.rect.topleft
         self.speed_limit = 50
