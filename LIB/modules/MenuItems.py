@@ -354,6 +354,8 @@ class MainCursor(Cursor):
             self.keys_generator(('end_turn', 'trade', 'manage_property'))
         elif type == 'ingame_buy_or_auction':
             self.keys_generator(('buy_a_cell', 'cell_to_an_auction', 'trade', 'manage_property'))
+        elif type == 'ingame_push_to_auction':
+            self.keys = ['ingame_push_to_auction_accept', 'return']
         elif type == 'choose_player_to_trade':
             self.keys_generator(['choose_player_to_trade_' + player.name for player in Globals.PLAYERS] + ['return'])
         elif type == 'trading_main_menu':

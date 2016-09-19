@@ -281,6 +281,14 @@ class MainScreen():
             self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
+        elif type == 'ingame_cell_to_an_auction':
+            self.save_step_indicators_state()
+            self.clear_main_menu_entries()
+            self.disable_central_labels()
+            self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[81], 'target_cell_info')
+            self.menuitems['ingame_push_to_auction_accept'] = MenuItem(Globals.TRANSLATION[82], 'ingame_push_to_auction_accept', 'ingame_main', 4)
+            self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_player_on_a_new_cell', 'ingame_main', 5)
+            self.cursor.screen_switched(self.menuitems, 'ingame_push_to_auction')
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
             self.objects['game_log'].add_message(type)
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -395,7 +403,8 @@ class MainScreen():
             if check_trading:
                 self.return_into_main_trading_menu(check_trading)
             else:
-                self.objects.pop('trade_summary')
+                if 'trade_summary' in self.objects.keys():
+                    self.objects.pop('trade_summary')
                 self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
@@ -575,7 +584,8 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        Globals.TEMP_VARS.pop('trading')
+        if 'trading' in Globals.TEMP_VARS.keys():
+            Globals.TEMP_VARS.pop('trading')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
         if type == 'return_end_turn':
@@ -587,7 +597,7 @@ class MainScreen():
         elif type == 'return_player_on_a_new_cell':
             self.disable_central_labels()
             self.labels['dices'] = GameMechanics.show_dices_picture()
-            if Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
+            if cell.owner and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
                 Globals.TEMP_VARS['xxx'] = cell.owner
                 cell.owner = Globals.TEMP_VARS['cur_field_owner']
             self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
