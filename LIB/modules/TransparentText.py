@@ -18,7 +18,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'trade_summary_trader_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -53,6 +53,8 @@ class AlphaText():
             self.color = Globals.TEMP_VARS['trading'][self.group[26:]]['info'].color
         elif self.group == 'birthday_info':
             self.color = Globals.TEMP_VARS['pay_birthday'][0].color
+        elif self.group == 'auction_info':
+            self.color = Globals.TEMP_VARS['auction']['order'][0].color
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
@@ -124,7 +126,7 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
-        elif self.group in ('birthday_info', 'trading_offer_request'):
+        elif self.group in ('birthday_info', 'auction_info', 'trading_offer_request'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430-100*number), (0, 0))
@@ -235,7 +237,7 @@ class AlphaText():
         if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds'] and self.group in temp:
             self.rect.y -= 33
     def init_new_pos(self):
-        if self.group[:12] == 'target_cell_':
+        if self.group[:12] in ('target_cell_', 'auction_info'):
             self.new_pos = (self.rect.x, self.rect.y - 70)
         elif self.group in ('trading_offer_request', 'birthday_info') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)

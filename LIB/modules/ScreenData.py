@@ -289,6 +289,18 @@ class MainScreen():
             self.menuitems['ingame_push_to_auction_accept'] = MenuItem(Globals.TRANSLATION[82], 'ingame_push_to_auction_accept', 'ingame_main', 4)
             self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_player_on_a_new_cell', 'ingame_main', 5)
             self.cursor.screen_switched(self.menuitems, 'ingame_push_to_auction')
+        elif type == 'ingame_push_to_auction_accept':
+            if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS)-1:
+                temp_range = range(len(Globals.PLAYERS))
+            elif Globals.TEMP_VARS['cur_turn']:
+                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + range(Globals.TEMP_VARS['cur_turn']+1)
+            else:
+                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
+            field = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+            Globals.TEMP_VARS['auction'] = {'bet'   : 0,
+                                            'field' : self.objects['gamefield'].cells[field].NAME,
+                                            'order' : [Globals.PLAYERS[i] for i in temp_range]}
+            self.auction_next_player()
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
             self.objects['game_log'].add_message(type)
             self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
@@ -973,6 +985,12 @@ class MainScreen():
             Globals.TEMP_VARS.pop('pay_birthday')
             self.objects['game_log'].add_message('birthday')
             self.ask_to_end_turn()
+    def auction_next_player(self):
+        temp_var = Globals.TEMP_VARS['auction']
+        if len(temp_var['order']) > 1:
+            text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name)
+            text = text.replace('@', temp_var['field'])
+            self.labels['target_cell_info'] = AlphaText(text, 'auction_info')
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
         for i in range(2):
