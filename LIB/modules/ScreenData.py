@@ -417,7 +417,10 @@ class MainScreen():
             else:
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
-                self.return_to_game_from_trading(type)
+                if 'auction' in Globals.TEMP_VARS.keys():
+                    self.auction_next_player()
+                else:
+                    self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
             self.clear_main_menu_entries(('return'))
             if 'error' in self.labels.keys():
@@ -850,8 +853,10 @@ class MainScreen():
         self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
         return data
     def trader_for_cur_player_or_for_birthday(self):
-        if 'pay_birthday' in Globals.TEMP_VARS:
+        if 'pay_birthday' in Globals.TEMP_VARS.keys():
             return Globals.TEMP_VARS['pay_birthday'][0]
+        elif 'auction' in Globals.TEMP_VARS.keys():
+            return Globals.TEMP_VARS['auction']['order'][0]
         else:
             return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
     def check_trading_accept_ability(self, player):
@@ -990,7 +995,13 @@ class MainScreen():
         if len(temp_var['order']) > 1:
             text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name)
             text = text.replace('@', temp_var['field'])
-            self.labels['target_cell_info'] = AlphaText(text, 'auction_info')
+            self.labels['target_cell_info'] = AlphaText(text, 'auction_info', -3)
+            self.clear_main_menu_entries()
+            self.show_property_management_menuitems(2)
+            number = 2 + ('trade' in self.menuitems.keys()) + ('manage_property' in self.menuitems.keys())
+            self.menuitems.update({'auction_up_bet' : MenuItem(Globals.TRANSLATION[84], 'auction_up_bet', 'ingame_main', 1),
+                                   'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
+            self.cursor.screen_switched(self.menuitems, 'auction_next_player')
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
         for i in range(2):

@@ -122,11 +122,11 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 360+35*number), (0, 0))
-        elif self.group[:12] == 'target_cell_':
+        elif self.group[:12] in ('target_cell_', 'auction_info'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
-        elif self.group in ('birthday_info', 'auction_info', 'trading_offer_request'):
+        elif self.group in ('birthday_info', 'trading_offer_request'):
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430-100*number), (0, 0))
