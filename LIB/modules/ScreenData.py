@@ -297,9 +297,12 @@ class MainScreen():
             else:
                 temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
             field = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-            Globals.TEMP_VARS['auction'] = {'bet'   : 0,
-                                            'field' : self.objects['gamefield'].cells[field].NAME,
-                                            'order' : [Globals.PLAYERS[i] for i in temp_range]}
+            Globals.TEMP_VARS['auction'] = {'bet'       : 0,
+                                            'field'     : self.objects['gamefield'].cells[field],
+                                            'order'     : [Globals.PLAYERS[i] for i in temp_range],
+                                            'player'    : None}
+            Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
+            Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
             self.auction_next_player()
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
             self.objects['game_log'].add_message(type)
@@ -993,15 +996,19 @@ class MainScreen():
     def auction_next_player(self):
         temp_var = Globals.TEMP_VARS['auction']
         if len(temp_var['order']) > 1:
-            text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name)
-            text = text.replace('@', temp_var['field'])
-            self.labels['target_cell_info'] = AlphaText(text, 'auction_info', -3)
+            self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', temp_var['order'][0].name), 'auction_info', -3)
             self.clear_main_menu_entries()
             self.show_property_management_menuitems(2)
             number = 2 + ('trade' in self.menuitems.keys()) + ('manage_property' in self.menuitems.keys())
-            self.menuitems.update({'auction_up_bet' : MenuItem(Globals.TRANSLATION[84], 'auction_up_bet', 'ingame_main', 1),
+            if temp_var['bet']:
+                text = Globals.TRANSLATION[84]
+            else:
+                text = Globals.TRANSLATION[88]
+            self.menuitems.update({'auction_up_bet' : MenuItem(text, 'auction_up_bet', 'ingame_main', 1),
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
+            if not 'auction_cur_bet' in self.labels.keys():
+                self.labels['auction_cur_bet'] = AlphaText(Globals.TRANSLATION[87], 'auction_cur_bet')
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
         for i in range(2):

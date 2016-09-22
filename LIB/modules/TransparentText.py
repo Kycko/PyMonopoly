@@ -28,7 +28,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name') or 'stats_table' in self.group or 'ERROR' in self.group:
+        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name', 'auction_cur_bet') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'music_and_sound_switches':
             self.font = Globals.FONTS['ume_16']
@@ -55,6 +55,11 @@ class AlphaText():
             self.color = Globals.TEMP_VARS['pay_birthday'][0].color
         elif self.group == 'auction_info':
             self.color = Globals.TEMP_VARS['auction']['order'][0].color
+        elif self.group == 'auction_cur_bet':
+            if Globals.TEMP_VARS['auction']['player']:
+                self.color = Globals.TEMP_VARS['auction']['player'].color
+            else:
+                self.color = Globals.COLORS['grey63']
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
@@ -126,6 +131,10 @@ class AlphaText():
             self.x = 'center'
             self.x_offset = 0
             self.rect = Rect((0, 430+35*number-5*(number-1)), (0, 0))
+        elif self.group == 'auction_cur_bet':
+            self.x = 'center'
+            self.x_offset = 0
+            self.rect = Rect((0, 600), (0, 0))
         elif self.group in ('birthday_info', 'trading_offer_request'):
             self.x = 'center'
             self.x_offset = 0
@@ -237,7 +246,7 @@ class AlphaText():
         if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds'] and self.group in temp:
             self.rect.y -= 33
     def init_new_pos(self):
-        if self.group[:12] in ('target_cell_', 'auction_info'):
+        if self.group[:12] in ('target_cell_', 'auction_info', 'auction_cur_'):
             self.new_pos = (self.rect.x, self.rect.y - 70)
         elif self.group in ('trading_offer_request', 'birthday_info') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
