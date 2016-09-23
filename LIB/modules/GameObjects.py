@@ -224,6 +224,12 @@ class GameLog(InfoWindow):
             text = Globals.GAMELOG_TRANSLATION[15].replace('1', Globals.TEMP_VARS['trading']['trader']['info'].name)
             text = text.replace('2', Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
             self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
+        elif type == 'auction_end':
+            if Globals.TEMP_VARS['auction']['bet']:
+                text = u'Аукцион за поле 34 состоялся'
+            else:
+                text = Globals.GAMELOG_TRANSLATION[16]
+            self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
         elif type in ('birthday', 'pay_each'):
             self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
         if len(self.messages) > 24:

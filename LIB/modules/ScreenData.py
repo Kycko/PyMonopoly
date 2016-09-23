@@ -472,6 +472,9 @@ class MainScreen():
                 self.return_to_auction_main('return_auction_main')
             else:
                 self.show_or_rm_error_msg(True, 91, 'ERROR_ingame', 'accept')
+        elif type == 'auction_refuse':
+            Globals.TEMP_VARS['auction']['order'].pop(0)
+            self.auction_next_player()
         elif type and 'onboard_select_cell' in type:
             if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
@@ -625,8 +628,9 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        if 'trading' in Globals.TEMP_VARS.keys():
-            Globals.TEMP_VARS.pop('trading')
+        for key in ('trading', 'auction'):
+            if key in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS.pop(key)
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
         if type == 'return_end_turn':
@@ -664,7 +668,7 @@ class MainScreen():
         self.cursor = None
     def disable_central_labels(self):
         for key in self.labels.keys():
-            if key[:12] in ('dices', 'target_cell_'):
+            if key[:12] in ('dices', 'target_cell_', 'auction_cur_'):
                 self.labels.pop(key)
     def disable_step_indicators(self):
         for cell in self.objects['gamefield'].cells:
@@ -1031,7 +1035,7 @@ class MainScreen():
             self.ask_to_end_turn()
     def auction_next_player(self):
         temp_var = Globals.TEMP_VARS['auction']
-        if len(temp_var['order']) > 1:
+        if len(temp_var['order']) > 1 or (len(temp_var['order']) and not temp_var['bet']):
             self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', temp_var['order'][0].name), 'auction_info', -3)
             self.clear_main_menu_entries()
             self.show_property_management_menuitems(2)
@@ -1045,6 +1049,10 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
             if not 'auction_cur_bet' in self.labels.keys():
                 self.labels['auction_cur_bet'] = AlphaText(Globals.TRANSLATION[87], 'auction_cur_bet')
+        else:
+            self.objects['game_log'].add_message('auction_end')
+            type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']]
+            self.return_to_game_from_trading(type)
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
         for i in range(2):
