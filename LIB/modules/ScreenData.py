@@ -423,11 +423,7 @@ class MainScreen():
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
                 if 'auction' in Globals.TEMP_VARS.keys():
-                    if type == 'return_auction_main':
-                        for key in ('target_cell_trading_info', 'trading_input_auction_bet'):
-                            self.labels.pop(key)
-                        self.objects.pop('text_cursor')
-                    self.auction_next_player()
+                    self.return_to_auction_main(type)
                 else:
                     self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
@@ -464,6 +460,14 @@ class MainScreen():
             money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
             self.objects['trade_summary'].add_rm_money(player, int(self.labels[money_lbl].symbols))
             self.return_into_main_trading_menu(money_lbl)
+        elif type == 'trading_input_auction_bet_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+            temp_var = Globals.TEMP_VARS['auction']
+            temp_var['bet'] = int(self.labels['trading_input_auction_bet'].symbols)
+            temp_var['player'] = Globals.TEMP_VARS['auction']['order'][0]
+            temp_var['order'].append(temp_var['order'].pop(0))
+            text = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
+            self.labels['auction_cur_bet'] = AlphaText(text, 'auction_cur_bet')
+            self.return_to_auction_main('return_auction_main')
         elif type and 'onboard_select_cell' in type:
             if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
@@ -636,6 +640,12 @@ class MainScreen():
             self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
             if 'xxx' in Globals.TEMP_VARS.keys():
                 cell.owner = Globals.TEMP_VARS.pop('xxx')
+    def return_to_auction_main(self, type):
+        if type == 'return_auction_main':
+            for key in ('target_cell_trading_info', 'trading_input_auction_bet'):
+                self.labels.pop(key)
+            self.objects.pop('text_cursor')
+        self.auction_next_player()
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():

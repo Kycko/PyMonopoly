@@ -56,10 +56,10 @@ class AlphaText():
         elif self.group == 'auction_info':
             self.color = Globals.TEMP_VARS['auction']['order'][0].color
         elif self.group == 'auction_cur_bet':
-            if Globals.TEMP_VARS['auction']['player']:
-                self.color = Globals.TEMP_VARS['auction']['player'].color
-            else:
-                self.color = Globals.COLORS['grey63']
+            # if Globals.TEMP_VARS['auction']['player']:
+            #     self.color = Globals.TEMP_VARS['auction']['player'].color
+            # else:
+            self.color = Globals.COLORS['grey63']
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
