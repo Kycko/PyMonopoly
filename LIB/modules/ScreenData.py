@@ -462,12 +462,16 @@ class MainScreen():
             self.return_into_main_trading_menu(money_lbl)
         elif type == 'trading_input_auction_bet_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
             temp_var = Globals.TEMP_VARS['auction']
-            temp_var['bet'] = int(self.labels['trading_input_auction_bet'].symbols)
-            temp_var['player'] = Globals.TEMP_VARS['auction']['order'][0]
-            temp_var['order'].append(temp_var['order'].pop(0))
-            text = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
-            self.labels['auction_cur_bet'] = AlphaText(text, 'auction_cur_bet')
-            self.return_to_auction_main('return_auction_main')
+            new_bet = int(self.labels['trading_input_auction_bet'].symbols)
+            if new_bet > temp_var['bet']:
+                temp_var['bet'] = int(self.labels['trading_input_auction_bet'].symbols)
+                temp_var['player'] = Globals.TEMP_VARS['auction']['order'][0]
+                temp_var['order'].append(temp_var['order'].pop(0))
+                text = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
+                self.labels['auction_cur_bet'] = AlphaText(text, 'auction_cur_bet')
+                self.return_to_auction_main('return_auction_main')
+            else:
+                self.show_or_rm_error_msg(True, 91, 'ERROR_ingame', 'accept')
         elif type and 'onboard_select_cell' in type:
             if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
