@@ -217,12 +217,14 @@ class MainScreen():
                     label_key = check_substring_in_dict_keys(self.labels, 'trading_input')
                     if label_key == 'trading_input_fields':
                         max_length = 2
+                    elif label_key == 'trading_input_auction_bet':
+                        max_length = len(str(Globals.TEMP_VARS['auction']['order'][0].money))
                     else:
                         trader = ('trader', 'tradingwith')['ask_for' in label_key]
                         max_length = len(str(Globals.TEMP_VARS['trading'][trader]['info'].money))
                     self.input_handling(e, label_key, max_length)
                 elif self.cursor and e.key in self.menuitems[self.cursor.active_key].HOTKEYS:
-                        self.action_call(self.cursor.active_key)
+                    self.action_call(self.cursor.active_key)
                 else:
                     for key in self.menuitems.keys():
                         if self.menuitems[key].type[:4] != 'main' and e.key in self.menuitems[key].HOTKEYS:
@@ -415,20 +417,21 @@ class MainScreen():
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
             check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
-            if check_trading:
+            if check_trading and 'auction' not in Globals.TEMP_VARS.keys():
                 self.return_into_main_trading_menu(check_trading)
             else:
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
                 if 'auction' in Globals.TEMP_VARS.keys():
                     if type == 'return_auction_main':
-                        self.labels.pop('target_cell_trading_info')
+                        for key in ('target_cell_trading_info', 'trading_input_auction_bet'):
+                            self.labels.pop(key)
                         self.objects.pop('text_cursor')
                     self.auction_next_player()
                 else:
                     self.return_to_game_from_trading(type)
-        elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'ingame_auction_up_bet'):
-            if type == 'ingame_auction_up_bet':
+        elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
+            if type == 'trading_input_auction_bet':
                 self.labels.pop('target_cell_info')
                 self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_auction_main', 'ingame_main', 6)
             self.clear_main_menu_entries(('return'))
@@ -798,10 +801,15 @@ class MainScreen():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
         if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
-            text = Globals.TRANSLATION[70]
-            if 'money' in KEY:
-                text = text.split('/')[0]
-            self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', 7)
+            if KEY == 'trading_input_auction_bet':
+                MInum = 5
+                text = Globals.TRANSLATION[90]
+            else:
+                MInum = 7
+                text = Globals.TRANSLATION[70]
+                if 'money' in KEY:
+                    text = text.split('/')[0]
+            self.menuitems['accept'] = MenuItem(text, KEY + '_ACCEPT', 'ingame_main', MInum)
             self.cursor.add_rm_keys(True, 'accept', 0, self.menuitems['accept'].active_zone.move(0, self.menuitems['accept'].text.new_pos[1] - self.menuitems['accept'].text.rect.y).topleft)
     def return_into_main_trading_menu(self, label_key):
         for cell in self.objects['gamefield'].cells:
@@ -834,9 +842,11 @@ class MainScreen():
         elif type == 'trading_input':
             temp = check_substring_in_dict_keys(self.labels, 'trading_input')
             obj = self.labels[temp].symbols
-            data = (72 + ('money' in temp), 'ERROR_ingame', 'accept')
+            data = (72 + ('money' in temp or 'auction' in temp), 'ERROR_ingame', 'accept')
             if 'fields' in temp:
                 MAX = 39
+            elif 'auction' in temp:
+                MAX = Globals.TEMP_VARS['auction']['order'][0].money
             else:
                 trader = ('trader', 'tradingwith')['ask_for' in temp]
                 MAX = Globals.TEMP_VARS['trading'][trader]['info'].money
@@ -1016,7 +1026,7 @@ class MainScreen():
                 text = Globals.TRANSLATION[84]
             else:
                 text = Globals.TRANSLATION[88]
-            self.menuitems.update({'auction_up_bet' : MenuItem(text, 'ingame_auction_up_bet', 'ingame_main', 1),
+            self.menuitems.update({'auction_up_bet' : MenuItem(text, 'trading_input_auction_bet', 'ingame_main', 1),
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
             if not 'auction_cur_bet' in self.labels.keys():
