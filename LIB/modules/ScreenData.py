@@ -315,9 +315,14 @@ class MainScreen():
             player = Globals.PLAYERS[cur_turn]
             cell = self.objects['gamefield'].cells[player.cur_field]
             self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
+            if 'cur_field_owner' in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS['xxx'] = cell.owner
+                cell.owner = Globals.TEMP_VARS.pop('cur_field_owner')
             for i in range(len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].name == cell.owner:
                     self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
+            if 'xxx' in Globals.TEMP_VARS.keys():
+                cell.owner = Globals.TEMP_VARS.pop('xxx')
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type in ('ingame_continue_chest', 'ingame_continue_chance'):
@@ -908,8 +913,6 @@ class MainScreen():
                 return True
     #--- Game mechanics
     def ask_to_end_turn(self):
-        if 'cur_field_owner' in Globals.TEMP_VARS.keys():
-            Globals.TEMP_VARS.pop('cur_field_owner')
         self.disable_central_labels()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
@@ -1022,10 +1025,7 @@ class MainScreen():
             text = Globals.TRANSLATION[58].replace('%', player_name)
             text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
-            if 'return' in self.menuitems.keys():
-                self.labels['target_cell_info'].change_new_pos((0, 80))
-            else:
-                self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
+            self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
             self.clear_main_menu_entries()
             self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player_name, 'ingame_main', 3)})
             self.show_property_management_menuitems(4)
