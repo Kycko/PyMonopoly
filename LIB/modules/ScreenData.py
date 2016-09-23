@@ -1002,8 +1002,9 @@ class MainScreen():
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
         self.show_property_management_menuitems(property_management_number, property_management_condition)
         self.cursor.screen_switched(self.menuitems, ('ingame_buy_or_auction', 'ingame_continue')['ingame_continue' in self.menuitems.keys()])
-    def change_owner_for_a_cell(self, player):
-        cell = self.objects['gamefield'].cells[player.cur_field]
+    def change_owner_for_a_cell(self, player, cell=None):
+        if not cell:
+            cell = self.objects['gamefield'].cells[player.cur_field]
         cell.owner = player.name
         cell.color = player.color
         cells = self.check_group_owners(cell.group, player.name)
@@ -1050,6 +1051,9 @@ class MainScreen():
             if not 'auction_cur_bet' in self.labels.keys():
                 self.labels['auction_cur_bet'] = AlphaText(Globals.TRANSLATION[87], 'auction_cur_bet')
         else:
+            if temp_var['bet']:
+                self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
+                self.change_player_money(temp_var['player'], -temp_var['bet'])
             self.objects['game_log'].add_message('auction_end')
             type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']]
             self.return_to_game_from_trading(type)
