@@ -421,17 +421,29 @@ class MainScreen():
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
                 if 'auction' in Globals.TEMP_VARS.keys():
+                    if type == 'return_auction_main':
+                        self.labels.pop('target_cell_trading_info')
+                        self.objects.pop('text_cursor')
                     self.auction_next_player()
                 else:
                     self.return_to_game_from_trading(type)
-        elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
+        elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'ingame_auction_up_bet'):
+            if type == 'ingame_auction_up_bet':
+                self.labels.pop('target_cell_info')
+                self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_auction_main', 'ingame_main', 6)
             self.clear_main_menu_entries(('return'))
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
             if type == 'trading_input_fields':
                 self.objects['gamefield'].render_cell_numbers('trade')
-            all_types = ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money')
-            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[(69, 71)['money' in type]], 'target_cell_info', -3)
+            if 'money' in type:
+                text = Globals.TRANSLATION[71]
+            elif 'fields' in type:
+                text = Globals.TRANSLATION[69]
+            else:
+                temp_var = Globals.TEMP_VARS['auction']
+                text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name).replace('@', temp_var['field'].NAME)
+            self.labels['target_cell_trading_info'] = AlphaText(text, 'target_cell_info', -3)
             self.labels[type] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'trading_input')
@@ -1004,7 +1016,7 @@ class MainScreen():
                 text = Globals.TRANSLATION[84]
             else:
                 text = Globals.TRANSLATION[88]
-            self.menuitems.update({'auction_up_bet' : MenuItem(text, 'auction_up_bet', 'ingame_main', 1),
+            self.menuitems.update({'auction_up_bet' : MenuItem(text, 'ingame_auction_up_bet', 'ingame_main', 1),
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
             if not 'auction_cur_bet' in self.labels.keys():

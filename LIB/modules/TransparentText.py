@@ -82,6 +82,8 @@ class AlphaText():
             self.color = Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color
         elif 'ERROR' in self.group:
             self.color = Globals.COLORS['light_red']
+        elif self.group == 'target_cell_info' and 'auction' in Globals.TEMP_VARS.keys():
+            self.color = Globals.TEMP_VARS['auction']['order'][0].color
         else:
             self.color = Globals.COLORS['white']
         #--- Position
