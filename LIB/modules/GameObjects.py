@@ -225,8 +225,12 @@ class GameLog(InfoWindow):
             text = text.replace('2', Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
             self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
         elif type == 'auction_end':
-            if Globals.TEMP_VARS['auction']['bet']:
-                text = u'Аукцион за поле 34 состоялся'
+            temp_var = Globals.TEMP_VARS['auction']
+            if temp_var['bet']:
+                text = Globals.GAMELOG_TRANSLATION[17].replace('%', str(temp_var['field'].number))
+                self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
+                text = Globals.GAMELOG_TRANSLATION[18].replace('%', temp_var['player'].name)
+                text = text.replace('@', str(temp_var['bet']))
             else:
                 text = Globals.GAMELOG_TRANSLATION[16]
             self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
