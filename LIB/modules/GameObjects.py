@@ -197,33 +197,32 @@ class GameLog(InfoWindow):
         InfoWindow.__init__(self, (10, 170), (10, 70))
     def add_message(self, type):
         if type in ('roll_the_dice', 'chest_goto'):
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field))
         elif type == 'change_player':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name), 'gamelog_message_player_switched', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3 + 10*(type[16:] == 'income')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])[(type[16:] == 'tax'):]), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[3 + 10*(type[16:] == 'income')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])[(type[16:] == 'tax'):])
         elif type == 'ingame_continue_PAY_RENT':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[4].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])).replace('^', Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[4].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])).replace('^', Globals.main_scr.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner)
         elif type == 'ingame_buy_a_cell':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[5].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)).replace('^', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[5].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field)).replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
         elif type == 'ingame_continue_gotojail':
             text = Globals.main_scr.objects['gamefield'].cells[30].NAME
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:]), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:])
         elif type == 'money_for_start_passing':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost)), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost))
         elif type == 'chest_income':
-            self.messages.append(AlphaText('- ' + Globals.GAMELOG_TRANSLATION[(3, 7)[Globals.TEMP_VARS['MUST_PAY'] > 0]].split()[1] + ' $' + str(Globals.TEMP_VARS['MUST_PAY']).lstrip('-'), 'gamelog_message_common', len(self.messages)))
+            text = '- ' + Globals.GAMELOG_TRANSLATION[(3, 7)[Globals.TEMP_VARS['MUST_PAY'] > 0]].split()[1] + ' $' + str(Globals.TEMP_VARS['MUST_PAY']).lstrip('-')
         elif type in ('chest_free_jail', 'use_card_to_exit_jail'):
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[9 + 5*(type == 'use_card_to_exit_jail')], 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[9 + 5*(type == 'use_card_to_exit_jail')]
         elif type == 'roll_the_dice_to_exit_jail':
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts)), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[8].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts))
         elif type == 'pay_money_to_exit_jail':
             CELL = Globals.main_scr.objects['gamefield'].cells[10]
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')', 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[3].replace('%', str(CELL.buy_cost)) + ' (' + CELL.NAME + ')'
         elif type == 'ingame_trading_ACCEPT_ALL':
             text = Globals.GAMELOG_TRANSLATION[15].replace('1', Globals.TEMP_VARS['trading']['trader']['info'].name)
             text = text.replace('2', Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
-            self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
         elif type == 'auction_end':
             temp_var = Globals.TEMP_VARS['auction']
             if temp_var['bet']:
@@ -233,16 +232,16 @@ class GameLog(InfoWindow):
                 text = text.replace('@', str(temp_var['bet']))
             else:
                 text = Globals.GAMELOG_TRANSLATION[16]
-            self.messages.append(AlphaText(text, 'gamelog_message_common', len(self.messages)))
         elif type in ('birthday', 'pay_each'):
-            self.messages.append(AlphaText(Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY'])), 'gamelog_message_common', len(self.messages)))
+            text = Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY']))
+        ATtype = ('gamelog_message_common', 'gamelog_message_player_switched')[type == 'change_player']
+        self.messages.append(AlphaText(text, ATtype, len(self.messages)))
         if len(self.messages) > 24:
             count = len(self.messages) - 24
             for i in range(count):
                 self.messages.pop(i)
             for message in self.messages:
-                if message:
-                    message.change_new_pos((0, -18*count))
+                message.change_new_pos((0, -18*count))
     def RErender(self):
         InfoWindow.RErender(self)
         for message in self.messages:
