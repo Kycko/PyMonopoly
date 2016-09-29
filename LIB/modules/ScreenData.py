@@ -377,6 +377,20 @@ class MainScreen():
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
+        elif type == 'enter_the_property_management':
+            if 'prev_trade' in self.labels.keys():
+                self.labels.pop('prev_trade')
+            if 'trade_summary' in self.objects.keys():
+                self.objects.pop('trade_summary')
+            if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                self.disable_central_labels()
+            Globals.TEMP_VARS['property'] = {}
+            for cell in self.objects['gamefield'].cells:
+                if cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                    Globals.TEMP_VARS['property'][cell.number] = cell.buildings
+            self.entering_property_menu()
+            self.clear_main_menu_entries(('return'))
+            self.cursor.screen_switched(self.menuitems, 'property_management')
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
@@ -385,21 +399,10 @@ class MainScreen():
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
-                self.save_step_indicators_state()
-                if 'pay_birthday' in Globals.TEMP_VARS.keys():
-                    self.labels['target_cell_info'].change_new_pos((0, -80))
+                self.entering_property_menu()
                 Globals.TEMP_VARS['trading'] = {}
                 self.make_trading_TEMP_VARS('trader')
                 self.objects['trade_summary'] = TradeSummary()
-                if 'end_turn' in self.menuitems.keys():
-                    back_type = 'end_turn'
-                elif 'pay_birthday' in Globals.TEMP_VARS.keys():
-                    back_type = 'pay_birthday'
-                elif 'roll_the_dice' in self.menuitems.keys():
-                    back_type = 'new_turn'
-                else:
-                    back_type = 'player_on_a_new_cell'
-                self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_' + back_type, 'ingame_main', 8)
             if type == 'enter_the_trade_menu':
                 if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
@@ -633,7 +636,7 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        for key in ('trading', 'auction'):
+        for key in ('trading', 'auction', 'property'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
@@ -647,7 +650,7 @@ class MainScreen():
         elif type == 'return_player_on_a_new_cell':
             self.disable_central_labels()
             self.labels['dices'] = GameMechanics.show_dices_picture()
-            if cell.owner and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
+            if cell.owner and 'cur_field_owner' in Globals.TEMP_VARS.keys() and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
                 Globals.TEMP_VARS['xxx'] = cell.owner
                 cell.owner = Globals.TEMP_VARS['cur_field_owner']
             self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
@@ -659,6 +662,11 @@ class MainScreen():
                 self.labels.pop(key)
             self.objects.pop('text_cursor')
         self.auction_next_player()
+    def entering_property_menu(self):
+        self.save_step_indicators_state()
+        if 'pay_birthday' in Globals.TEMP_VARS.keys():
+            self.labels['target_cell_info'].change_new_pos((0, -80))
+        self.make_return_button_for_property_management()
     #--- Cleaning and moving
     def clear_labels(self, exception):
         for key in self.labels.keys():
@@ -780,6 +788,16 @@ class MainScreen():
                 self.menuitems['trade'] = MenuItem(Globals.TRANSLATION[44], type, 'ingame_main', number)
             if check_if_player_owns_fieldcells(trader_name):
                 self.menuitems['manage_property'] = MenuItem(Globals.TRANSLATION[62], 'enter_the_property_management', 'ingame_main', number+1)
+    def make_return_button_for_property_management(self):
+        if 'end_turn' in self.menuitems.keys():
+            back_type = 'return_end_turn'
+        elif 'pay_birthday' in Globals.TEMP_VARS.keys():
+            back_type = 'return_pay_birthday'
+        elif 'roll_the_dice' in self.menuitems.keys():
+            back_type = 'return_new_turn'
+        else:
+            back_type = 'return_player_on_a_new_cell'
+        self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], back_type, 'ingame_main', 8)
     def show_main_trading_menu(self):
         if 'target_cell_trading_info' in self.labels.keys():
             self.labels.pop('target_cell_trading_info')
