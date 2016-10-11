@@ -75,6 +75,9 @@ class GameField():
             traders = (Globals.TEMP_VARS['trading']['trader']['info'].name,
                        Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
             cells = [cell for cell in self.cells if cell.owner in traders]
+        elif type == 'prop_manage':
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+            cells = [cell for cell in self.cells if cell.owner == player]
         for cell in cells:
             cell.a_little_number_visible = True
     def render(self):

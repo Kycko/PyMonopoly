@@ -390,6 +390,10 @@ class MainScreen():
                     Globals.TEMP_VARS['property'][cell.number] = cell.buildings
             self.entering_property_menu()
             self.clear_main_menu_entries(('return'))
+            self.objects['gamefield'].render_cell_numbers('prop_manage')
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[69], 'target_cell_info', -3)
+            self.labels[type] = AlphaText('', 'ingame_main', 1)
+            self.make_obj_for_enter_name(type)
             self.cursor.screen_switched(self.menuitems, 'property_management')
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
@@ -639,6 +643,10 @@ class MainScreen():
         for key in ('trading', 'auction', 'property'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
+        if 'text_cursor' in self.objects.keys():
+            self.objects.pop('text_cursor')
+            for cell in self.objects['gamefield'].cells:
+                cell.a_little_number_visible = False
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
         if type == 'return_end_turn':
