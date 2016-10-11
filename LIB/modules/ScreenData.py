@@ -213,6 +213,8 @@ class MainScreen():
                     self.menuitems[self.cursor.active_key].selector.keypress(e.key)
                 elif self.menuitems and ('main_new_edit_player' in self.menuitems['exit'].type or self.menuitems['exit'].type == 'main_settings_player'):
                     self.input_handling(e, 'name_MI', 15)
+                elif self.labels and 'property_management_input' in self.labels.keys():
+                    self.input_handling(e, 'property_management_input', 2)
                 elif self.labels and check_substring_in_dict_keys(self.labels, 'trading_input'):
                     label_key = check_substring_in_dict_keys(self.labels, 'trading_input')
                     if label_key == 'trading_input_fields':
@@ -392,8 +394,8 @@ class MainScreen():
             self.clear_main_menu_entries(('return'))
             self.objects['gamefield'].render_cell_numbers('prop_manage')
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[69], 'target_cell_info', -3)
-            self.labels[type] = AlphaText('', 'ingame_main', 1)
-            self.make_obj_for_enter_name(type)
+            self.labels['property_management_input'] = AlphaText('', 'ingame_main', 1)
+            self.make_obj_for_enter_name('property_management_input')
             self.cursor.screen_switched(self.menuitems, 'property_management')
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
@@ -645,6 +647,7 @@ class MainScreen():
                 Globals.TEMP_VARS.pop(key)
         if 'text_cursor' in self.objects.keys():
             self.objects.pop('text_cursor')
+            self.labels.pop('property_management_input')
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
