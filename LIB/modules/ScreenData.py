@@ -916,7 +916,7 @@ class MainScreen():
                 counter += 1
                 if cell.owner == player:
                     data.append(cell)
-        self.objects['gamefield'].groups_monopolies[group] = counter == len(data)
+        self.objects['gamefield'].groups_monopolies[group] = ('', player)[counter == len(data)]
         return data
     def trader_for_cur_player_or_for_birthday(self):
         if 'pay_birthday' in Globals.TEMP_VARS.keys():

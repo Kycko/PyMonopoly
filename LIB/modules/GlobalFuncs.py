@@ -99,7 +99,10 @@ def check_group_monopoly(group):
     else:
         numbers = [i for i in range((group-1)*5+1, group*5) if fieldcells[i].group == group]
     owners = [fieldcells[i].owner for i in numbers]
-    Globals.main_scr.objects['gamefield'].groups_monopolies[group] = owners.count(owners[0]) == len(owners)
+    if owners.count(owners[0]) == len(owners):
+        Globals.main_scr.objects['gamefield'].groups_monopolies[group] = owners[0]
+    else:
+        Globals.main_scr.objects['gamefield'].groups_monopolies[group] = ''
     if group in ('railroad', 'service'):
         for i in numbers:
             fieldcells[i].buildings = owners.count(fieldcells[i].owner) - 1

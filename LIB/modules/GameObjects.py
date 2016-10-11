@@ -22,7 +22,7 @@ class GameField():
                                         size,
                                         pos))
             if self.cells[i].group not in self.groups_monopolies.keys():
-                self.groups_monopolies[self.cells[i].group] = False
+                self.groups_monopolies[self.cells[i].group] = ''
             self.RErender_a_cell(i)
         self.chests_and_chances = {}
         for type in ('chests', 'chances'):
@@ -123,7 +123,7 @@ class FieldCell():
         self.rect = pygame.Rect((0, 0), size)
         self.surf = pygame.Surface(size)
         self.color = Globals.COLORS['grey22']
-    def RErender(self, monopolied_cell = False):
+    def RErender(self, monopolied_cell = ''):
         #--- Background
         pygame.draw.rect(self.surf, self.color, self.rect, 0)
         #--- Group-specific color (for groups 1-8)
