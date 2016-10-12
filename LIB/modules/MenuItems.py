@@ -407,7 +407,7 @@ class MainCursor(Cursor):
             index = self.keys.index(key)
             self.keys.pop(index)
             self.cords.pop(index)
-        if key == 'accept':
+        if key in ('accept', 'state_selector'):
             self.change_pos(('return', key)[add])
         # elif key == 'accept_ALL' and not add:
         #     self.change_pos('return')

@@ -657,11 +657,13 @@ class MainScreen():
         for key in ('trading', 'auction', 'property'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
-        if 'text_cursor' in self.objects.keys():
-            self.objects.pop('text_cursor')
-            self.labels.pop(check_substring_in_dict_keys(self.labels, 'property_management_input'))
+        temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
+        if temp:
+            self.labels.pop(temp)
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
+        if 'text_cursor' in self.objects.keys():
+            self.objects.pop('text_cursor')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
         if type == 'return_end_turn':
