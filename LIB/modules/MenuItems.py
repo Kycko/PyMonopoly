@@ -251,6 +251,11 @@ class MenuSelector():
             for i in range(len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].human:
                     self.active = i
+        elif type == 'cell_state_SELECTOR':
+            num = int(Globals.main_scr.labels['property_management_input_ready'].symbols)
+            group = Globals.main_scr.objects['gamefield'].cells[num].group
+            itemcount_end = 2 + (4 + int(Globals.TEMP_VARS['cur_game'])) * (group in range(9)) * bool(Globals.main_scr.objects['gamefield'].groups_monopolies[group])
+            self.active = 0
         self.items = [AlphaText(u'●', type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]

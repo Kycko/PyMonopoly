@@ -400,7 +400,13 @@ class MainScreen():
         elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
             cell = int(self.labels['property_management_input'].symbols)
             if self.objects['gamefield'].cells[cell].owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
-                print('yup')
+                self.objects.pop('text_cursor')
+                self.labels['property_management_input_ready'] = self.labels.pop('property_management_input')
+                self.labels['target_cell_trading_subinfo'] = AlphaText(Globals.TRANSLATION[95], 'target_cell_info', -1)
+                self.menuitems.pop('accept')
+                self.cursor.add_rm_keys(False, 'accept')
+                self.menuitems['state_selector'] = MenuItem('', 'cell_state_SELECTOR', 'ingame_main', 3)
+                self.cursor.add_rm_keys(True, 'state_selector', 0, self.menuitems['state_selector'].active_zone.move(0, self.menuitems['state_selector'].text.new_pos[1] - self.menuitems['state_selector'].text.rect.y).topleft)
             else:
                 self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
         elif type and 'enter_the_trade_menu' in type:
@@ -653,7 +659,7 @@ class MainScreen():
                 Globals.TEMP_VARS.pop(key)
         if 'text_cursor' in self.objects.keys():
             self.objects.pop('text_cursor')
-            self.labels.pop('property_management_input')
+            self.labels.pop(check_substring_in_dict_keys(self.labels, 'property_management_input'))
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field

@@ -176,6 +176,13 @@ class AlphaText():
         elif self.group == 'show_prev_trades':
             self.x = Globals.RESOLUTION[0] - 42 - 52*number
             self.rect = Rect((0, -25), (0, 0))
+        elif self.group == 'cell_state_SELECTOR':
+            num = int(Globals.main_scr.labels['property_management_input_ready'].symbols)
+            group = Globals.main_scr.objects['gamefield'].cells[num].group
+            itemcount_end = 2 + (4 + int(Globals.TEMP_VARS['cur_game'])) * (group in range(9)) * bool(Globals.main_scr.objects['gamefield'].groups_monopolies[group])
+            self.x = 'center'
+            self.x_offset = -10-25*((itemcount_end/2)-1) + 25*number
+            self.rect = Rect((0, 471), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
             self.rect = Rect((0, 623), (0, 0))
@@ -250,7 +257,7 @@ class AlphaText():
     def init_new_pos(self):
         if self.group[:12] in ('target_cell_', 'auction_info', 'auction_cur_'):
             self.new_pos = (self.rect.x, self.rect.y - 70)
-        elif self.group in ('trading_offer_request', 'birthday_info') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
+        elif self.group in ('trading_offer_request', 'birthday_info', 'cell_state_SELECTOR') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
