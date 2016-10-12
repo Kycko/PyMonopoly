@@ -179,9 +179,9 @@ class AlphaText():
         elif self.group == 'cell_state_SELECTOR':
             num = int(Globals.main_scr.labels['property_management_input_ready'].symbols)
             group = Globals.main_scr.objects['gamefield'].cells[num].group
-            itemcount_end = 2 + (4 + int(Globals.TEMP_VARS['cur_game'])) * (group in range(9)) * bool(Globals.main_scr.objects['gamefield'].groups_monopolies[group])
+            itemcount_end = 2 + (5 - int(Globals.TEMP_VARS['cur_game'])) * (group in range(9)) * bool(Globals.main_scr.objects['gamefield'].groups_monopolies[group])
             self.x = 'center'
-            self.x_offset = -10-25*((itemcount_end/2)-1) + 25*number
+            self.x_offset = -25*(itemcount_end/2) + 25*number
             self.rect = Rect((0, 471), (0, 0))
         elif self.group == 'main_settings_volume_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
