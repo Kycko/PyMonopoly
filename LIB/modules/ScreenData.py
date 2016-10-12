@@ -808,7 +808,7 @@ class MainScreen():
             back_type = 'return_new_turn'
         else:
             back_type = 'return_player_on_a_new_cell'
-        self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], back_type, 'ingame_main', 8)
+        self.menuitems['return'] = MenuItem(Globals.TRANSLATION[(64, 93)['property' in Globals.TEMP_VARS.keys()]], back_type, 'ingame_main', 8)
     def show_main_trading_menu(self):
         if 'target_cell_trading_info' in self.labels.keys():
             self.labels.pop('target_cell_trading_info')
@@ -853,9 +853,9 @@ class MainScreen():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
         if self.labels[KEY].symbols and ('trading_input' in KEY or KEY == 'property_management_input') and 'accept' not in self.menuitems.keys():
-            if KEY == 'trading_input_auction_bet':
+            if KEY in ('trading_input_auction_bet', 'property_management_input'):
                 MInum = 5
-                text = Globals.TRANSLATION[90]
+                text = Globals.TRANSLATION[(90, 92)[KEY == 'property_management_input']]
             else:
                 MInum = 7
                 text = Globals.TRANSLATION[70]
