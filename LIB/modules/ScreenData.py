@@ -238,7 +238,7 @@ class MainScreen():
             self.labels[KEY].update_text(self.labels[KEY].symbols[:len(self.labels[KEY].symbols)-1], False)
         elif len(self.labels[KEY].symbols) < max_length and (KEY == 'name_MI' or e.unicode in ''.join([str(i) for i in range(10)])):
             self.labels[KEY].update_text(self.labels[KEY].symbols + e.unicode, False)
-        if check_substring_in_dict_keys(self.labels, 'trading_input'):
+        if 'property_management_input' in self.labels.keys() or check_substring_in_dict_keys(self.labels, 'trading_input'):
             self.create_trading_input_spec_objects(KEY)
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
@@ -848,11 +848,11 @@ class MainScreen():
         text, operation = self.generate_trading_jail_text_for_menuitem(key, i)
         self.menuitems[operation + str(i)].update_text(text)
     def create_trading_input_spec_objects(self, KEY):
-        self.check_error('trading_input')
+        self.check_error(('property_management_input', 'trading_input')['trading' in Globals.TEMP_VARS.keys()])
         if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
-        if self.labels[KEY].symbols and 'trading_input' in KEY and 'accept' not in self.menuitems.keys():
+        if self.labels[KEY].symbols and ('trading_input' in KEY or KEY == 'property_management_input') and 'accept' not in self.menuitems.keys():
             if KEY == 'trading_input_auction_bet':
                 MInum = 5
                 text = Globals.TRANSLATION[90]
@@ -893,7 +893,6 @@ class MainScreen():
                 self.show_or_rm_error_msg(False, data[0], data[1], data[2])
         elif type == 'trading_input':
             temp = check_substring_in_dict_keys(self.labels, 'trading_input')
-            obj = self.labels[temp].symbols
             data = (72 + ('money' in temp or 'auction' in temp), 'ERROR_ingame', 'accept')
             if 'fields' in temp:
                 MAX = 39
@@ -902,6 +901,12 @@ class MainScreen():
             else:
                 trader = ('trader', 'tradingwith')['ask_for' in temp]
                 MAX = Globals.TEMP_VARS['trading'][trader]['info'].money
+        elif type == 'property_management_input':
+            temp = type
+            data = (72, 'ERROR_ingame', 'accept')
+            MAX = 39
+        if type in ('trading_input', 'property_management_input'):
+            obj = self.labels[temp].symbols
             if obj and int(obj) > MAX:
                 self.show_or_rm_error_msg(True, data[0], data[1], data[2])
             elif (obj and int(obj) <= MAX and 'error' in self.labels.keys()) or (not obj and 'error' in self.labels.keys()):
