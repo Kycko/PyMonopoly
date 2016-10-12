@@ -397,6 +397,12 @@ class MainScreen():
             self.labels['property_management_input'] = AlphaText('', 'ingame_main', 1)
             self.make_obj_for_enter_name('property_management_input')
             self.cursor.screen_switched(self.menuitems, 'property_management')
+        elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+            cell = int(self.labels['property_management_input'].symbols)
+            if self.objects['gamefield'].cells[cell].owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                print('yup')
+            else:
+                self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
