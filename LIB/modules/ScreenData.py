@@ -848,7 +848,7 @@ class MainScreen():
         text, operation = self.generate_trading_jail_text_for_menuitem(key, i)
         self.menuitems[operation + str(i)].update_text(text)
     def create_trading_input_spec_objects(self, KEY):
-        self.check_error(('property_management_input', 'trading_input')['trading' in Globals.TEMP_VARS.keys()])
+        self.check_error(('trading_input', 'property_management_input')['property' in Globals.TEMP_VARS.keys()])
         if not self.labels[KEY].symbols and 'accept' in self.menuitems.keys():
             self.menuitems.pop('accept')
             self.cursor.add_rm_keys(False, 'accept')
