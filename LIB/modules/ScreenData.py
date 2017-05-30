@@ -51,6 +51,7 @@ class MainScreen():
                         self.labels[key].change_new_pos((1820, 0))
                     for cell in self.objects['gamefield'].cells:
                         cell.step_indicator.change_new_pos((1820, 0))
+                        cell.a_little_number.change_new_pos((1820, 0))
                 elif self.menuitems['exit'].group == 'main_settings_player_exit':
                     self.move_APPINFO((-300, 0))
                 elif self.menuitems['exit'].group == 'ingame_start':
