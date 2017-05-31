@@ -183,7 +183,7 @@ class Tooltip():
         else:
             ##--- Buy cost
             if self.number != 20:
-                color = self.choose_color(0, cell_state)
+                color = self.choose_color(0, cell_state + bool(CELL.owner))
                 self.text.blit(font.render(Globals.TRANSLATION[37], True, color), (0, 18))
                 self.text.blit(font.render(str(CELL.buy_cost), True, color), (font.size(Globals.TRANSLATION[37]+' ')[0], 18))
             ##--- Rentlabels
@@ -204,9 +204,8 @@ class Tooltip():
                     else:
                         string = str(CELL.rent_costs[i])
                     self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 45+i*15))
-                statuses = ('mortrage_cost', 'mortraged')
-                for i in range(len(statuses)):
-                    color = self.choose_color(statuses[i], cell_state)
+                for i in range(2):
+                    color = self.choose_color(i, 2 + CELL.buildings)
                     self.text.blit(font.render(Globals.TRANSLATION[38+i], True, color), (0, 60+(count+i)*15))
                     string = str(int((CELL.buy_cost/2)+((CELL.buy_cost/2)*0.1*i)))
                     self.text.blit(font.render(string, True, color), (180-font.size(string)[0], 60+(count+i)*15))

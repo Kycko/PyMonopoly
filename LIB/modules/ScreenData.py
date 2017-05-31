@@ -1070,7 +1070,7 @@ class MainScreen():
     def change_cell_state(self, cell, buildings):
         self.objects['gamefield'].cells[cell].buildings = buildings
         self.objects['gamefield'].RErender_a_cell(cell)
-        self.menuitems['fieldcell_'+str(cell)].tooltip.RErender(buildings+2)
+        self.menuitems['fieldcell_'+str(cell)].tooltip.RErender(buildings+1)
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
