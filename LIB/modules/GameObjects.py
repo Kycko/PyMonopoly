@@ -170,9 +170,12 @@ class FieldCell():
         if self.number not in (0, 10) and self.buy_cost:
             temp = self.buy_cost
             if self.owner:
-                temp = self.rent_costs[self.buildings]
-                if monopolied_cell and self.group in range(9):
-                    temp = temp * 2
+                if self.buildings > -1:
+                    temp = self.rent_costs[self.buildings]
+                    if monopolied_cell and self.group in range(9):
+                        temp = temp * 2
+                else:
+                    temp = 0
             pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):

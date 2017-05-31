@@ -410,6 +410,8 @@ class MainScreen():
                 self.cursor.add_rm_keys(True, 'state_selector', 0, self.menuitems['state_selector'].active_zone.move(0, self.menuitems['state_selector'].text.new_pos[1] - self.menuitems['state_selector'].text.rect.y).topleft)
             else:
                 self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
+        elif type == 'cell_state_SELECTOR':
+            self.change_cell_state(int(self.labels['property_management_input_ready'].symbols), self.menuitems[key].selector.active - 1)
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
@@ -1065,6 +1067,10 @@ class MainScreen():
                 group_cell.buildings = len(cells) - 1
             self.objects['gamefield'].RErender_a_cell(group_cell.number)
             self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
+    def change_cell_state(self, cell, buildings):
+        self.objects['gamefield'].cells[cell].buildings = buildings
+        self.objects['gamefield'].RErender_a_cell(cell)
+        self.menuitems['fieldcell_'+str(cell)].tooltip.RErender(buildings+2)
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
