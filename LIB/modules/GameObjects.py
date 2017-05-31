@@ -2,7 +2,7 @@
 import Globals, FieldCellsData, pygame
 from GlobalFuncs import check_group_monopoly, count_new_pos, slight_animation_count_pos, read_chests_and_chances_translation
 from random import shuffle
-from Sprite import Sprite
+from Sprite import Line, Sprite
 from TransparentText import AlphaText
 
 class GameField():
@@ -174,8 +174,15 @@ class FieldCell():
                     temp = self.rent_costs[self.buildings]
                     if monopolied_cell and self.group in range(9):
                         temp = temp * 2
+                elif self.number in range(11, 20) + range(31, 40):
+                    if self.group in (3, 4, 7, 8):
+                        temp = 7*'X'
+                    else:
+                        temp = 10*'X'
                 else:
-                    temp = 0
+                    temp = 6*'X'
+                    # pygame.draw.line(self.surf, Globals.COLORS['black'], self.rect.topleft, self.rect.bottomright, 5)
+                    # pygame.draw.line(self.surf, Globals.COLORS['black'], self.rect.topright, self.rect.bottomleft, 5)
             pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):

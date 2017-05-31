@@ -146,20 +146,24 @@ class Tooltip():
         self.type = type
         if type == 'fieldcells_info':
             self.number = text
-            self.NAME = Globals.FONTS['ubuntu_16'].render(Globals.TEMP_VARS['onboard_text']['fieldnames'][text], True, Globals.COLORS['grey22'])
-            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-188), (250, 188))
+            self.NAME = Globals.TEMP_VARS['onboard_text']['fieldnames'][text]
+            self.rect = pygame.Rect((10, Globals.RESOLUTION[1]-188), (280, 188))
             self.RErender()
         else:
             self.rect = pygame.Rect((0, 0), Globals.FONTS[font].size(text))
             self.move_text(obj.rect)
             self.text = Globals.FONTS[font].render(text, True, Globals.COLORS['grey'])
     def RErender(self, cell_state=0):
+        CELL = Globals.main_scr.objects['gamefield'].cells[self.number]
+        NAME = self.NAME
+        if not cell_state and CELL.owner:
+            NAME += Globals.TRANSLATION[96]
+        NAME = Globals.FONTS['ubuntu_16'].render(NAME, True, Globals.COLORS['grey22'])
         self.text = pygame.Surface(self.rect.size, pygame.SRCALPHA)
-        self.text.blit(self.NAME, (0, 0))
+        self.text.blit(NAME, (0, 0))
         #--- Font and color
         font = Globals.FONTS['ubuntu_13']
         #--- Render elements
-        CELL = Globals.main_scr.objects['gamefield'].cells[self.number]
         ##--- Jail info
         if self.number == 10:
             line = 0
