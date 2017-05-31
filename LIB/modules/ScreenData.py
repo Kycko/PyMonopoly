@@ -446,7 +446,7 @@ class MainScreen():
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
             check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
-            if check_trading and 'auction' not in Globals.TEMP_VARS.keys():
+            if check_trading:
                 self.return_into_main_trading_menu(check_trading)
             else:
                 if 'trade_summary' in self.objects.keys():
