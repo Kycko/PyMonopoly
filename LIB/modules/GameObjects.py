@@ -9,6 +9,7 @@ class GameField():
     def __init__(self):
         group_symbols = FieldCellsData.make_group_symbols()
         group_colors = FieldCellsData.make_group_colors()
+        build_costs = FieldCellsData.read_cells_build_costs()
         self.cells = []
         Globals.TEMP_VARS['cells_rects'] = []
         self.surf = pygame.Surface((601, 601), pygame.SRCALPHA)
@@ -18,6 +19,7 @@ class GameField():
             Globals.TEMP_VARS['cells_rects'].append(pygame.Rect((pos[0]+300, pos[1]+70), size))
             self.cells.append(FieldCell(group_symbols[Globals.TEMP_VARS['cells_groups'][i]],
                                         group_colors,
+                                        build_costs,
                                         i,
                                         size,
                                         pos))
@@ -91,7 +93,7 @@ class GameField():
         for player in Globals.PLAYERS:
             player.render()
 class FieldCell():
-    def __init__(self, group_symbol, group_colors, number, size, pos):
+    def __init__(self, group_symbol, group_colors, build_costs, number, size, pos):
         self.owner = None
         self.NAME = None
         self.buildings = 0
@@ -101,6 +103,9 @@ class FieldCell():
         self.number = number
         self.group = Globals.TEMP_VARS['cells_groups'][number]
         self.group_symbol = group_symbol
+        print(self.group)
+        if self.group in range(9):
+            self.build_cost = build_costs[self.group-1]
         if number in Globals.TEMP_VARS['cells_cost'].keys():
             self.buy_cost = Globals.TEMP_VARS['cells_cost'][number]
         else:

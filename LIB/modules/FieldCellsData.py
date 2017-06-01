@@ -150,6 +150,11 @@ def read_cells_rent_costs():
                 35  : (25, 50, 100, 200),
                 37  : (35, 175, 500, 1100, 1300, 1500),
                 39  : (50, 200, 600, 1400, 1700, 2000)}
+def read_cells_build_costs():
+    if Globals.TEMP_VARS['cur_game']:
+        return (5000, 5000, 10000, 10000, 15000, 15000, 20000, 20000)
+    else:
+        return (50, 50, 100, 100, 150, 150, 200, 200)
 def make_chests_and_chances(type):
     if type == 'chests':
         if Globals.TEMP_VARS['cur_game']:

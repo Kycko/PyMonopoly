@@ -411,7 +411,9 @@ class MainScreen():
             else:
                 self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
         elif type == 'cell_state_SELECTOR':
-            self.change_cell_state(int(self.labels['property_management_input_ready'].symbols), self.menuitems[key].selector.active - 1)
+            CELL = int(self.labels['property_management_input_ready'].symbols)
+            cell_obj = self.objects['gamefield'].cells[CELL]
+            self.change_cell_state(CELL, self.menuitems[key].selector.active - 1)
             self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
