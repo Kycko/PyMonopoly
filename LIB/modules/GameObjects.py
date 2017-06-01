@@ -172,7 +172,7 @@ class FieldCell():
             if self.owner:
                 if self.buildings > -1:
                     temp = self.rent_costs[self.buildings]
-                    if monopolied_cell and self.group in range(9):
+                    if monopolied_cell and not self.buildings and self.group in range(9):
                         temp = temp * 2
                 elif self.number in range(11, 20) + range(31, 40):
                     if self.group in (3, 4, 7, 8):
