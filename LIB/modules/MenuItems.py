@@ -188,7 +188,7 @@ class Tooltip():
             ##--- Buy cost
             if self.number != 20:
                 color = self.choose_color(0, cell_state + bool(CELL.owner))
-                if CELL.owner:
+                if CELL.group in range(9) and CELL.owner:
                     text = Globals.TRANSLATION[97]
                     price = str(CELL.build_cost)
                 else:
