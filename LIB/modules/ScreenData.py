@@ -412,6 +412,7 @@ class MainScreen():
                 self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
         elif type == 'cell_state_SELECTOR':
             self.change_cell_state(int(self.labels['property_management_input_ready'].symbols), self.menuitems[key].selector.active - 1)
+            self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
@@ -448,6 +449,8 @@ class MainScreen():
             check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
             if check_trading:
                 self.return_into_main_trading_menu(check_trading)
+            elif 'state_selector' in self.menuitems.keys():
+                self.return_into_prop_manage_choose_field()
             else:
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
@@ -690,6 +693,13 @@ class MainScreen():
                 self.labels.pop(key)
             self.objects.pop('text_cursor')
         self.auction_next_player()
+    def return_into_prop_manage_choose_field(self):
+        self.labels['property_management_input'] = self.labels.pop('property_management_input_ready')
+        self.labels['property_management_input'].update_text('', True)
+        self.labels.pop('target_cell_trading_subinfo')
+        self.make_obj_for_enter_name('property_management_input')
+        self.cursor.add_rm_keys(False, 'state_selector')
+        self.menuitems.pop('state_selector')
     def entering_property_menu(self):
         self.save_step_indicators_state()
         if 'pay_birthday' in Globals.TEMP_VARS.keys():
