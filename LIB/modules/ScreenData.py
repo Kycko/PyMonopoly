@@ -413,7 +413,10 @@ class MainScreen():
         elif type == 'cell_state_SELECTOR':
             CELL = int(self.labels['property_management_input_ready'].symbols)
             cell_obj = self.objects['gamefield'].cells[CELL]
-            self.change_cell_state(CELL, self.menuitems[key].selector.active - 1)
+            old_buildings = cell_obj.buildings
+            new_buildings = self.menuitems[key].selector.active - 1
+            self.change_cell_state(CELL, new_buildings)
+            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], (old_buildings - new_buildings) * cell_obj.build_cost)
             self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
