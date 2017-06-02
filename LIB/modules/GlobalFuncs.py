@@ -104,8 +104,10 @@ def check_group_monopoly(group):
     else:
         Globals.main_scr.objects['gamefield'].groups_monopolies[group] = ''
     if group in ('railroad', 'service'):
+        mortragers = [fieldcells[i].owner for i in numbers if fieldcells[i].buildings < 0]
         for i in numbers:
-            fieldcells[i].buildings = owners.count(fieldcells[i].owner) - 1
+            if fieldcells[i].buildings > -1:
+                fieldcells[i].buildings = owners.count(fieldcells[i].owner) - 1 - mortragers.count(fieldcells[i].owner)
     return numbers
 #--- Hardware related
 def check_user_monitor(x, y):

@@ -1093,9 +1093,11 @@ class MainScreen():
             self.objects['gamefield'].RErender_a_cell(group_cell.number)
             self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
     def change_cell_state(self, cell, buildings):
-        self.objects['gamefield'].cells[cell].buildings = buildings
-        self.objects['gamefield'].RErender_a_cell(cell)
+        cell_obj = self.objects['gamefield'].cells[cell]
+        cell_obj.buildings = buildings
         self.menuitems['fieldcell_'+str(cell)].tooltip.RErender(buildings+1)
+        Globals.TEMP_VARS['RErender_groups'] = [cell_obj.group]
+        self.objects['gamefield'].RErender_fieldcell_groups()
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
