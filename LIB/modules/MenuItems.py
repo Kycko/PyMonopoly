@@ -46,7 +46,7 @@ class MenuItem():
             self.tooltip = None
     def init_for_type(self):
         #--- Hotkeys
-        if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
+        if self.type in ('main_settings_language', 'main_settings_hotkeys', 'main_settings_music', 'main_settings_sounds', 'main_settings_build_style', 'main_settings_fav_game', 'stats_switch', 'main_new_game_switch'):
             self.HOTKEYS = (pygame.K_LEFT, pygame.K_RIGHT)
         #--- Selector
         if 'SELECTOR' in self.type:
@@ -114,11 +114,12 @@ class MenuItem():
             return None
         elif self.type == 'main_sysexit':
             SYSEXIT()
-        elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys'):
+        elif self.type in ('main_settings_music', 'main_settings_sounds', 'main_settings_hotkeys', 'main_settings_build_style'):
             if self.type in ('main_settings_music', 'main_settings_sounds'):
                 switch_sound_state(self.type[14:], Globals.SETTINGS[self.type[14:]])
             else:
-                Globals.SETTINGS['hotkeys'] = not Globals.SETTINGS['hotkeys']
+                KEY = ('hotkeys', 'build_style')['build' in self.type]
+                Globals.SETTINGS[KEY] = not Globals.SETTINGS[KEY]
             self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS[self.type[14:]])]+u' ›')
             return None
         elif self.type == 'game_start':
@@ -401,9 +402,9 @@ class MainCursor(Cursor):
         elif type in ('main_stats', 'main_settings_player_name'):
             self.keys = ['exit']
         elif type == 'main_settings':
-            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'exit']
+            self.keys = ['language', 'player', 'hotkeys', 'music', 'sounds', 'volume', 'build_style', 'exit']
             if not Globals.SETTINGS['block']:
-                self.keys.insert(6, 'fav_game')
+                self.keys.insert(7, 'fav_game')
         elif 'main_new_edit_player' in type or type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':

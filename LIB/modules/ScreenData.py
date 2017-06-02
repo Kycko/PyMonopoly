@@ -777,16 +777,18 @@ class MainScreen():
                           'music'       : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['music'])]+u' ›', 'main_settings_music', 'main_settings_left_MI', 3),
                           'sounds'      : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['sounds'])]+u' ›', 'main_settings_sounds', 'main_settings_left_MI', 4),
                           'volume'      : MenuItem('', 'main_settings_volume_SELECTOR', 'main_settings_left_MI', 5),
+                          'build_style' : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.SETTINGS['build_style'])]+u' ›', 'main_settings_build_style', 'main_settings_left_MI', 6),
                           'exit'        : MenuItem(Globals.TRANSLATION[13], 'main_main', 'main_settings_exit')}
-        self.labels.update({'language'  : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0),
-                            'player'    : AlphaText(Globals.TRANSLATION[20], 'settings_left', 1),
-                            'hotkeys'   : AlphaText(Globals.TRANSLATION[25], 'settings_left', 2),
-                            'music'     : AlphaText(Globals.TRANSLATION[15], 'settings_left', 3),
-                            'sounds'    : AlphaText(Globals.TRANSLATION[16], 'settings_left', 4),
-                            'volume'    : AlphaText(Globals.TRANSLATION[19], 'settings_left', 5)})
+        self.labels.update({'language'      : AlphaText(Globals.TRANSLATION[14], 'settings_left', 0),
+                            'player'        : AlphaText(Globals.TRANSLATION[20], 'settings_left', 1),
+                            'hotkeys'       : AlphaText(Globals.TRANSLATION[25], 'settings_left', 2),
+                            'music'         : AlphaText(Globals.TRANSLATION[15], 'settings_left', 3),
+                            'sounds'        : AlphaText(Globals.TRANSLATION[16], 'settings_left', 4),
+                            'volume'        : AlphaText(Globals.TRANSLATION[19], 'settings_left', 5),
+                            'build_style'   : AlphaText(Globals.TRANSLATION[98], 'settings_left', 6)})
         if not Globals.SETTINGS['block']:
-            self.menuitems.update({'fav_game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_settings_fav_game', 'main_settings_left_MI', 6)})
-            self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 6)})
+            self.menuitems.update({'fav_game'   : MenuItem(u'‹ '+Globals.TRANSLATION[5+int(Globals.SETTINGS['fav_game'])]+u' ›', 'main_settings_fav_game', 'main_settings_left_MI', 7)})
+            self.labels.update({'fav_game'      : AlphaText(Globals.TRANSLATION[26], 'settings_left', 7)})
     def make_obj_for_enter_name(self, key):
         self.objects['text_cursor'] = Line(self.labels[key], 'right', 2, Globals.COLORS['white'])
     def make_playersettings_screen(self):
