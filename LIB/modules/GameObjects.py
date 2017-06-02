@@ -103,7 +103,6 @@ class FieldCell():
         self.number = number
         self.group = Globals.TEMP_VARS['cells_groups'][number]
         self.group_symbol = group_symbol
-        print(self.group)
         if self.group in range(9):
             self.build_cost = build_costs[self.group-1]
         if number in Globals.TEMP_VARS['cells_cost'].keys():

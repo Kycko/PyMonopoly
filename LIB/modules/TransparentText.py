@@ -64,6 +64,8 @@ class AlphaText():
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
             self.color = Globals.COLORS['grey']
+        elif self.group == 'cell_state_SELECTOR':
+            self.color = Globals.COLORS[('white', 'light_red')[number == 0]]
         elif 'volume_SELECTOR' in self.group:
             self.choose_selector_color('volume', number)
         elif self.group == 'main_new_total_SELECTOR':

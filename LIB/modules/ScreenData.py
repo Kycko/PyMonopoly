@@ -415,8 +415,18 @@ class MainScreen():
             cell_obj = self.objects['gamefield'].cells[CELL]
             old_buildings = cell_obj.buildings
             new_buildings = self.menuitems[key].selector.active - 1
-            self.change_cell_state(CELL, new_buildings)
-            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], (old_buildings - new_buildings) * cell_obj.build_cost)
+            if not old_buildings == new_buildings:
+                self.change_cell_state(CELL, new_buildings)
+                MONEY = 0
+                if old_buildings < 0:
+                    MONEY -= (cell_obj.buy_cost / 2) * 1.1
+                    old_buildings = 0
+                elif new_buildings < 0:
+                    MONEY += cell_obj.buy_cost / 2
+                    new_buildings = 0
+                if cell_obj.group in range(9):
+                    MONEY += (old_buildings - new_buildings) * cell_obj.build_cost
+                print(MONEY)
             self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
@@ -1021,7 +1031,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        self.DEBUGGER_chests_and_chances()
+        # self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)

@@ -243,19 +243,23 @@ class MenuSelector():
         self.type = type
         itemcount_start = 0
         if 'volume_SELECTOR' in type:
+            text = 10*u'●'
             itemcount_end = 10
             self.active = int(Globals.SETTINGS['volume'] * 10 - 1)
         elif type == 'main_settings_player_color_SELECTOR':
+            text = 10*u'●'
             itemcount_end = len(Globals.PLAYERS_COLORS)
             if Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color in Globals.PLAYERS_COLORS:
                 self.active = Globals.PLAYERS_COLORS.index(Globals.PLAYERS[Globals.TEMP_VARS['edit_player']].color)
             else:
                 self.active = 0
         elif type == 'main_new_total_SELECTOR':
+            text = 10*u'●'
             itemcount_start = 1
             itemcount_end = 6
             self.active = len(Globals.PLAYERS) - 2
         elif type == 'main_new_humans_SELECTOR':
+            text = 10*u'●'
             itemcount_end = len(Globals.PLAYERS)
             for i in range(len(Globals.PLAYERS)):
                 if Globals.PLAYERS[i].human:
@@ -266,7 +270,10 @@ class MenuSelector():
             group = gamefield.cells[num].group
             itemcount_end = 2 + (5 - int(Globals.TEMP_VARS['cur_game'])) * (group in range(9)) * bool(gamefield.groups_monopolies[group])
             self.active = gamefield.cells[num].buildings + 1
-        self.items = [AlphaText(u'●', type, i) for i in range(itemcount_start, itemcount_end)]
+            if group in ('railroad', 'service') and self.active > 0:
+                self.active = 1
+            text = u'●○➊➋➌➍❖          '
+        self.items = [AlphaText(text[i], type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]
         self.cursor = SelectorCursor(self.rects[self.active])
