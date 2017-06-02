@@ -124,7 +124,7 @@ def check_files():
         print('config dir exists')
     DB = listdir(Globals.DIRS['settings'])
     for FILE in ('stats', 'settings', 'last_game_settings'):
-        if FILE not in DB:
+        if (FILE not in DB) or (FILE == 'settings' and not len(read_file(Globals.FILES['settings'])) == 12):
             create_init_file(FILE)
 def create_init_file(type):
     if type == 'stats':
@@ -135,21 +135,22 @@ def create_init_file(type):
         locale = getdefaultlocale()[0][:2]
         if locale not in (listdir(Globals.DIRS['translations'])):
             locale = 'en'
-        data = (locale+'\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n')
+        data = (locale+'\n', 'Player 1\n', str(color.r)+'\n', str(color.g)+'\n', str(color.b)+'\n', '1\n', '1\n', '1\n', '1\n', '1.0\n', '1\n', '1\n')
     elif type == 'last_game_settings':
         data = ("human\n", "AI\n")
     write_to_file(Globals.FILES[type], data)
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
-    return {'language'  : SETTINGS[0],
-            'pl_name'   : SETTINGS[1],
-            'pl_color'  : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
-            'fav_game'  : int(SETTINGS[5]),
-            'hotkeys'   : bool(int(SETTINGS[6])),
-            'music'     : bool(int(SETTINGS[7])),
-            'sounds'    : bool(int(SETTINGS[8])),
-            'volume'    : float(SETTINGS[9]),
-            'block'     : bool(int(SETTINGS[10]))}
+    return {'language'      : SETTINGS[0],
+            'pl_name'       : SETTINGS[1],
+            'pl_color'      : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
+            'fav_game'      : int(SETTINGS[5]),
+            'hotkeys'       : bool(int(SETTINGS[6])),
+            'music'         : bool(int(SETTINGS[7])),
+            'sounds'        : bool(int(SETTINGS[8])),
+            'volume'        : float(SETTINGS[9]),
+            'build_style'   : bool(SETTINGS[10]),
+            'block'         : bool(int(SETTINGS[11]))}
 def save_settings():
     array = [Globals.SETTINGS['language'] + '\n',
              Globals.SETTINGS['pl_name'] + '\n',
@@ -161,6 +162,7 @@ def save_settings():
              str(int(Globals.SETTINGS['music'])) + '\n',
              str(int(Globals.SETTINGS['sounds'])) + '\n',
              str(Globals.SETTINGS['volume']) + '\n',
+             str(int(Globals.SETTINGS['build_style'])) + '\n',
              str(int(Globals.SETTINGS['block'])) + '\n']
     write_to_file(Globals.FILES['settings'], array)
 def choose_next_language():
