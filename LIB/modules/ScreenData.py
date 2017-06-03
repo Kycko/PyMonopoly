@@ -469,6 +469,7 @@ class MainScreen():
             else:
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
+                    if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
                 if 'auction' in Globals.TEMP_VARS.keys():
                     self.return_to_auction_main(type)
                 else:
