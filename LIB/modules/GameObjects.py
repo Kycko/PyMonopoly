@@ -195,6 +195,21 @@ class FieldCell():
             if self.number in range(21, 30) and self.group not in ('railroad', 'service', 'tax'):
                 y -= 20
             self.surf.blit(pic, (x, y))
+        #--- Build pictures
+        if self.group in range(9):
+            if self.buildings == 5 - Globals.TEMP_VARS['cur_game']:
+                pic = Globals.FONTS['ume_16'].render(u'❖', True, Globals.COLORS['black'])
+                self.surf.blit(pic, (16, 2))
+            elif self.buildings > 0:
+                for i in range(self.buildings):
+                    pic = Globals.FONTS['ume_8'].render(u'●', True, Globals.COLORS['black'])
+                    self.surf.blit(pic, (5+10*i, 6))
+            #         Globals.TEMP_VARS['create_build_pictures_for'] = self
+            #         build_pictures.append(AlphaText(u'●', 'cell_build_picture', i))
+            #         Globals.TEMP_VARS.pop('create_build_pictures_for')
+            # for pic in build_pictures:
+            #     pic.render()
+            #     print(pic.rect)
 class InfoWindow():
     def __init__(self, pos, new_pos):
         self.RErender()
