@@ -185,8 +185,6 @@ class FieldCell():
                         temp = 10*'X'
                 else:
                     temp = 6*'X'
-                    # pygame.draw.line(self.surf, Globals.COLORS['black'], self.rect.topleft, self.rect.bottomright, 5)
-                    # pygame.draw.line(self.surf, Globals.COLORS['black'], self.rect.topright, self.rect.bottomleft, 5)
             pic = Globals.FONTS['ubuntu_11'].render(str(temp), True, Globals.COLORS['black'])
             x = self.rect.right-pic.get_width()-3
             if self.number in range(11, 20) and self.group not in ('railroad', 'service', 'income'):
@@ -197,19 +195,25 @@ class FieldCell():
             self.surf.blit(pic, (x, y))
         #--- Build pictures
         if self.group in range(9):
-            if self.buildings == 5 - Globals.TEMP_VARS['cur_game']:
+            if self.buildings == 5 - Globals.TEMP_VARS['cur_game']:                             # HOTEL picture
                 pic = Globals.FONTS['ume_16'].render(u'❖', True, Globals.COLORS['black'])
-                self.surf.blit(pic, (16, 2))
-            elif self.buildings > 0:
+                x = 2
+                if self.group in range(1, 7): x += (14, 60)[self.group in (3, 4)]
+                y = 2
+                if self.group in range(3, 9): y += (14, 60)[self.group in (5, 6)]
+                self.surf.blit(pic, (x, y))
+            elif self.buildings > 0:                                                            # House picture
                 for i in range(self.buildings):
                     pic = Globals.FONTS['ume_8'].render(u'●', True, Globals.COLORS['black'])
-                    self.surf.blit(pic, (5+10*i, 6))
-            #         Globals.TEMP_VARS['create_build_pictures_for'] = self
-            #         build_pictures.append(AlphaText(u'●', 'cell_build_picture', i))
-            #         Globals.TEMP_VARS.pop('create_build_pictures_for')
-            # for pic in build_pictures:
-            #     pic.render()
-            #     print(pic.rect)
+                    x = 6
+                    if self.group in range(1, 7):
+                        x += (14, 60)[self.group in (3, 4)]
+                        if self.group in (1, 2, 5, 6): x += 10*i - 5*(self.buildings - 1)
+                    y = 5
+                    if self.group in range(3, 9):
+                        y += (14, 60)[self.group in (5, 6)]
+                        if self.group in (3, 4, 7, 8): y += 10*i - 5*(self.buildings - 1) + 1
+                    self.surf.blit(pic, (x, y))
 class InfoWindow():
     def __init__(self, pos, new_pos):
         self.RErender()
