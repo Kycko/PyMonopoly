@@ -415,11 +415,22 @@ class MainScreen():
             cell_obj = self.objects['gamefield'].cells[CELL]
             old_buildings = cell_obj.buildings
             new_buildings = self.menuitems[key].selector.active - 1
-            if not old_buildings == new_buildings:
-                self.change_cell_state(CELL, new_buildings)
+            if old_buildings != new_buildings:
+                Globals.TEMP_VARS['RErender_groups'] = [cell_obj.group]
+                cell_obj.buildings = new_buildings
+                TEMP = [cell_obj.number]            # cell numbers to RErender
+                if Globals.SETTINGS['build_style']:
+                    for cell in self.objects['gamefield'].cells:
+                        if cell.group in Globals.TEMP_VARS['RErender_groups'] and cell.number != cell_obj.number:
+                            while cell.buildings not in range(new_buildings-1, new_buildings+2):
+                                cell.buildings += 1 - 2*int(new_buildings < old_buildings)
+                                TEMP.append(cell.number)
+                for i in TEMP:
+                    self.menuitems['fieldcell_'+str(i)].tooltip.RErender(self.objects['gamefield'].cells[i].buildings+1)
+                self.objects['gamefield'].RErender_fieldcell_groups()
                 MONEY = 0
                 if old_buildings < 0:
-                    MONEY -= (cell_obj.buy_cost / 2) * 1.1
+                    MONEY -= int((cell_obj.buy_cost / 2) * 1.1)
                     old_buildings = 0
                 elif new_buildings < 0:
                     MONEY += cell_obj.buy_cost / 2
@@ -1118,14 +1129,6 @@ class MainScreen():
                 group_cell.buildings = len(cells) - 1
             self.objects['gamefield'].RErender_a_cell(group_cell.number)
             self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
-    def change_cell_state(self, cell, buildings):
-        cell_obj = self.objects['gamefield'].cells[cell]
-        cell_obj.buildings = buildings
-        Globals.TEMP_VARS['RErender_groups'] = [cell_obj.group]
-        for cell in self.objects['gamefield'].cells:
-            if cell.group in Globals.TEMP_VARS['RErender_groups']:
-                self.menuitems['fieldcell_'+str(cell.number)].tooltip.RErender(buildings+1)
-        self.objects['gamefield'].RErender_fieldcell_groups()
     def change_player_money(self, player, money):
         player.money += money
         self.labels['money_player_'+player.name].update_text(str(player.money))
