@@ -425,10 +425,10 @@ class MainCursor(Cursor):
             index = self.keys.index(key)
             self.keys.pop(index)
             self.cords.pop(index)
-        if key in ('accept', 'state_selector'):
+        if key[:6] == 'accept' or key == 'state_selector':
             self.change_pos(('return', key)[add])
-        # elif key == 'accept_ALL' and not add:
-        #     self.change_pos('return')
+            if 'accept_all_prop_management' in self.keys and self.active_key == 'return':
+                self.change_pos('accept_all_prop_management')
     def update_cords(self, menuitems):
         rects = [menuitems[key].active_zone for key in self.keys]
         self.cords = [rect.topleft for rect in rects]

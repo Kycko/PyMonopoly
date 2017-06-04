@@ -716,6 +716,14 @@ class MainScreen():
         self.make_obj_for_enter_name('property_management_input')
         self.cursor.add_rm_keys(False, 'state_selector')
         self.menuitems.pop('state_selector')
+        KEY = 'accept_all_prop_management'
+        CHANGES = self.check_if_there_are_prop_management_changes()
+        if not KEY in self.menuitems.keys() and CHANGES:
+            self.menuitems[KEY] = MenuItem(Globals.TRANSLATION[13], 'prop_management_ACCEPT_ALL', 'ingame_main', 7)
+            self.cursor.add_rm_keys(True, KEY, 0, self.menuitems[KEY].active_zone.move(0, self.menuitems[KEY].text.new_pos[1] - self.menuitems[KEY].text.rect.y).topleft)
+        elif KEY in self.menuitems.keys() and not CHANGES:
+            self.menuitems.pop(KEY)
+            self.cursor.add_rm_keys(False, KEY)
     def entering_property_menu(self):
         self.save_step_indicators_state()
         if 'pay_birthday' in Globals.TEMP_VARS.keys():
@@ -989,6 +997,10 @@ class MainScreen():
     def check_trading_accept_ability(self, player):
         for key in ('fields', 'money', 'jail'):
             if Globals.TEMP_VARS['trading'][player][key]:
+                return True
+    def check_if_there_are_prop_management_changes(self):
+        for i in Globals.TEMP_VARS['property'].keys():
+            if Globals.TEMP_VARS['property'][i] != self.objects['gamefield'].cells[i].buildings:
                 return True
     #--- Game mechanics
     def ask_to_end_turn(self):
