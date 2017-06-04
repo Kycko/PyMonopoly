@@ -244,6 +244,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
+        # self.DEBUGGER_show_TEMP_VARS_keys()
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
             self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -391,6 +392,7 @@ class MainScreen():
             for cell in self.objects['gamefield'].cells:
                 if cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
                     Globals.TEMP_VARS['property'][cell.number] = cell.buildings
+            Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
             self.entering_property_menu()
             self.clear_main_menu_entries(('return'))
             self.objects['gamefield'].render_cell_numbers('prop_manage')
@@ -428,16 +430,7 @@ class MainScreen():
                 for i in TEMP:
                     self.menuitems['fieldcell_'+str(i)].tooltip.RErender(self.objects['gamefield'].cells[i].buildings+1)
                 self.objects['gamefield'].RErender_fieldcell_groups()
-                MONEY = 0
-                if old_buildings < 0:
-                    MONEY -= int((cell_obj.buy_cost / 2) * 1.1)
-                    old_buildings = 0
-                elif new_buildings < 0:
-                    MONEY += cell_obj.buy_cost / 2
-                    new_buildings = 0
-                if cell_obj.group in range(9):
-                    MONEY += (old_buildings - new_buildings) * cell_obj.build_cost
-                print(MONEY)
+                self.recheck_prop_management_money_changes()
             self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
             if 'prev_trade' in self.labels.keys():
@@ -699,7 +692,7 @@ class MainScreen():
                         Globals.TEMP_VARS['RErender_groups'].append(cell.group)
             self.RErender_fieldcell_tooltips_by_groups()
             self.objects['gamefield'].RErender_fieldcell_groups()
-        for key in ('trading', 'auction', 'property'):
+        for key in ('trading', 'auction', 'property', 'prop_manage_CHANGED'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
         if 'text_cursor' in self.objects.keys():
@@ -1024,6 +1017,28 @@ class MainScreen():
         for cell in self.objects['gamefield'].cells:
             if cell.group in Globals.TEMP_VARS['RErender_groups']:
                 self.menuitems['fieldcell_' + str(cell.number)].tooltip.RErender()
+    def recheck_prop_management_money_changes(self):
+        Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
+        temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
+        TOTAL = 0
+        for i in Globals.TEMP_VARS['property'].keys():
+            CELL = self.objects['gamefield'].cells[i]
+            old_buildings = Globals.TEMP_VARS['property'][i]
+            new_buildings = CELL.buildings
+            if old_buildings != new_buildings:
+                temp_var[i] = (old_buildings, new_buildings)
+                MONEY = 0
+                if old_buildings < 0:
+                    MONEY -= int((CELL.buy_cost / 2) * 1.1)
+                    old_buildings = 0
+                elif new_buildings < 0:
+                    MONEY += CELL.buy_cost / 2
+                    new_buildings = 0
+                if CELL.group in range(9):
+                    MONEY += (old_buildings - new_buildings) * CELL.build_cost
+                temp_var[i] += tuple([MONEY])
+                TOTAL += MONEY
+        self.DEBUGGER_prop_management_money_changes(TOTAL)
     #--- Game mechanics
     def ask_to_end_turn(self):
         self.disable_central_labels()
@@ -1210,4 +1225,10 @@ class MainScreen():
     def DEBUGGER_show_TEMP_VARS_keys(self):
         for key in Globals.TEMP_VARS.keys():
             print(key)
+        print('')
+    def DEBUGGER_prop_management_money_changes(self, TOTAL):
+        for i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
+            print(str(i)+'   : '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][0])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][1])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][2]))
+        print('-----------------------------------------------')
+        print(15*' ' + str(TOTAL))
         print('')
