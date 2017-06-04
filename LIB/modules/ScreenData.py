@@ -676,14 +676,21 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        for key in ('trading', 'auction', 'property'):
-            if key in Globals.TEMP_VARS.keys():
-                Globals.TEMP_VARS.pop(key)
         temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
         if temp:
             self.labels.pop(temp)
+            Globals.TEMP_VARS['RErender_groups'] = []
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
+                if cell.number in Globals.TEMP_VARS['property'].keys() and cell.buildings != Globals.TEMP_VARS['property'][cell.number]:
+                    cell.buildings = Globals.TEMP_VARS['property'][cell.number]
+                    if cell.group not in Globals.TEMP_VARS['RErender_groups']:
+                        Globals.TEMP_VARS['RErender_groups'].append(cell.group)
+            self.RErender_fieldcell_tooltips_by_groups()
+            self.objects['gamefield'].RErender_fieldcell_groups()
+        for key in ('trading', 'auction', 'property'):
+            if key in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS.pop(key)
         if 'text_cursor' in self.objects.keys():
             self.objects.pop('text_cursor')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
@@ -1002,6 +1009,10 @@ class MainScreen():
         for i in Globals.TEMP_VARS['property'].keys():
             if Globals.TEMP_VARS['property'][i] != self.objects['gamefield'].cells[i].buildings:
                 return True
+    def RErender_fieldcell_tooltips_by_groups(self):
+        for cell in self.objects['gamefield'].cells:
+            if cell.group in Globals.TEMP_VARS['RErender_groups']:
+                self.menuitems['fieldcell_' + str(cell.number)].tooltip.RErender()
     #--- Game mechanics
     def ask_to_end_turn(self):
         self.disable_central_labels()
