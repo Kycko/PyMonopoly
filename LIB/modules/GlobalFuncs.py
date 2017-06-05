@@ -141,9 +141,6 @@ def create_init_file(type):
     write_to_file(Globals.FILES[type], data)
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
-    print(SETTINGS)
-    print('')
-    print(SETTINGS[10])
     return {'language'      : SETTINGS[0],
             'pl_name'       : SETTINGS[1],
             'pl_color'      : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),

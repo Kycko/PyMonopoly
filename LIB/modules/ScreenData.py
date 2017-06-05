@@ -401,17 +401,8 @@ class MainScreen():
             self.make_obj_for_enter_name('property_management_input')
             self.cursor.screen_switched(self.menuitems, 'property_management')
         elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
-            cell = int(self.labels['property_management_input'].symbols)
-            if self.objects['gamefield'].cells[cell].owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
-                self.objects.pop('text_cursor')
-                self.labels['property_management_input_ready'] = self.labels.pop('property_management_input')
-                self.labels['target_cell_trading_subinfo'] = AlphaText(Globals.TRANSLATION[95], 'target_cell_info', -1)
-                self.menuitems.pop('accept')
-                self.cursor.add_rm_keys(False, 'accept')
-                self.menuitems['state_selector'] = MenuItem('', 'cell_state_SELECTOR', 'ingame_main', 3)
-                self.cursor.add_rm_keys(True, 'state_selector', 0, self.menuitems['state_selector'].active_zone.move(0, self.menuitems['state_selector'].text.new_pos[1] - self.menuitems['state_selector'].text.rect.y).topleft)
-            else:
-                self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
+            num = int(self.labels['property_management_input'].symbols)
+            self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
         elif type == 'cell_state_SELECTOR':
             CELL = int(self.labels['property_management_input_ready'].symbols)
             cell_obj = self.objects['gamefield'].cells[CELL]
@@ -532,6 +523,8 @@ class MainScreen():
                 status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
                 self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
                 self.show_trading_OFFER_ALL_button(True)
+            elif 'property' in Globals.TEMP_VARS.keys():
+                self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[int(type[20:])])
         elif type == 'ingame_trading_OFFER_ALL':
             self.clear_main_menu_entries('return')
             self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request')
@@ -946,6 +939,25 @@ class MainScreen():
         temp_var.new_pos = (temp_var.new_pos[0], temp_var.new_pos[1] + 20)
         if not 'show_prev_trades' in self.menuitems.keys():
             self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
+    def create_prop_management_cell_state_objects(self, CELL):
+        if CELL.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+            if 'error' in self.labels.keys(): self.labels.pop('error')
+            if 'text_cursor' in self.objects.keys(): self.objects.pop('text_cursor')
+            if 'property_management_input' in self.labels.keys():
+                self.labels['property_management_input_ready'] = self.labels.pop('property_management_input')
+            self.labels['property_management_input_ready'].update_text(str(CELL.number))
+            self.labels['target_cell_trading_subinfo'] = AlphaText(Globals.TRANSLATION[95], 'target_cell_info', -1)
+            if 'accept' in self.menuitems.keys():
+                self.menuitems.pop('accept')
+                self.cursor.add_rm_keys(False, 'accept')
+            self.menuitems['state_selector'] = MenuItem('', 'cell_state_SELECTOR', 'ingame_main', 3)
+            if 'state_selector' in self.cursor.keys:
+                self.cursor.add_rm_keys(False, 'state_selector')
+            self.cursor.add_rm_keys(True, 'state_selector', 0, self.menuitems['state_selector'].active_zone.move(0, self.menuitems['state_selector'].text.new_pos[1] - self.menuitems['state_selector'].text.rect.y).topleft)
+        else:
+            if 'state_selector' in self.menuitems.keys():
+                self.return_into_prop_manage_choose_field()
+            self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
