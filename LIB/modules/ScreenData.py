@@ -1037,6 +1037,7 @@ class MainScreen():
             CELL = self.objects['gamefield'].cells[i]
             old_buildings = Globals.TEMP_VARS['property'][i]
             new_buildings = CELL.buildings
+            CELL.step_indicator_visible = old_buildings != new_buildings
             if old_buildings != new_buildings:
                 temp_var[i] = (old_buildings, new_buildings)
                 MONEY = 0
