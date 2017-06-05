@@ -423,7 +423,7 @@ class MainScreen():
                 TEMP = [cell_obj.number]            # cell numbers to RErender
                 if Globals.SETTINGS['build_style']:
                     for cell in self.objects['gamefield'].cells:
-                        if cell.group in Globals.TEMP_VARS['RErender_groups'] and cell.number != cell_obj.number:
+                        if cell.group not in ('railroad', 'service') and cell.group in Globals.TEMP_VARS['RErender_groups'] and cell.number != cell_obj.number:
                             while cell.buildings not in range(new_buildings-1, new_buildings+2):
                                 cell.buildings += 1 - 2*int(new_buildings < old_buildings)
                                 TEMP.append(cell.number)
