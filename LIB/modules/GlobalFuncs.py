@@ -141,6 +141,9 @@ def create_init_file(type):
     write_to_file(Globals.FILES[type], data)
 def read_settings():
     SETTINGS = read_file(Globals.FILES['settings'])
+    print(SETTINGS)
+    print('')
+    print(SETTINGS[10])
     return {'language'      : SETTINGS[0],
             'pl_name'       : SETTINGS[1],
             'pl_color'      : Color(int(SETTINGS[2]), int(SETTINGS[3]), int(SETTINGS[4])),
@@ -149,7 +152,7 @@ def read_settings():
             'music'         : bool(int(SETTINGS[7])),
             'sounds'        : bool(int(SETTINGS[8])),
             'volume'        : float(SETTINGS[9]),
-            'build_style'   : bool(SETTINGS[10]),
+            'build_style'   : bool(int(SETTINGS[10])),
             'block'         : bool(int(SETTINGS[11]))}
 def save_settings():
     array = [Globals.SETTINGS['language'] + '\n',
