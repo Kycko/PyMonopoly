@@ -692,6 +692,8 @@ class MainScreen():
             self.objects.pop('text_cursor')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
         cell = self.objects['gamefield'].cells[field_num]
+        if type != 'return_player_on_a_new_cell' and 'cur_field_owner' in Globals.TEMP_VARS:
+            Globals.TEMP_VARS.pop('cur_field_owner')
         if type == 'return_end_turn':
             self.ask_to_end_turn()
         elif type == 'return_pay_birthday':
@@ -1210,6 +1212,7 @@ class MainScreen():
                     Globals.TEMP_VARS['RErender_groups'].append(cell.group)
                 cell.owner = change_to['info'].name
                 cell.color = change_to['info'].color
+                cell.step_indicator.change_color(change_to['info'].color)
             if change_from['money']:
                 self.change_player_money(change_from['info'], -change_from['money'])
                 self.change_player_money(change_to['info'], change_from['money'])
