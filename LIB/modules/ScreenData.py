@@ -1039,6 +1039,7 @@ class MainScreen():
             CELL = self.objects['gamefield'].cells[i]
             old_buildings = Globals.TEMP_VARS['property'][i]
             new_buildings = CELL.buildings
+            CELL.step_indicator.change_color(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].color)
             CELL.step_indicator_visible = old_buildings != new_buildings
             if old_buildings != new_buildings:
                 temp_var[i] = (old_buildings, new_buildings)
@@ -1052,6 +1053,9 @@ class MainScreen():
                 if CELL.group in range(9):
                     MONEY += (old_buildings - new_buildings) * CELL.build_cost
                 temp_var[i] += tuple([MONEY])
+                if not MONEY:
+                    temp_var.pop(i)
+                    CELL.step_indicator_visible = False
                 TOTAL += MONEY
         self.DEBUGGER_prop_management_money_changes(TOTAL)
     #--- Game mechanics
@@ -1212,7 +1216,6 @@ class MainScreen():
                     Globals.TEMP_VARS['RErender_groups'].append(cell.group)
                 cell.owner = change_to['info'].name
                 cell.color = change_to['info'].color
-                cell.step_indicator.change_color(change_to['info'].color)
             if change_from['money']:
                 self.change_player_money(change_from['info'], -change_from['money'])
                 self.change_player_money(change_to['info'], change_from['money'])
