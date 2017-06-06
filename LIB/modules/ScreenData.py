@@ -389,8 +389,11 @@ class MainScreen():
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             Globals.TEMP_VARS['property'] = {}
+            if 'auction' in Globals.TEMP_VARS.keys():
+                playername = Globals.TEMP_VARS['auction']['order'][0].name
+            else: playername = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
             for cell in self.objects['gamefield'].cells:
-                if cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                if cell.owner == playername:
                     Globals.TEMP_VARS['property'][cell.number] = cell.buildings
             Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
             self.entering_property_menu()
@@ -466,6 +469,14 @@ class MainScreen():
                     self.objects.pop('trade_summary')
                     if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
                 if 'auction' in Globals.TEMP_VARS.keys():
+                    key = 'target_cell_trading_info'
+                    if key in self.labels.keys(): self.labels.pop(key)
+                    key = 'text_cursor'
+                    if key in self.objects.keys(): self.objects.pop(key)
+                    self.cancel_prop_manage()
+                    for key in ('trading', 'property', 'prop_manage_CHANGED'):
+                        if key in Globals.TEMP_VARS.keys():
+                            Globals.TEMP_VARS.pop(key)
                     self.return_to_auction_main(type)
                 else:
                     self.return_to_game_from_trading(type)
@@ -673,18 +684,7 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
-        temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
-        if temp:
-            self.labels.pop(temp)
-            Globals.TEMP_VARS['RErender_groups'] = []
-            for cell in self.objects['gamefield'].cells:
-                cell.a_little_number_visible = False
-                if cell.number in Globals.TEMP_VARS['property'].keys() and cell.buildings != Globals.TEMP_VARS['property'][cell.number]:
-                    cell.buildings = Globals.TEMP_VARS['property'][cell.number]
-                    if cell.group not in Globals.TEMP_VARS['RErender_groups']:
-                        Globals.TEMP_VARS['RErender_groups'].append(cell.group)
-            self.RErender_fieldcell_tooltips_by_groups()
-            self.objects['gamefield'].RErender_fieldcell_groups()
+        self.cancel_prop_manage()
         for key in ('trading', 'property', 'prop_manage_CHANGED'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
@@ -768,6 +768,19 @@ class MainScreen():
     def move_APPINFO(self, offset):
         for obj in (self.pics['logo'], self.labels['APPNAME'], self.labels['APPVERSION']):
             obj.new_pos = count_new_pos(obj.new_pos, offset)
+    def cancel_prop_manage(self):
+        temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
+        if temp:
+            self.labels.pop(temp)
+            Globals.TEMP_VARS['RErender_groups'] = []
+            for cell in self.objects['gamefield'].cells:
+                cell.a_little_number_visible = False
+                if cell.number in Globals.TEMP_VARS['property'].keys() and cell.buildings != Globals.TEMP_VARS['property'][cell.number]:
+                    cell.buildings = Globals.TEMP_VARS['property'][cell.number]
+                    if cell.group not in Globals.TEMP_VARS['RErender_groups']:
+                        Globals.TEMP_VARS['RErender_groups'].append(cell.group)
+            self.RErender_fieldcell_tooltips_by_groups()
+            self.objects['gamefield'].RErender_fieldcell_groups()
     #--- Creating specific objects
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -952,7 +965,10 @@ class MainScreen():
         if not 'show_prev_trades' in self.menuitems.keys():
             self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
     def create_prop_management_cell_state_objects(self, CELL):
-        if CELL.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+        if 'auction' in Globals.TEMP_VARS.keys():
+            playername = Globals.TEMP_VARS['auction']['order'][0].name
+        else: playername = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+        if CELL.owner == playername:
             if 'error' in self.labels.keys(): self.labels.pop('error')
             if 'text_cursor' in self.objects.keys(): self.objects.pop('text_cursor')
             if 'property_management_input' in self.labels.keys():
@@ -1200,13 +1216,16 @@ class MainScreen():
             number = 2 + ('trade' in self.menuitems.keys()) + ('manage_property' in self.menuitems.keys())
             if temp_var['bet']:
                 text = Globals.TRANSLATION[84]
+                betstring = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
+                if not 'auction_cur_bet' in self.labels.keys():
+                    self.labels['auction_cur_bet'] = AlphaText(betstring, 'auction_cur_bet')
             else:
                 text = Globals.TRANSLATION[88]
+                if not 'auction_cur_bet' in self.labels.keys():
+                    self.labels['auction_cur_bet'] = AlphaText(Globals.TRANSLATION[87], 'auction_cur_bet')
             self.menuitems.update({'auction_up_bet' : MenuItem(text, 'trading_input_auction_bet', 'ingame_main', 1),
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
-            if not 'auction_cur_bet' in self.labels.keys():
-                self.labels['auction_cur_bet'] = AlphaText(Globals.TRANSLATION[87], 'auction_cur_bet')
         else:
             if temp_var['bet']:
                 self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
