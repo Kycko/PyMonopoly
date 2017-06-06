@@ -210,7 +210,7 @@ class Tooltip():
                 for i in range(count):
                     color = self.choose_color(i+1, cell_state)
                     self.text.blit(font.render((Globals.TEMP_VARS['rentlabels'][i+start_string]), True, color), (0, 45+i*15))
-                    if cell_state == 1 and i == 0 and CELL.group not in (None, 'railroad') and Globals.main_scr.objects['gamefield'].groups_monopolies[CELL.group]:
+                    if cell_state == 1 and i == 0 and CELL.group not in (None, 'railroad', 'service') and Globals.main_scr.objects['gamefield'].groups_monopolies[CELL.group]:
                         string = '(x2) ' + str(2 * CELL.rent_costs[i])
                     else:
                         string = str(CELL.rent_costs[i])

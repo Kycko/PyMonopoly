@@ -405,11 +405,10 @@ class MainScreen():
             num = int(self.labels['property_management_input'].symbols)
             self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
         elif type == 'prop_management_ACCEPT_ALL':
+            for cell in self.objects['gamefield'].cells:
+                cell.a_little_number_visible = False
             temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
             if temp: self.labels.pop(temp)
-            if 'state_selector' in self.menuitems.keys():
-                self.menuitems.pop('state_selector')
-                self.cursor.add_rm_keys(False, 'state_selector')
             for key in ('property_management_input',
                         'property_management_input_ready',
                         'target_cell_trading_info',
@@ -1140,7 +1139,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        # self.DEBUGGER_chests_and_chances()
+        self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
@@ -1163,8 +1162,10 @@ class MainScreen():
         else:
             if cell.owner:
                 text = Globals.TRANSLATION[45] + cell.owner
-                if cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                if cell.buildings < 0 or cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
                     type = 'ingame_continue_NO'
+                    if cell.buildings < 0:
+                        self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[96], 'target_cell_info', 2)
                 else:
                     type = 'ingame_continue_PAY_RENT'
                     if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
@@ -1176,7 +1177,7 @@ class MainScreen():
                             Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                         else:
                             Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                            if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible):
+                            if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type != 'goto' and self.objects['gamefield'].chests_and_chances['chances'][0].modifier != [5]):
                                 Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
@@ -1186,7 +1187,7 @@ class MainScreen():
                 self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47] + str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
                                        'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
             property_management_number = 7
-            property_management_condition = not(cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
+            property_management_condition = not(cell.buildings < 0 or cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
         self.show_property_management_menuitems(property_management_number, property_management_condition)
         self.cursor.screen_switched(self.menuitems, ('ingame_buy_or_auction', 'ingame_continue')['ingame_continue' in self.menuitems.keys()])
