@@ -244,7 +244,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        self.DEBUGGER_show_TEMP_VARS_keys()
+        # self.DEBUGGER_show_TEMP_VARS_keys()
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
             self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -701,6 +701,8 @@ class MainScreen():
         if type == 'return_end_turn':
             self.ask_to_end_turn()
         elif type == 'return_pay_birthday':
+            if 'target_cell_trading_info' in self.labels.keys():
+                self.labels.pop('target_cell_trading_info')
             self.pay_birthday_next_player()
         elif type == 'return_new_turn':
             self.new_turn()
@@ -1128,7 +1130,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        # self.DEBUGGER_chests_and_chances()
+        self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
