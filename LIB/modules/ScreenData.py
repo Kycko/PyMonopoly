@@ -389,9 +389,7 @@ class MainScreen():
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             Globals.TEMP_VARS['property'] = {}
-            if 'auction' in Globals.TEMP_VARS.keys():
-                playername = Globals.TEMP_VARS['auction']['order'][0].name
-            else: playername = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+            playername = check_cur_prop_management()
             for cell in self.objects['gamefield'].cells:
                 if cell.owner == playername:
                     Globals.TEMP_VARS['property'][cell.number] = cell.buildings
@@ -967,9 +965,7 @@ class MainScreen():
         if not 'show_prev_trades' in self.menuitems.keys():
             self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
     def create_prop_management_cell_state_objects(self, CELL):
-        if 'auction' in Globals.TEMP_VARS.keys():
-            playername = Globals.TEMP_VARS['auction']['order'][0].name
-        else: playername = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+        playername = check_cur_prop_management()
         if CELL.owner == playername:
             if 'error' in self.labels.keys(): self.labels.pop('error')
             if 'text_cursor' in self.objects.keys(): self.objects.pop('text_cursor')

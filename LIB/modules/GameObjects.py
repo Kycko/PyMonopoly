@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals, FieldCellsData, pygame
-from GlobalFuncs import check_group_monopoly, count_new_pos, slight_animation_count_pos, read_chests_and_chances_translation
+from GlobalFuncs import *
 from random import shuffle
 from Sprite import Line, Sprite
 from TransparentText import AlphaText
@@ -78,7 +78,7 @@ class GameField():
                        Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
             cells = [cell for cell in self.cells if cell.owner in traders]
         elif type == 'prop_manage':
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+            player = check_cur_prop_management()
             cells = [cell for cell in self.cells if cell.owner == player]
         for cell in cells:
             cell.a_little_number_visible = True

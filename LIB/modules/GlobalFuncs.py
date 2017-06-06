@@ -109,6 +109,13 @@ def check_group_monopoly(group):
             if fieldcells[i].buildings > -1:
                 fieldcells[i].buildings = owners.count(fieldcells[i].owner) - 1 - mortragers.count(fieldcells[i].owner)
     return numbers
+def check_cur_prop_management():
+    if 'auction' in Globals.TEMP_VARS.keys():
+        return Globals.TEMP_VARS['auction']['order'][0].name
+    elif 'pay_birthday' in Globals.TEMP_VARS.keys():
+        return Globals.TEMP_VARS['pay_birthday'][0].name
+    else:
+        return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
