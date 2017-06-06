@@ -79,7 +79,7 @@ class GameField():
             cells = [cell for cell in self.cells if cell.owner in traders]
         elif type == 'prop_manage':
             player = check_cur_prop_management()
-            cells = [cell for cell in self.cells if cell.owner == player]
+            cells = [cell for cell in self.cells if cell.owner == player.name]
         for cell in cells:
             cell.a_little_number_visible = True
     def render(self):

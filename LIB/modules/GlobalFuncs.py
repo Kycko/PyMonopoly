@@ -111,11 +111,11 @@ def check_group_monopoly(group):
     return numbers
 def check_cur_prop_management():
     if 'auction' in Globals.TEMP_VARS.keys():
-        return Globals.TEMP_VARS['auction']['order'][0].name
+        return Globals.TEMP_VARS['auction']['order'][0]
     elif 'pay_birthday' in Globals.TEMP_VARS.keys():
-        return Globals.TEMP_VARS['pay_birthday'][0].name
+        return Globals.TEMP_VARS['pay_birthday'][0]
     else:
-        return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name
+        return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

@@ -389,9 +389,9 @@ class MainScreen():
             if 'pay_birthday' not in Globals.TEMP_VARS.keys():
                 self.disable_central_labels()
             Globals.TEMP_VARS['property'] = {}
-            playername = check_cur_prop_management()
+            player = check_cur_prop_management()
             for cell in self.objects['gamefield'].cells:
-                if cell.owner == playername:
+                if cell.owner == player.name:
                     Globals.TEMP_VARS['property'][cell.number] = cell.buildings
             Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
             self.entering_property_menu()
@@ -404,6 +404,20 @@ class MainScreen():
         elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
             num = int(self.labels['property_management_input'].symbols)
             self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
+        elif type == 'prop_management_ACCEPT_ALL':
+            temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
+            if temp: self.labels.pop(temp)
+            if 'state_selector' in self.menuitems.keys():
+                self.menuitems.pop('state_selector')
+                self.cursor.add_rm_keys(False, 'state_selector')
+            for key in ('property_management_input',
+                        'property_management_input_ready',
+                        'target_cell_trading_info',
+                        'target_cell_trading_subinfo'):
+                if key in self.labels.keys():
+                    self.labels.pop(key)
+            self.change_player_money(check_cur_prop_management(), Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL'])
+            self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type == 'cell_state_SELECTOR':
             CELL = int(self.labels['property_management_input_ready'].symbols)
             cell_obj = self.objects['gamefield'].cells[CELL]
@@ -965,8 +979,8 @@ class MainScreen():
         if not 'show_prev_trades' in self.menuitems.keys():
             self.menuitems['show_prev_trades'] = MenuItem(u'♼', 'show_prev_trades', 'show_prev_trades', 1)
     def create_prop_management_cell_state_objects(self, CELL):
-        playername = check_cur_prop_management()
-        if CELL.owner == playername:
+        player = check_cur_prop_management()
+        if CELL.owner == player.name:
             if 'error' in self.labels.keys(): self.labels.pop('error')
             if 'text_cursor' in self.objects.keys(): self.objects.pop('text_cursor')
             if 'property_management_input' in self.labels.keys():
@@ -1058,7 +1072,7 @@ class MainScreen():
     def recheck_prop_management_money_changes(self):
         Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
-        TOTAL = 0
+        temp_var['TOTAL'] = 0
         for i in Globals.TEMP_VARS['property'].keys():
             CELL = self.objects['gamefield'].cells[i]
             old_buildings = Globals.TEMP_VARS['property'][i]
@@ -1080,8 +1094,8 @@ class MainScreen():
                 if not MONEY:
                     temp_var.pop(i)
                     CELL.step_indicator_visible = False
-                TOTAL += MONEY
-        self.DEBUGGER_prop_management_money_changes(TOTAL)
+                temp_var['TOTAL'] += MONEY
+        self.DEBUGGER_prop_management_money_changes()
     #--- Game mechanics
     def ask_to_end_turn(self):
         self.disable_central_labels()
@@ -1126,7 +1140,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        self.DEBUGGER_chests_and_chances()
+        # self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
@@ -1272,9 +1286,10 @@ class MainScreen():
         for key in Globals.TEMP_VARS.keys():
             print(key)
         print('')
-    def DEBUGGER_prop_management_money_changes(self, TOTAL):
+    def DEBUGGER_prop_management_money_changes(self):
         for i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
-            print(str(i)+'   : '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][0])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][1])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][2]))
+            if i != 'TOTAL':
+                print(str(i)+'   : '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][0])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][1])+'   '+str(Globals.TEMP_VARS['prop_manage_CHANGED'][i][2]))
         print('-----------------------------------------------')
-        print(15*' ' + str(TOTAL))
+        print(15*' ' + str(Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL']))
         print('')
