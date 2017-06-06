@@ -244,7 +244,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        # self.DEBUGGER_show_TEMP_VARS_keys()
+        self.DEBUGGER_show_TEMP_VARS_keys()
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
             self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -685,9 +685,13 @@ class MainScreen():
                         Globals.TEMP_VARS['RErender_groups'].append(cell.group)
             self.RErender_fieldcell_tooltips_by_groups()
             self.objects['gamefield'].RErender_fieldcell_groups()
-        for key in ('trading', 'auction', 'property', 'prop_manage_CHANGED'):
+        for key in ('trading', 'property', 'prop_manage_CHANGED'):
             if key in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop(key)
+        if 'auction' in Globals.TEMP_VARS.keys():
+            temp_var = Globals.TEMP_VARS['auction']
+            if not (len(temp_var['order']) > 1 or (len(temp_var['order']) and not temp_var['bet'])):
+                Globals.TEMP_VARS.pop('auction')
         if 'text_cursor' in self.objects.keys():
             self.objects.pop('text_cursor')
         field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
@@ -706,7 +710,10 @@ class MainScreen():
             if cell.owner and 'cur_field_owner' in Globals.TEMP_VARS.keys() and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
                 Globals.TEMP_VARS['xxx'] = cell.owner
                 cell.owner = Globals.TEMP_VARS['cur_field_owner']
-            self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+            if 'auction' in Globals.TEMP_VARS.keys():
+                self.labels.pop('dices')
+                self.auction_next_player()
+            else: self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
             if 'xxx' in Globals.TEMP_VARS.keys():
                 cell.owner = Globals.TEMP_VARS.pop('xxx')
     def return_to_auction_main(self, type):
@@ -844,9 +851,12 @@ class MainScreen():
         cell.step_indicator_visible = True
     def restore_step_indicators_state(self):
         self.disable_step_indicators()
-        for i in Globals.TEMP_VARS['save_step_indicators_state']:
-            self.objects['gamefield'].cells[i].step_indicator_visible = True
-        Globals.TEMP_VARS.pop('save_step_indicators_state')
+        if 'save_step_indicators_state' in Globals.TEMP_VARS.keys():
+            for i in Globals.TEMP_VARS['save_step_indicators_state']:
+                self.objects['gamefield'].cells[i].step_indicator_visible = True
+            Globals.TEMP_VARS.pop('save_step_indicators_state')
+        else:
+            self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].step_indicator_visible = True
     def show_property_management_menuitems(self, number, condition=True):
         if condition:
             trader_name = self.trader_for_cur_player_or_for_birthday().name
