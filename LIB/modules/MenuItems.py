@@ -363,6 +363,7 @@ class SelectorCursor(Cursor):
         Cursor.render(self)
 class MainCursor(Cursor):
     def __init__(self, menuitems, type):
+        self.u_length = 0
         first_rect = self.screen_switched(menuitems, type)
         Cursor.__init__(self, 0, first_rect)
     def screen_switched(self, menuitems, type):
@@ -451,6 +452,15 @@ class MainCursor(Cursor):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5, 15)
         if self.surf_color.a != 104:
             self.surf_color.a += 8
+            self.draw_rect()
+        if self.active_key == 'buy_a_cell':
+            if self.u_length < self.rect.w/2-15:
+                self.u_length += 10
+                self.draw_rect()
+                COLOR = ('light_green', 'light_red')[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money < Globals.TEMP_VARS['MUST_PAY']]
+                pygame.draw.line(self.surf, Globals.COLORS[COLOR], (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
+        elif self.u_length != 0:
+            self.u_length = 0
             self.draw_rect()
         Cursor.render(self)
 class OwnCursor(Cursor):
