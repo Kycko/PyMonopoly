@@ -1098,7 +1098,7 @@ class MainScreen():
                     MONEY += CELL.buy_cost / 2
                     new_buildings = 0
                 if CELL.group in range(9):
-                    MONEY += (old_buildings - new_buildings) * CELL.build_cost
+                    MONEY += (old_buildings - new_buildings) * CELL.build_cost / (1 + 1 * int(new_buildings < old_buildings))
                 temp_var[i] += tuple([MONEY])
                 if not MONEY:
                     temp_var.pop(i)
