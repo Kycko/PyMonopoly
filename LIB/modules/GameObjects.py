@@ -259,6 +259,11 @@ class GameLog(InfoWindow):
         elif type == 'ingame_trading_ACCEPT_ALL':
             text = Globals.GAMELOG_TRANSLATION[15].replace('1', Globals.TEMP_VARS['trading']['trader']['info'].name)
             text = text.replace('2', Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
+        elif type[:20] == 'prop_manage_mortrage':
+            field = type[21:]
+            temp_var = Globals.TEMP_VARS['prop_manage_CHANGED'][int(field)]
+            IF = int(temp_var[0] < 0)
+            text = Globals.GAMELOG_TRANSLATION[19 + IF].replace('%', field) + str(temp_var[2])[IF:]
         elif type == 'auction_end':
             temp_var = Globals.TEMP_VARS['auction']
             if temp_var['bet']:

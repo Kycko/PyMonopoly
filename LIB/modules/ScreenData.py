@@ -405,6 +405,11 @@ class MainScreen():
             num = int(self.labels['property_management_input'].symbols)
             self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
         elif type == 'prop_management_ACCEPT_ALL':
+            temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
+            for field in temp_var.keys():
+                if field != 'TOTAL':
+                    if temp_var[field][0] < 0 or temp_var[field][1] < 0:
+                        self.objects['game_log'].add_message('prop_manage_mortrage_'+str(field))
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
             temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
@@ -415,7 +420,7 @@ class MainScreen():
                         'target_cell_trading_subinfo'):
                 if key in self.labels.keys():
                     self.labels.pop(key)
-            self.change_player_money(check_cur_prop_management(), Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL'])
+            self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
             self.return_to_game_from_trading(self.menuitems['return'].type)
         elif type == 'cell_state_SELECTOR':
             CELL = int(self.labels['property_management_input_ready'].symbols)
