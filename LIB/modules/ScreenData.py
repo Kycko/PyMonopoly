@@ -406,10 +406,15 @@ class MainScreen():
             self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
         elif type == 'prop_management_ACCEPT_ALL':
             temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
-            for field in temp_var.keys():
-                if field != 'TOTAL':
-                    if temp_var[field][0] < 0 or temp_var[field][1] < 0:
-                        self.objects['game_log'].add_message('prop_manage_mortrage_'+str(field))
+            for i in range(1, 40):
+                if i in temp_var.keys():
+                    if temp_var[i][0] < 0 or temp_var[i][1] < 0:
+                        self.objects['game_log'].add_message('prop_manage_mortrage_'+str(i))
+                    if self.objects['gamefield'].cells[i].group not in ('railroad', 'service'):
+                        if temp_var[i][1] > temp_var[i][0] and temp_var[i][1] > 0:
+                            self.objects['game_log'].add_message('prop_manage_build_'+str(i))
+                        elif temp_var[i][0] > temp_var[i][1] and temp_var[i][0] > 0:
+                            self.objects['game_log'].add_message('prop_manage_debuild_'+str(i))
             for cell in self.objects['gamefield'].cells:
                 cell.a_little_number_visible = False
             temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
