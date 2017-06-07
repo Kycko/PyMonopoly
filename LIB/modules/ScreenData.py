@@ -244,22 +244,13 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        # self.DEBUGGER_show_TEMP_VARS_keys()
+        self.DEBUGGER_show_TEMP_VARS_keys()
         type = self.menuitems[key].action(key)
         if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
             self.labels['dices'] = GameMechanics.roll_the_dice()
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
             points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
-            if not (type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']):
-                for i in range(player.cur_field + 1, player.cur_field + points + 1):
-                    self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
-                    self.objects['gamefield'].cells[i-40].step_indicator_visible = True
-                player.move_forward(points)
-                if player.cur_field - points == 10:
-                    self.menuitems['fieldcell_10'].tooltip.RErender()
-                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
-                self.objects['game_log'].add_message('roll_the_dice')
-            else:
+            if type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
                 self.clear_main_menu_entries()
                 player.exit_jail_attempts -= 1
                 self.objects['game_log'].add_message('roll_the_dice_to_exit_jail')
@@ -267,6 +258,20 @@ class MainScreen():
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
                 self.cursor.screen_switched(self.menuitems, 'ingame_continue')
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+            else:
+                if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']:
+                    Globals.TEMP_VARS['double_dices_count'] += 1
+                if Globals.TEMP_VARS['double_dices_count'] == 3:
+                    self.player_on_a_new_cell(self.objects['gamefield'].cells[30])
+                else:
+                    for i in range(player.cur_field + 1, player.cur_field + points + 1):
+                        self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
+                        self.objects['gamefield'].cells[i-40].step_indicator_visible = True
+                    player.move_forward(points)
+                    if player.cur_field - points == 10:
+                        self.menuitems['fieldcell_10'].tooltip.RErender()
+                    self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                    self.objects['game_log'].add_message('roll_the_dice')
         elif type == 'ingame_end_turn':
             self.change_player()
         elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
@@ -666,6 +671,7 @@ class MainScreen():
                 if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                     self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
             clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
+            Globals.TEMP_VARS['double_dices_count'] = 0
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
             for player in Globals.PLAYERS:
                 player.speed_limit = 5
@@ -1149,7 +1155,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        self.DEBUGGER_chests_and_chances()
+        # self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)

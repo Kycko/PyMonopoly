@@ -234,6 +234,8 @@ class GameLog(InfoWindow):
     def add_message(self, type):
         if type in ('roll_the_dice', 'chest_goto'):
             text = Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field))
+            if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']:
+                text += Globals.GAMELOG_TRANSLATION[23]
         elif type == 'change_player':
             text = Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
@@ -245,6 +247,8 @@ class GameLog(InfoWindow):
         elif type == 'ingame_continue_gotojail':
             text = Globals.main_scr.objects['gamefield'].cells[30].NAME
             text = Globals.GAMELOG_TRANSLATION[6].replace('%', text[text.index(' ')+1:])
+            if Globals.TEMP_VARS['double_dices_count'] == 3:
+                text += Globals.GAMELOG_TRANSLATION[23]
         elif type == 'money_for_start_passing':
             text = Globals.GAMELOG_TRANSLATION[7].replace('%', str(Globals.main_scr.objects['gamefield'].cells[0].buy_cost))
         elif type == 'chest_income':
