@@ -490,7 +490,7 @@ class MainCursor(Cursor):
                 MUST_PAY = -obj[0].modifier[0]
             elif obj[0].type == 'repair':
                 cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
-                MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
+                MUST_PAY = Globals.TEMP_VARS['repair_cost_SAVE']
             else:
                 self.uCondition = False
                 return None

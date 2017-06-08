@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -244,7 +244,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        # self.DEBUGGER_show_TEMP_VARS_keys()
+        self.DEBUGGER_show_TEMP_VARS_keys()
         if not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -364,6 +364,9 @@ class MainScreen():
                     self.ask_to_end_turn()
                     return None
                 elif obj[0].type == 'repair':
+                    Globals.TEMP_VARS['MUST_PAY'] = - Globals.TEMP_VARS.pop('repair_cost_SAVE')
+                    self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
+                    self.objects['game_log'].add_message('chest_income')
                     self.ask_to_end_turn()
                 elif obj[0].type == 'birthday':
                     self.disable_central_labels()
@@ -1185,6 +1188,14 @@ class MainScreen():
             property_management_number = 6
             if cell.group in ('chest', 'chance'):
                 obj = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0]
+                if obj.type == 'repair' and 'repair_cost_SAVE' not in Globals.TEMP_VARS.keys():
+                    Globals.TEMP_VARS['repair_cost_SAVE'] = 0
+                    for i in self.objects['gamefield'].cells:
+                        if i.group in range(9) and i.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name and i.buildings > 0:
+                            if i.buildings == 5 - Globals.TEMP_VARS['cur_game']:
+                                Globals.TEMP_VARS['repair_cost_SAVE'] += obj.modifier[1]
+                            else:
+                                Globals.TEMP_VARS['repair_cost_SAVE'] += i.buildings * obj.modifier[0]
                 property_management_condition = (obj.type == 'income' and obj.modifier[0] < 0) or obj.type == 'pay_each'
             else:
                 property_management_condition = cell.group == 'tax'
