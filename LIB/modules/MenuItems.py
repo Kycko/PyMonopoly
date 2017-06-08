@@ -472,9 +472,12 @@ class MainCursor(Cursor):
         elif KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type == 'ingame_continue_tax':
             cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
             MUST_PAY = -Globals.TEMP_VARS['MUST_PAY']
+        elif KEY == 'auction_up_bet':
+            cur_money = Globals.TEMP_VARS['auction']['order'][0].money
+            MUST_PAY = Globals.TEMP_VARS['auction']['bet'] + 1
         else: return None
         if not cur_money < MUST_PAY and cur_money <= 2*MUST_PAY: return 'orange'
-        return ('light_green', 'light_red')[cur_money < MUST_PAY]
+        return ('light_green', 'red27')[cur_money < MUST_PAY]
 class OwnCursor(Cursor):
     def __init__(self, color, rect):
         self.u_color = Globals.COLORS[color]

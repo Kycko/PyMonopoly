@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -517,25 +517,29 @@ class MainScreen():
                 else:
                     self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
-            if type == 'trading_input_auction_bet':
-                self.labels.pop('target_cell_info')
-                self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_auction_main', 'ingame_main', 6)
-            self.clear_main_menu_entries(('return'))
-            if 'error' in self.labels.keys():
-                self.labels.pop('error')
-            if type == 'trading_input_fields':
-                self.objects['gamefield'].render_cell_numbers('trade')
-            if 'money' in type:
-                text = Globals.TRANSLATION[71]
-            elif 'fields' in type:
-                text = Globals.TRANSLATION[69]
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            if type == 'trading_input_auction_bet' and player.money < Globals.TEMP_VARS['auction']['bet'] + 1:
+                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
             else:
-                temp_var = Globals.TEMP_VARS['auction']
-                text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name).replace('@', temp_var['field'].NAME)
-            self.labels['target_cell_trading_info'] = AlphaText(text, 'target_cell_info', -3)
-            self.labels[type] = AlphaText('', 'ingame_main', 1)
-            self.make_obj_for_enter_name(type)
-            self.cursor.screen_switched(self.menuitems, 'trading_input')
+                if type == 'trading_input_auction_bet':
+                    self.labels.pop('target_cell_info')
+                    self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_auction_main', 'ingame_main', 6)
+                self.clear_main_menu_entries(('return'))
+                if 'error' in self.labels.keys():
+                    self.labels.pop('error')
+                if type == 'trading_input_fields':
+                    self.objects['gamefield'].render_cell_numbers('trade')
+                if 'money' in type:
+                    text = Globals.TRANSLATION[71]
+                elif 'fields' in type:
+                    text = Globals.TRANSLATION[69]
+                else:
+                    temp_var = Globals.TEMP_VARS['auction']
+                    text = Globals.TRANSLATION[83].replace('%', temp_var['order'][0].name).replace('@', temp_var['field'].NAME)
+                self.labels['target_cell_trading_info'] = AlphaText(text, 'target_cell_info', -3)
+                self.labels[type] = AlphaText('', 'ingame_main', 1)
+                self.make_obj_for_enter_name(type)
+                self.cursor.screen_switched(self.menuitems, 'trading_input')
         elif type == 'trading_input_fields_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
             cell_num = int(self.labels['trading_input_fields'].symbols)
             cell_obj = self.objects['gamefield'].cells[cell_num]
