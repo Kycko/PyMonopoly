@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -288,11 +288,15 @@ class MainScreen():
             self.new_turn()
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            self.change_owner_for_a_cell(player)
-            self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
-            self.objects['game_log'].add_message(type)
-            self.ask_to_end_turn()
+            if player.money >= Globals.TEMP_VARS['MUST_PAY']:
+                self.change_owner_for_a_cell(player)
+                self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
+                self.objects['game_log'].add_message(type)
+                self.ask_to_end_turn()
+            else:
+                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         elif type == 'ingame_cell_to_an_auction':
+            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
             self.save_step_indicators_state()
             self.clear_main_menu_entries()
             self.disable_central_labels()
@@ -387,6 +391,7 @@ class MainScreen():
             self.objects['game_log'].add_message(type)
             self.ask_to_end_turn()
         elif type == 'enter_the_property_management':
+            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
             if 'trade_summary' in self.objects.keys():
@@ -453,6 +458,7 @@ class MainScreen():
                 self.recheck_prop_management_money_changes()
             self.return_into_prop_manage_choose_field()
         elif type and 'enter_the_trade_menu' in type:
+            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
             if 'prev_trade' in self.labels.keys():
                 self.labels.pop('prev_trade')
             if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
