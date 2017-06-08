@@ -1061,7 +1061,7 @@ class MainScreen():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
     def error_msg_money_limits(self, type):
-        condition = self.cursor and self.cursor.uCOLOR == 'red27' and type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet', 'pay_money_to_exit_jail')
+        condition = self.cursor and self.cursor.uCOLOR == 'red27' and (type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet', 'pay_money_to_exit_jail') or (type in ('ingame_continue_chance', 'ingame_continue_chest') and self.objects['gamefield'].chests_and_chances[type[16:] + 's'][0].type == 'income' and self.objects['gamefield'].chests_and_chances[type[16:] + 's'][0].modifier[0] < 0))
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
@@ -1169,7 +1169,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        # self.DEBUGGER_chests_and_chances()
+        self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)

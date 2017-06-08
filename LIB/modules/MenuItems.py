@@ -481,6 +481,13 @@ class MainCursor(Cursor):
         elif KEY == 'pay_money_to_exit_jail':
             cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
             MUST_PAY = 50
+        elif KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type[16:] in ('chance', 'chest'):
+            type = Globals.main_scr.menuitems[KEY].type[16:] + 's'
+            obj = Globals.main_scr.objects['gamefield'].chests_and_chances[type]
+            if obj[0].type == 'income' and obj[0].modifier[0] < 0:
+                cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+                MUST_PAY = -obj[0].modifier[0]
+            else: return None
         else: return None
         if not cur_money < MUST_PAY and cur_money <= 2*MUST_PAY: return 'orange'
         return ('light_green', 'red27')[cur_money < MUST_PAY]
