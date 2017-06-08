@@ -245,7 +245,7 @@ class MainScreen():
     #--- Menu actions
     def action_call(self, key):
         # self.DEBUGGER_show_TEMP_VARS_keys()
-        if not self.error_msg_money_limits(self.menuitems[key].type):
+        if not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
                 self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -1060,8 +1060,8 @@ class MainScreen():
         if menuitem_key in self.menuitems.keys():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
-    def error_msg_money_limits(self, type):
-        condition = self.cursor and self.cursor.uCOLOR == 'red27' and (type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet', 'pay_money_to_exit_jail') or (type in ('ingame_continue_chance', 'ingame_continue_chest') and self.objects['gamefield'].chests_and_chances[type[16:] + 's'][0].type == 'income' and self.objects['gamefield'].chests_and_chances[type[16:] + 's'][0].modifier[0] < 0))
+    def error_msg_money_limits(self, key):
+        condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):

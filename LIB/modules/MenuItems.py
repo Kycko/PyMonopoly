@@ -465,6 +465,7 @@ class MainCursor(Cursor):
             self.u_length = 0
             self.draw_rect()
     def underline_conditions(self):
+        self.uCondition = True
         KEY = self.active_key
         if KEY == 'buy_a_cell':
             cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
@@ -487,8 +488,15 @@ class MainCursor(Cursor):
             if obj[0].type == 'income' and obj[0].modifier[0] < 0:
                 cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
                 MUST_PAY = -obj[0].modifier[0]
-            else: return None
-        else: return None
+            elif obj[0].type == 'repair':
+                cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+                MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
+            else:
+                self.uCondition = False
+                return None
+        else:
+            self.uCondition = False
+            return None
         if not cur_money < MUST_PAY and cur_money <= 2*MUST_PAY: return 'orange'
         return ('light_green', 'red27')[cur_money < MUST_PAY]
 class OwnCursor(Cursor):
