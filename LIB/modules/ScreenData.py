@@ -244,283 +244,272 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        self.DEBUGGER_show_TEMP_VARS_keys()
-        type = self.menuitems[key].action(key)
-        if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
-            self.labels['dices'] = GameMechanics.roll_the_dice()
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
-            if type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
-                self.clear_main_menu_entries()
-                player.exit_jail_attempts -= 1
-                self.objects['game_log'].add_message('roll_the_dice_to_exit_jail')
-                self.labels['target_cell_owner'] = AlphaText(Globals.TRANSLATION[54] + str(player.exit_jail_attempts), 'target_cell_owner', 1)
-                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
-                self.cursor.screen_switched(self.menuitems, 'ingame_continue')
-                self.menuitems['fieldcell_10'].tooltip.RErender()
-            else:
-                if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']:
-                    Globals.TEMP_VARS['double_dices_count'] += 1
-                if Globals.TEMP_VARS['double_dices_count'] == 3:
-                    self.player_on_a_new_cell(self.objects['gamefield'].cells[30])
+        # self.DEBUGGER_show_TEMP_VARS_keys()
+        if not self.error_msg_money_limits(key):
+            type = self.menuitems[key].action(key)
+            if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
+                self.labels['dices'] = GameMechanics.roll_the_dice()
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
+                if type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
+                    self.clear_main_menu_entries()
+                    player.exit_jail_attempts -= 1
+                    self.objects['game_log'].add_message('roll_the_dice_to_exit_jail')
+                    self.labels['target_cell_owner'] = AlphaText(Globals.TRANSLATION[54] + str(player.exit_jail_attempts), 'target_cell_owner', 1)
+                    self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_doesnt_exit_jail', 'ingame_main', 5)
+                    self.cursor.screen_switched(self.menuitems, 'ingame_continue')
+                    self.menuitems['fieldcell_10'].tooltip.RErender()
                 else:
-                    for i in range(player.cur_field + 1, player.cur_field + points + 1):
-                        self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
-                        self.objects['gamefield'].cells[i-40].step_indicator_visible = True
-                    player.move_forward(points)
-                    if player.cur_field - points == 10:
-                        self.menuitems['fieldcell_10'].tooltip.RErender()
-                    self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
-                    self.objects['game_log'].add_message('roll_the_dice')
-        elif type == 'ingame_end_turn':
-            self.change_player()
-        elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            CELL = self.objects['gamefield'].cells[10]
-            if type == 'pay_money_to_exit_jail':
-                self.change_player_money(player, -CELL.buy_cost)
-            else:
-                vid = player.free_jail_cards.pop(0)
-                self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
-            player.exit_jail_attempts = None
-            self.menuitems['fieldcell_10'].tooltip.RErender()
-            self.objects['game_log'].add_message(type)
-            self.new_turn()
-        elif type == 'ingame_buy_a_cell':
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if player.money < Globals.TEMP_VARS['MUST_PAY']:
-                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
-            else:
-                self.change_owner_for_a_cell(player)
-                self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
-                self.objects['game_log'].add_message(type)
-                self.ask_to_end_turn()
-        elif type == 'ingame_cell_to_an_auction':
-            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
-            self.save_step_indicators_state()
-            self.clear_main_menu_entries()
-            self.disable_central_labels()
-            self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[81], 'target_cell_info')
-            self.menuitems['ingame_push_to_auction_accept'] = MenuItem(Globals.TRANSLATION[82], 'ingame_push_to_auction_accept', 'ingame_main', 4)
-            self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_player_on_a_new_cell', 'ingame_main', 5)
-            self.cursor.screen_switched(self.menuitems, 'ingame_push_to_auction')
-        elif type == 'ingame_push_to_auction_accept':
-            if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS)-1:
-                temp_range = range(len(Globals.PLAYERS))
-            elif Globals.TEMP_VARS['cur_turn']:
-                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + range(Globals.TEMP_VARS['cur_turn']+1)
-            else:
-                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
-            field = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-            Globals.TEMP_VARS['auction'] = {'bet'       : 0,
-                                            'field'     : self.objects['gamefield'].cells[field],
-                                            'order'     : [Globals.PLAYERS[i] for i in temp_range],
-                                            'player'    : None}
-            Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
-            Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
-            self.auction_next_player()
-        elif type in ('ingame_continue_tax', 'ingame_continue_income'):
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if player.money < -Globals.TEMP_VARS['MUST_PAY']:
-                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
-            else:
-                self.objects['game_log'].add_message(type)
-                self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
-                self.ask_to_end_turn()
-        elif type == 'ingame_continue_PAY_RENT':
-            cur_turn = Globals.TEMP_VARS['cur_turn']
-            player = Globals.PLAYERS[cur_turn]
-            cell = self.objects['gamefield'].cells[player.cur_field]
-            self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
-            if 'cur_field_owner' in Globals.TEMP_VARS.keys():
-                Globals.TEMP_VARS['xxx'] = cell.owner
-                cell.owner = Globals.TEMP_VARS.pop('cur_field_owner')
-            for i in range(len(Globals.PLAYERS)):
-                if Globals.PLAYERS[i].name == cell.owner:
-                    self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
-            if 'xxx' in Globals.TEMP_VARS.keys():
-                cell.owner = Globals.TEMP_VARS.pop('xxx')
-            self.objects['game_log'].add_message(type)
-            self.ask_to_end_turn()
-        elif type in ('ingame_continue_chest', 'ingame_continue_chance'):
-            obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if obj[0].type == 'income':
-                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
-                self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
-                self.objects['game_log'].add_message('chest_income')
-                self.ask_to_end_turn()
-            elif obj[0].type[:4] == 'goto':
-                type = obj[0].type[5:]
-                if not type:
-                    player.move_to(obj[0].modifier[0])
-                elif type == 'forward':
-                    player.move_forward(obj[0].modifier[0])
-                else:
-                    player.move_to_chance(type)
-                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
-                self.objects['game_log'].add_message('chest_goto')
-            elif obj[0].type == 'free_jail':
-                Globals.TEMP_VARS['free_jail_obj'] = obj.pop(0)
-                player.free_jail_cards.append(type[16:])
-                self.objects['game_log'].add_message('chest_free_jail')
-                self.menuitems['fieldcell_10'].tooltip.RErender()
-                self.ask_to_end_turn()
-                return None
-            elif obj[0].type == 'repair':
-                self.ask_to_end_turn()
-            elif obj[0].type == 'birthday':
-                self.disable_central_labels()
-                Globals.TEMP_VARS['pay_birthday'] = [i for i in Globals.PLAYERS if i.name != player.name]
-                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
-                self.pay_birthday_next_player()
-            elif obj[0].type == 'pay_each':
-                Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
-                for i in Globals.PLAYERS:
-                    if i.name == player.name:
-                        self.change_player_money(player, -obj[0].modifier[0] * (len(Globals.PLAYERS)-1))
+                    if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']:
+                        Globals.TEMP_VARS['double_dices_count'] += 1
+                    if Globals.TEMP_VARS['double_dices_count'] == 3:
+                        self.player_on_a_new_cell(self.objects['gamefield'].cells[30])
                     else:
-                        self.change_player_money(i, obj[0].modifier[0])
-                self.objects['game_log'].add_message('pay_each')
+                        for i in range(player.cur_field + 1, player.cur_field + points + 1):
+                            self.objects['gamefield'].cells[i-40].step_indicator.change_color(player.color)
+                            self.objects['gamefield'].cells[i-40].step_indicator_visible = True
+                        player.move_forward(points)
+                        if player.cur_field - points == 10:
+                            self.menuitems['fieldcell_10'].tooltip.RErender()
+                        self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                        self.objects['game_log'].add_message('roll_the_dice')
+            elif type == 'ingame_end_turn':
+                self.change_player()
+            elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                CELL = self.objects['gamefield'].cells[10]
+                if type == 'pay_money_to_exit_jail':
+                    self.change_player_money(player, -CELL.buy_cost)
+                else:
+                    vid = player.free_jail_cards.pop(0)
+                    self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
+                player.exit_jail_attempts = None
+                self.menuitems['fieldcell_10'].tooltip.RErender()
+                self.objects['game_log'].add_message(type)
+                self.new_turn()
+            elif type == 'ingame_buy_a_cell':
+                self.change_owner_for_a_cell(player)
+                self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], -Globals.TEMP_VARS['MUST_PAY'])
+                self.objects['game_log'].add_message(type)
                 self.ask_to_end_turn()
-            elif obj[0].type == 'take_chance':
-                Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = True
-                self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
-            obj.append(obj.pop(0))
-        elif type == 'ingame_continue_gotojail':
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            player.move_to(10, False)
-            player.exit_jail_attempts = 3
-            self.menuitems['fieldcell_10'].tooltip.RErender()
-            self.objects['game_log'].add_message(type)
-            self.ask_to_end_turn()
-        elif type == 'enter_the_property_management':
-            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
-            if 'prev_trade' in self.labels.keys():
-                self.labels.pop('prev_trade')
-            if 'trade_summary' in self.objects.keys():
-                self.objects.pop('trade_summary')
-            if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+            elif type == 'ingame_cell_to_an_auction':
+                self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
+                self.save_step_indicators_state()
+                self.clear_main_menu_entries()
                 self.disable_central_labels()
-            Globals.TEMP_VARS['property'] = {}
-            player = check_cur_prop_management()
-            for cell in self.objects['gamefield'].cells:
-                if cell.owner == player.name:
-                    Globals.TEMP_VARS['property'][cell.number] = cell.buildings
-            Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
-            self.entering_property_menu()
-            self.clear_main_menu_entries(('return'))
-            self.objects['gamefield'].render_cell_numbers('prop_manage')
-            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[69], 'target_cell_info', -3)
-            self.labels['property_management_input'] = AlphaText('', 'ingame_main', 1)
-            self.make_obj_for_enter_name('property_management_input')
-            self.cursor.screen_switched(self.menuitems, 'property_management')
-        elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
-            num = int(self.labels['property_management_input'].symbols)
-            self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
-        elif type == 'prop_management_ACCEPT_ALL':
-            temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
-            for i in range(1, 40):
-                if i in temp_var.keys():
-                    if temp_var[i][0] < 0 or temp_var[i][1] < 0:
-                        self.objects['game_log'].add_message('prop_manage_mortrage_'+str(i))
-                    if self.objects['gamefield'].cells[i].group not in ('railroad', 'service'):
-                        if temp_var[i][1] > temp_var[i][0] and temp_var[i][1] > 0:
-                            self.objects['game_log'].add_message('prop_manage_build_'+str(i))
-                        elif temp_var[i][0] > temp_var[i][1] and temp_var[i][0] > 0:
-                            self.objects['game_log'].add_message('prop_manage_debuild_'+str(i))
-            for cell in self.objects['gamefield'].cells:
-                cell.a_little_number_visible = False
-            temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
-            if temp: self.labels.pop(temp)
-            for key in ('property_management_input',
-                        'property_management_input_ready',
-                        'target_cell_trading_info',
-                        'target_cell_trading_subinfo'):
-                if key in self.labels.keys():
-                    self.labels.pop(key)
-            self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
-            self.return_to_game_from_trading(self.menuitems['return'].type)
-        elif type == 'cell_state_SELECTOR':
-            CELL = int(self.labels['property_management_input_ready'].symbols)
-            cell_obj = self.objects['gamefield'].cells[CELL]
-            old_buildings = cell_obj.buildings
-            new_buildings = self.menuitems[key].selector.active - 1
-            if old_buildings != new_buildings:
-                Globals.TEMP_VARS['RErender_groups'] = [cell_obj.group]
-                cell_obj.buildings = new_buildings
-                TEMP = [cell_obj.number]            # cell numbers to RErender
-                if Globals.SETTINGS['build_style']:
-                    for cell in self.objects['gamefield'].cells:
-                        if cell.group not in ('railroad', 'service') and cell.group in Globals.TEMP_VARS['RErender_groups'] and cell.number != cell_obj.number:
-                            while cell.buildings not in range(new_buildings-1, new_buildings+2):
-                                cell.buildings += 1 - 2*int(new_buildings < old_buildings)
-                                TEMP.append(cell.number)
-                for i in TEMP:
-                    self.menuitems['fieldcell_'+str(i)].tooltip.RErender(self.objects['gamefield'].cells[i].buildings+1)
-                self.objects['gamefield'].RErender_fieldcell_groups()
-                self.recheck_prop_management_money_changes()
-            self.return_into_prop_manage_choose_field()
-        elif type and 'enter_the_trade_menu' in type:
-            self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
-            if 'prev_trade' in self.labels.keys():
-                self.labels.pop('prev_trade')
-            if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
-                Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
-            if 'pay_birthday' not in Globals.TEMP_VARS.keys():
-                self.disable_central_labels()
-            if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
-                self.entering_property_menu()
-                Globals.TEMP_VARS['trading'] = {}
-                self.make_trading_TEMP_VARS('trader')
-                self.objects['trade_summary'] = TradeSummary()
-            if type == 'enter_the_trade_menu':
-                if 'pay_birthday' not in Globals.TEMP_VARS.keys():
-                    self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
-                self.clear_main_menu_entries(('return'))
-                temp_var = Globals.TEMP_VARS['trading']['trader']
-                counter = 0
+                self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[81], 'target_cell_info')
+                self.menuitems['ingame_push_to_auction_accept'] = MenuItem(Globals.TRANSLATION[82], 'ingame_push_to_auction_accept', 'ingame_main', 4)
+                self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_player_on_a_new_cell', 'ingame_main', 5)
+                self.cursor.screen_switched(self.menuitems, 'ingame_push_to_auction')
+            elif type == 'ingame_push_to_auction_accept':
+                if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS)-1:
+                    temp_range = range(len(Globals.PLAYERS))
+                elif Globals.TEMP_VARS['cur_turn']:
+                    temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + range(Globals.TEMP_VARS['cur_turn']+1)
+                else:
+                    temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
+                field = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+                Globals.TEMP_VARS['auction'] = {'bet'       : 0,
+                                                'field'     : self.objects['gamefield'].cells[field],
+                                                'order'     : [Globals.PLAYERS[i] for i in temp_range],
+                                                'player'    : None}
+                Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
+                Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
+                self.auction_next_player()
+            elif type in ('ingame_continue_tax', 'ingame_continue_income'):
+                self.objects['game_log'].add_message(type)
+                self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
+                self.ask_to_end_turn()
+            elif type == 'ingame_continue_PAY_RENT':
+                cur_turn = Globals.TEMP_VARS['cur_turn']
+                player = Globals.PLAYERS[cur_turn]
+                cell = self.objects['gamefield'].cells[player.cur_field]
+                self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
+                if 'cur_field_owner' in Globals.TEMP_VARS.keys():
+                    Globals.TEMP_VARS['xxx'] = cell.owner
+                    cell.owner = Globals.TEMP_VARS.pop('cur_field_owner')
                 for i in range(len(Globals.PLAYERS)):
-                    if Globals.PLAYERS[i].name != temp_var['info'].name:
-                        trader = check_if_player_can_trade(temp_var['info'])
-                        trading_with = check_if_player_can_trade(Globals.PLAYERS[i])
-                        if trader or trading_with:
-                            counter += 1
-                            self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
-                self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
-            else:
-                self.make_trading_TEMP_VARS('tradingwith', type[21:])
-                self.objects['trade_summary'].make_person_texts('tradingwith')
-                self.show_main_trading_menu()
-        elif type and type[:7] == 'return_':
-            if 'error' in self.labels.keys():
-                self.labels.pop('error')
-            check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
-            if check_trading in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
-                self.return_into_main_trading_menu(check_trading)
-            elif 'state_selector' in self.menuitems.keys():
-                self.return_into_prop_manage_choose_field()
-            else:
+                    if Globals.PLAYERS[i].name == cell.owner:
+                        self.change_player_money(Globals.PLAYERS[i], Globals.TEMP_VARS['MUST_PAY'])
+                if 'xxx' in Globals.TEMP_VARS.keys():
+                    cell.owner = Globals.TEMP_VARS.pop('xxx')
+                self.objects['game_log'].add_message(type)
+                self.ask_to_end_turn()
+            elif type in ('ingame_continue_chest', 'ingame_continue_chance'):
+                obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                if obj[0].type == 'income':
+                    Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                    self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
+                    self.objects['game_log'].add_message('chest_income')
+                    self.ask_to_end_turn()
+                elif obj[0].type[:4] == 'goto':
+                    type = obj[0].type[5:]
+                    if not type:
+                        player.move_to(obj[0].modifier[0])
+                    elif type == 'forward':
+                        player.move_forward(obj[0].modifier[0])
+                    else:
+                        player.move_to_chance(type)
+                    self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                    self.objects['game_log'].add_message('chest_goto')
+                elif obj[0].type == 'free_jail':
+                    Globals.TEMP_VARS['free_jail_obj'] = obj.pop(0)
+                    player.free_jail_cards.append(type[16:])
+                    self.objects['game_log'].add_message('chest_free_jail')
+                    self.menuitems['fieldcell_10'].tooltip.RErender()
+                    self.ask_to_end_turn()
+                    return None
+                elif obj[0].type == 'repair':
+                    self.ask_to_end_turn()
+                elif obj[0].type == 'birthday':
+                    self.disable_central_labels()
+                    Globals.TEMP_VARS['pay_birthday'] = [i for i in Globals.PLAYERS if i.name != player.name]
+                    Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                    self.pay_birthday_next_player()
+                elif obj[0].type == 'pay_each':
+                    Globals.TEMP_VARS['MUST_PAY'] = obj[0].modifier[0]
+                    for i in Globals.PLAYERS:
+                        if i.name == player.name:
+                            self.change_player_money(player, -obj[0].modifier[0] * (len(Globals.PLAYERS)-1))
+                        else:
+                            self.change_player_money(i, obj[0].modifier[0])
+                    self.objects['game_log'].add_message('pay_each')
+                    self.ask_to_end_turn()
+                elif obj[0].type == 'take_chance':
+                    Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = True
+                    self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
+                obj.append(obj.pop(0))
+            elif type == 'ingame_continue_gotojail':
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                player.move_to(10, False)
+                player.exit_jail_attempts = 3
+                self.menuitems['fieldcell_10'].tooltip.RErender()
+                self.objects['game_log'].add_message(type)
+                self.ask_to_end_turn()
+            elif type == 'enter_the_property_management':
+                self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
+                if 'prev_trade' in self.labels.keys():
+                    self.labels.pop('prev_trade')
                 if 'trade_summary' in self.objects.keys():
                     self.objects.pop('trade_summary')
-                    if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
-                if 'auction' in Globals.TEMP_VARS.keys():
-                    self.disable_step_indicators()
-                    key = 'target_cell_trading_info'
-                    if key in self.labels.keys(): self.labels.pop(key)
-                    key = 'text_cursor'
-                    self.cancel_prop_manage()
-                    for key in ('trading', 'property', 'prop_manage_CHANGED'):
-                        if key in Globals.TEMP_VARS.keys():
-                            Globals.TEMP_VARS.pop(key)
-                    self.return_to_auction_main('return_auction_main')
+                if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                    self.disable_central_labels()
+                Globals.TEMP_VARS['property'] = {}
+                player = check_cur_prop_management()
+                for cell in self.objects['gamefield'].cells:
+                    if cell.owner == player.name:
+                        Globals.TEMP_VARS['property'][cell.number] = cell.buildings
+                Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
+                self.entering_property_menu()
+                self.clear_main_menu_entries(('return'))
+                self.objects['gamefield'].render_cell_numbers('prop_manage')
+                self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[69], 'target_cell_info', -3)
+                self.labels['property_management_input'] = AlphaText('', 'ingame_main', 1)
+                self.make_obj_for_enter_name('property_management_input')
+                self.cursor.screen_switched(self.menuitems, 'property_management')
+            elif type == 'property_management_input_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+                num = int(self.labels['property_management_input'].symbols)
+                self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
+            elif type == 'prop_management_ACCEPT_ALL':
+                temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
+                for i in range(1, 40):
+                    if i in temp_var.keys():
+                        if temp_var[i][0] < 0 or temp_var[i][1] < 0:
+                            self.objects['game_log'].add_message('prop_manage_mortrage_'+str(i))
+                        if self.objects['gamefield'].cells[i].group not in ('railroad', 'service'):
+                            if temp_var[i][1] > temp_var[i][0] and temp_var[i][1] > 0:
+                                self.objects['game_log'].add_message('prop_manage_build_'+str(i))
+                            elif temp_var[i][0] > temp_var[i][1] and temp_var[i][0] > 0:
+                                self.objects['game_log'].add_message('prop_manage_debuild_'+str(i))
+                for cell in self.objects['gamefield'].cells:
+                    cell.a_little_number_visible = False
+                temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
+                if temp: self.labels.pop(temp)
+                for key in ('property_management_input',
+                            'property_management_input_ready',
+                            'target_cell_trading_info',
+                            'target_cell_trading_subinfo'):
+                    if key in self.labels.keys():
+                        self.labels.pop(key)
+                self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
+                self.return_to_game_from_trading(self.menuitems['return'].type)
+            elif type == 'cell_state_SELECTOR':
+                CELL = int(self.labels['property_management_input_ready'].symbols)
+                cell_obj = self.objects['gamefield'].cells[CELL]
+                old_buildings = cell_obj.buildings
+                new_buildings = self.menuitems[key].selector.active - 1
+                if old_buildings != new_buildings:
+                    Globals.TEMP_VARS['RErender_groups'] = [cell_obj.group]
+                    cell_obj.buildings = new_buildings
+                    TEMP = [cell_obj.number]            # cell numbers to RErender
+                    if Globals.SETTINGS['build_style']:
+                        for cell in self.objects['gamefield'].cells:
+                            if cell.group not in ('railroad', 'service') and cell.group in Globals.TEMP_VARS['RErender_groups'] and cell.number != cell_obj.number:
+                                while cell.buildings not in range(new_buildings-1, new_buildings+2):
+                                    cell.buildings += 1 - 2*int(new_buildings < old_buildings)
+                                    TEMP.append(cell.number)
+                    for i in TEMP:
+                        self.menuitems['fieldcell_'+str(i)].tooltip.RErender(self.objects['gamefield'].cells[i].buildings+1)
+                    self.objects['gamefield'].RErender_fieldcell_groups()
+                    self.recheck_prop_management_money_changes()
+                self.return_into_prop_manage_choose_field()
+            elif type and 'enter_the_trade_menu' in type:
+                self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
+                if 'prev_trade' in self.labels.keys():
+                    self.labels.pop('prev_trade')
+                if 'cur_field_owner' not in Globals.TEMP_VARS.keys():
+                    Globals.TEMP_VARS['cur_field_owner'] = self.objects['gamefield'].cells[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field].owner
+                if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                    self.disable_central_labels()
+                if type == 'enter_the_trade_menu' or len(Globals.PLAYERS) == 2:
+                    self.entering_property_menu()
+                    Globals.TEMP_VARS['trading'] = {}
+                    self.make_trading_TEMP_VARS('trader')
+                    self.objects['trade_summary'] = TradeSummary()
+                if type == 'enter_the_trade_menu':
+                    if 'pay_birthday' not in Globals.TEMP_VARS.keys():
+                        self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[63], 'target_cell_info', -3)
+                    self.clear_main_menu_entries(('return'))
+                    temp_var = Globals.TEMP_VARS['trading']['trader']
+                    counter = 0
+                    for i in range(len(Globals.PLAYERS)):
+                        if Globals.PLAYERS[i].name != temp_var['info'].name:
+                            trader = check_if_player_can_trade(temp_var['info'])
+                            trading_with = check_if_player_can_trade(Globals.PLAYERS[i])
+                            if trader or trading_with:
+                                counter += 1
+                                self.menuitems['choose_player_to_trade_'+Globals.PLAYERS[i].name] = MenuItem(Globals.PLAYERS[i].name, 'enter_the_trade_menu_'+Globals.PLAYERS[i].name, 'ingame_enter_the_trade_menu_'+Globals.PLAYERS[i].name, counter)
+                    self.cursor.screen_switched(self.menuitems, 'choose_player_to_trade')
                 else:
-                    self.return_to_game_from_trading(type)
-        elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
-            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if type == 'trading_input_auction_bet' and player.money < Globals.TEMP_VARS['auction']['bet'] + 1:
-                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
-            else:
+                    self.make_trading_TEMP_VARS('tradingwith', type[21:])
+                    self.objects['trade_summary'].make_person_texts('tradingwith')
+                    self.show_main_trading_menu()
+            elif type and type[:7] == 'return_':
+                if 'error' in self.labels.keys():
+                    self.labels.pop('error')
+                check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
+                if check_trading in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
+                    self.return_into_main_trading_menu(check_trading)
+                elif 'state_selector' in self.menuitems.keys():
+                    self.return_into_prop_manage_choose_field()
+                else:
+                    if 'trade_summary' in self.objects.keys():
+                        self.objects.pop('trade_summary')
+                        if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
+                    if 'auction' in Globals.TEMP_VARS.keys():
+                        self.disable_step_indicators()
+                        key = 'target_cell_trading_info'
+                        if key in self.labels.keys(): self.labels.pop(key)
+                        key = 'text_cursor'
+                        self.cancel_prop_manage()
+                        for key in ('trading', 'property', 'prop_manage_CHANGED'):
+                            if key in Globals.TEMP_VARS.keys():
+                                Globals.TEMP_VARS.pop(key)
+                        self.return_to_auction_main('return_auction_main')
+                    else:
+                        self.return_to_game_from_trading(type)
+            elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
                 if type == 'trading_input_auction_bet':
                     self.labels.pop('target_cell_info')
                     self.menuitems['return'] = MenuItem(Globals.TRANSLATION[64], 'return_auction_main', 'ingame_main', 6)
@@ -540,189 +529,191 @@ class MainScreen():
                 self.labels[type] = AlphaText('', 'ingame_main', 1)
                 self.make_obj_for_enter_name(type)
                 self.cursor.screen_switched(self.menuitems, 'trading_input')
-        elif type == 'trading_input_fields_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
-            cell_num = int(self.labels['trading_input_fields'].symbols)
-            cell_obj = self.objects['gamefield'].cells[cell_num]
-            if self.objects['trade_summary'].add_rm_fields(cell_obj):
-                self.labels['trading_input_fields'].update_text('')
-                self.make_obj_for_enter_name('trading_input_fields')
-                self.create_trading_input_spec_objects('trading_input_fields')
-            else:
-                self.show_or_rm_error_msg(True, 74, 'ERROR_ingame', 'accept')
-        elif type in ('trading_input_offer_money_ACCEPT', 'trading_input_ask_for_money_ACCEPT') and self.menuitems['accept'].text.color == Globals.COLORS['white']:
-            player = ('tradingwith', 'trader')['offer' in type]
-            money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
-            self.objects['trade_summary'].add_rm_money(player, int(self.labels[money_lbl].symbols))
-            self.return_into_main_trading_menu(money_lbl)
-        elif type == 'trading_input_auction_bet_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
-            temp_var = Globals.TEMP_VARS['auction']
-            new_bet = int(self.labels['trading_input_auction_bet'].symbols)
-            if new_bet > temp_var['bet']:
-                temp_var['bet'] = int(self.labels['trading_input_auction_bet'].symbols)
-                temp_var['player'] = Globals.TEMP_VARS['auction']['order'][0]
-                temp_var['order'].append(temp_var['order'].pop(0))
-                text = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
-                self.labels['auction_cur_bet'] = AlphaText(text, 'auction_cur_bet')
-                self.return_to_auction_main('return_auction_main')
-            else:
-                self.show_or_rm_error_msg(True, 91, 'ERROR_ingame', 'accept')
-        elif type == 'auction_refuse':
-            Globals.TEMP_VARS['auction']['order'].pop(0)
-            self.auction_next_player()
-        elif type and 'onboard_select_cell' in type:
-            if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
-                status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
-                self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
-                self.show_trading_OFFER_ALL_button(True)
-            elif 'property' in Globals.TEMP_VARS.keys():
-                self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[int(type[20:])])
-        elif type == 'ingame_trading_OFFER_ALL':
-            self.clear_main_menu_entries('return')
-            self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request')
-            self.menuitems['ingame_trading_ACCEPT_ALL'] = MenuItem(Globals.TRANSLATION[78], 'ingame_trading_ACCEPT_ALL', 'ingame_main', 3)
-            temp_pos = self.menuitems['ingame_trading_ACCEPT_ALL'].text.new_pos
-            self.menuitems['return'].text.update_text(Globals.TRANSLATION[79])
-            upper_size = self.menuitems['ingame_trading_ACCEPT_ALL'].text.rect.w
-            down_size = self.menuitems['return'].text.rect.w
-            self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
-            self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
-        elif type == 'ingame_trading_ACCEPT_ALL':
-            self.swap_property_to_finish_trading()
-            self.objects['gamefield'].RErender_fieldcell_groups()
-            self.objects['game_log'].add_message(type)
-            self.trade_history_append()
-            self.return_to_game_from_trading(self.menuitems['return'].type)
-        elif type == 'show_prev_trades':
-            if not 'trading' in Globals.TEMP_VARS.keys():
-                if 'trade_summary' in self.objects.keys():
-                    self.objects.pop('trade_summary')
-                    self.labels.pop('prev_trade')
+            elif type == 'trading_input_fields_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+                cell_num = int(self.labels['trading_input_fields'].symbols)
+                cell_obj = self.objects['gamefield'].cells[cell_num]
+                if self.objects['trade_summary'].add_rm_fields(cell_obj):
+                    self.labels['trading_input_fields'].update_text('')
+                    self.make_obj_for_enter_name('trading_input_fields')
+                    self.create_trading_input_spec_objects('trading_input_fields')
                 else:
-                    self.objects['trade_summary'] = Globals.TEMP_VARS['prev_trade']
-                    self.labels['prev_trade'] = AlphaText(Globals.TRANSLATION[80], 'last_trade_info')
-        elif type and 'trading' in type and 'free_jail' in type:
-            person = ('trader', 'tradingwith')['ask_for' in type]
-            self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
-            self.update_trading_jail_text_for_menuitem(person, int(type[-1]))
-            person = ('trader', 'tradingwith')['ask_for' not in type]
-            temp_var = Globals.TEMP_VARS['trading'][person]['jail']
-            while temp_var:
-                num = temp_var[0]
-                self.objects['trade_summary'].add_rm_jails(person, num)
-                self.update_trading_jail_text_for_menuitem(person, num)
-            self.show_trading_OFFER_ALL_button(True)
-        elif type and 'pay_birthday' in type:
-            self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
-            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
-            Globals.TEMP_VARS['pay_birthday'].pop(0)
-            self.pay_birthday_next_player()
-        elif type == 'stats_switch':
-            self.make_stats_screen(self.labels['game_name'].symbols)
-        elif type == 'main_settings_language':
-            self.labels['APPVERSION'].update_text(Globals.TRANSLATION[4]+Globals.VERSION)
-            self.make_settings_screen()
-        elif type == 'main_settings_player_color_SELECTOR':
-            self.menuitems['name'].text.color = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
-            self.menuitems['name'].text.RErender()
-        elif type and ('main_new_edit_player' in type or type == 'main_settings_player') and key == 'exit' and not self.labels['name_MI'].symbols:
-            if 'error' not in self.labels.keys():
-                self.labels.update({'error' : AlphaText(Globals.TRANSLATION[29], 'ERROR_main')})
-        elif type == 'main_new_total_SELECTOR':
-            old = len(Globals.PLAYERS)
-            new = self.menuitems[key].selector.active + 2
-            if old != new:
-                tempModifier = int(new > old)
-                for i in range(old, new, (new-old)/abs(new-old)):
-                    dictkey = 'player'+str(i-1+tempModifier)
+                    self.show_or_rm_error_msg(True, 74, 'ERROR_ingame', 'accept')
+            elif type in ('trading_input_offer_money_ACCEPT', 'trading_input_ask_for_money_ACCEPT') and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+                player = ('tradingwith', 'trader')['offer' in type]
+                money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
+                self.objects['trade_summary'].add_rm_money(player, int(self.labels[money_lbl].symbols))
+                self.return_into_main_trading_menu(money_lbl)
+            elif type == 'trading_input_auction_bet_ACCEPT' and self.menuitems['accept'].text.color == Globals.COLORS['white']:
+                temp_var = Globals.TEMP_VARS['auction']
+                new_bet = int(self.labels['trading_input_auction_bet'].symbols)
+                if new_bet > temp_var['bet']:
+                    temp_var['bet'] = int(self.labels['trading_input_auction_bet'].symbols)
+                    temp_var['player'] = Globals.TEMP_VARS['auction']['order'][0]
+                    temp_var['order'].append(temp_var['order'].pop(0))
+                    text = Globals.TRANSLATION[86] + str(temp_var['bet']) + ' (' + temp_var['player'].name + ')'
+                    self.labels['auction_cur_bet'] = AlphaText(text, 'auction_cur_bet')
+                    self.return_to_auction_main('return_auction_main')
+                else:
+                    self.show_or_rm_error_msg(True, 91, 'ERROR_ingame', 'accept')
+            elif type == 'auction_refuse':
+                if 'error' in self.labels.keys():
+                    self.labels.pop('error')
+                Globals.TEMP_VARS['auction']['order'].pop(0)
+                self.auction_next_player()
+            elif type and 'onboard_select_cell' in type:
+                if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
+                    status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
+                    self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
+                    self.show_trading_OFFER_ALL_button(True)
+                elif 'property' in Globals.TEMP_VARS.keys():
+                    self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[int(type[20:])])
+            elif type == 'ingame_trading_OFFER_ALL':
+                self.clear_main_menu_entries('return')
+                self.labels['target_cell_info'] = AlphaText(Globals.TEMP_VARS['trading']['tradingwith']['info'].name + Globals.TRANSLATION[77], 'trading_offer_request')
+                self.menuitems['ingame_trading_ACCEPT_ALL'] = MenuItem(Globals.TRANSLATION[78], 'ingame_trading_ACCEPT_ALL', 'ingame_main', 3)
+                temp_pos = self.menuitems['ingame_trading_ACCEPT_ALL'].text.new_pos
+                self.menuitems['return'].text.update_text(Globals.TRANSLATION[79])
+                upper_size = self.menuitems['ingame_trading_ACCEPT_ALL'].text.rect.w
+                down_size = self.menuitems['return'].text.rect.w
+                self.menuitems['return'].text.new_pos = (temp_pos[0] + (upper_size - down_size)/2, temp_pos[1] + 35)
+                self.cursor.screen_switched(self.menuitems, 'ingame_trading_ACCEPT_DECLINE')
+            elif type == 'ingame_trading_ACCEPT_ALL':
+                self.swap_property_to_finish_trading()
+                self.objects['gamefield'].RErender_fieldcell_groups()
+                self.objects['game_log'].add_message(type)
+                self.trade_history_append()
+                self.return_to_game_from_trading(self.menuitems['return'].type)
+            elif type == 'show_prev_trades':
+                if not 'trading' in Globals.TEMP_VARS.keys():
+                    if 'trade_summary' in self.objects.keys():
+                        self.objects.pop('trade_summary')
+                        self.labels.pop('prev_trade')
+                    else:
+                        self.objects['trade_summary'] = Globals.TEMP_VARS['prev_trade']
+                        self.labels['prev_trade'] = AlphaText(Globals.TRANSLATION[80], 'last_trade_info')
+            elif type and 'trading' in type and 'free_jail' in type:
+                person = ('trader', 'tradingwith')['ask_for' in type]
+                self.objects['trade_summary'].add_rm_jails(person, int(type[-1]))
+                self.update_trading_jail_text_for_menuitem(person, int(type[-1]))
+                person = ('trader', 'tradingwith')['ask_for' not in type]
+                temp_var = Globals.TEMP_VARS['trading'][person]['jail']
+                while temp_var:
+                    num = temp_var[0]
+                    self.objects['trade_summary'].add_rm_jails(person, num)
+                    self.update_trading_jail_text_for_menuitem(person, num)
+                self.show_trading_OFFER_ALL_button(True)
+            elif type and 'pay_birthday' in type:
+                self.change_player_money(Globals.TEMP_VARS['pay_birthday'][0], -Globals.TEMP_VARS['MUST_PAY'])
+                self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
+                Globals.TEMP_VARS['pay_birthday'].pop(0)
+                self.pay_birthday_next_player()
+            elif type == 'stats_switch':
+                self.make_stats_screen(self.labels['game_name'].symbols)
+            elif type == 'main_settings_language':
+                self.labels['APPVERSION'].update_text(Globals.TRANSLATION[4]+Globals.VERSION)
+                self.make_settings_screen()
+            elif type == 'main_settings_player_color_SELECTOR':
+                self.menuitems['name'].text.color = Globals.PLAYERS_COLORS[self.menuitems['color'].selector.active]
+                self.menuitems['name'].text.RErender()
+            elif type and ('main_new_edit_player' in type or type == 'main_settings_player') and key == 'exit' and not self.labels['name_MI'].symbols:
+                if 'error' not in self.labels.keys():
+                    self.labels.update({'error' : AlphaText(Globals.TRANSLATION[29], 'ERROR_main')})
+            elif type == 'main_new_total_SELECTOR':
+                old = len(Globals.PLAYERS)
+                new = self.menuitems[key].selector.active + 2
+                if old != new:
+                    tempModifier = int(new > old)
+                    for i in range(old, new, (new-old)/abs(new-old)):
+                        dictkey = 'player'+str(i-1+tempModifier)
+                        if new < old:
+                            self.cursor.add_rm_keys(False, dictkey)
+                            self.menuitems.pop(dictkey)
+                            if not Globals.PLAYERS[i-1].human:
+                                self.labels.pop(dictkey)
+                            selector_color = 'grey63'
+                        elif new > old:
+                            add_new_player(False)
+                            self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
+                            self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
+                            self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-2, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
+                            selector_color = 'white'
+                        self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
+                        self.menuitems[key].selector.items[i-2+tempModifier].RErender()
                     if new < old:
-                        self.cursor.add_rm_keys(False, dictkey)
-                        self.menuitems.pop(dictkey)
-                        if not Globals.PLAYERS[i-1].human:
-                            self.labels.pop(dictkey)
-                        selector_color = 'grey63'
-                    elif new > old:
-                        add_new_player(False)
-                        self.menuitems.update({dictkey  : MenuItem(Globals.PLAYERS[i].name, 'main_new_edit_player_'+str(i), 'main_new_playerlist', i)})
-                        self.labels.update({dictkey     : AlphaText('AI', 'newgame_playertype', i)})
-                        self.cursor.add_rm_keys(True, dictkey, len(self.cursor.keys)-2, self.menuitems[dictkey].active_zone.move(0, self.menuitems[dictkey].text.new_pos[1] - self.menuitems[dictkey].text.rect.y).topleft)
-                        selector_color = 'white'
-                    self.menuitems[key].selector.items[i-2+tempModifier].color = Globals.COLORS[selector_color]
-                    self.menuitems[key].selector.items[i-2+tempModifier].RErender()
-                if new < old:
-                    Globals.PLAYERS = Globals.PLAYERS[:new]
-                    self.init_avail_colors_and_names()
-                    self.check_error('main_new_game')
-                self.menuitems['humans'].selector.add_rm_items(new > old, new)
-        elif type == 'main_new_humans_SELECTOR':
-            for i in range(1, len(Globals.PLAYERS)):
-                dictkey = 'player'+str(i)
-                if Globals.PLAYERS[i].human and dictkey in self.labels.keys():
-                    self.labels.pop(dictkey)
-                elif not Globals.PLAYERS[i].human and dictkey not in self.labels.keys():
-                    self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
-                    self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
-        elif type == 'ingame_start_game':
-            Globals.GAMELOG_TRANSLATION = read_gamelog_translation()
-            self.pics['logo'].pos = (self.pics['logo'].init_pos[0]-1820, self.pics['logo'].init_pos[1])
-            self.pics['logo'].change_new_pos((-300, 0))
-            for string in ('background', 'logo'):
-                self.pics.pop(string)
-                self.pics['order'].remove(string)
-            for lbl in self.labels.keys():
-                if 'money_player' not in lbl:
-                    self.labels.pop(lbl)
-            self.objects['game_log'] = GameLog()
-            self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),
-                                'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
-                                'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})
-            self.new_turn()
-            self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
-                                   'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
-                                   'volume_level'   : MenuItem('', 'in_game_volume_SELECTOR', 'volume_in_game'),
-                                   'music'          : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['music'])], 'in_game_music_switch', 'music_and_sound_switches', 0),
-                                   'sounds'         : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
-            for cell in self.objects['gamefield'].cells:
-                if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
-                    self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
-            clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
-            Globals.TEMP_VARS['double_dices_count'] = 0
-            Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
-            for player in Globals.PLAYERS:
-                player.speed_limit = 5
-        elif type == 'show_menu':
-            state = int(self.menuitems['show_menu'].text.symbols == u'↓')
-            self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
-            if not state:
-                state = -1
-            objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.objects['game_log']]
-            if 'trade_summary' in self.objects.keys():
-                objects_to_move += [self.objects['trade_summary']]
-            elif 'prev_trade' in Globals.TEMP_VARS.keys():
-                Globals.TEMP_VARS['prev_trade'].change_new_pos((0, state*100))
-            objects_to_move += [cell for cell in self.menuitems.values() if cell.group == 'onboard_select_cell']
-            objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
-            objects_to_move += [cell.a_little_number for cell in self.objects['gamefield'].cells]
-            objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds', 'show_prev_trades') if key in self.menuitems.keys()]
-            objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds', 'prev_trade') if key in self.labels.keys()]
-            for obj in objects_to_move:
-                obj.change_new_pos((0, state*100))
-        elif type == 'music_and_sound_switches':
-            offset = None
-            if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds']:
-                offset = (0, -33)
-            elif self.labels['volume_level'].new_pos[1] < 0:
-                offset = (0, 33)
-            if offset:
-                keys = ('volume_level', 'music', 'sounds')
-                for obj in [self.labels[key] for key in keys] + [self.menuitems[key] for key in keys]:
-                    obj.change_new_pos(offset)
-        elif type == 'main_main' and 'show_menu' in self.menuitems.keys() and self.menuitems['show_menu'].text.symbols == u'↓':
-            return None
-        elif type and type[:16] == 'ingame_continue_':
-            self.ask_to_end_turn()
-        elif type:
-            self.switch_screen(type, key)
-            self.cursor.screen_switched(self.menuitems, type)
+                        Globals.PLAYERS = Globals.PLAYERS[:new]
+                        self.init_avail_colors_and_names()
+                        self.check_error('main_new_game')
+                    self.menuitems['humans'].selector.add_rm_items(new > old, new)
+            elif type == 'main_new_humans_SELECTOR':
+                for i in range(1, len(Globals.PLAYERS)):
+                    dictkey = 'player'+str(i)
+                    if Globals.PLAYERS[i].human and dictkey in self.labels.keys():
+                        self.labels.pop(dictkey)
+                    elif not Globals.PLAYERS[i].human and dictkey not in self.labels.keys():
+                        self.labels.update({dictkey  : AlphaText('AI', 'newgame_playertype', i)})
+                        self.labels[dictkey].rect.topleft = self.labels[dictkey].new_pos
+            elif type == 'ingame_start_game':
+                Globals.GAMELOG_TRANSLATION = read_gamelog_translation()
+                self.pics['logo'].pos = (self.pics['logo'].init_pos[0]-1820, self.pics['logo'].init_pos[1])
+                self.pics['logo'].change_new_pos((-300, 0))
+                for string in ('background', 'logo'):
+                    self.pics.pop(string)
+                    self.pics['order'].remove(string)
+                for lbl in self.labels.keys():
+                    if 'money_player' not in lbl:
+                        self.labels.pop(lbl)
+                self.objects['game_log'] = GameLog()
+                self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),
+                                    'music'         : AlphaText(Globals.TRANSLATION[15], 'volume_in_game_lbl', 1),
+                                    'sounds'        : AlphaText(Globals.TRANSLATION[42], 'volume_in_game_lbl', 2)})
+                self.new_turn()
+                self.menuitems.update({'exit'           : MenuItem(u'×', 'main_main', 'from_game_return_to_menu'),
+                                       'show_menu'      : MenuItem(u'↓', 'show_menu', 'show_menu'),
+                                       'volume_level'   : MenuItem('', 'in_game_volume_SELECTOR', 'volume_in_game'),
+                                       'music'          : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['music'])], 'in_game_music_switch', 'music_and_sound_switches', 0),
+                                       'sounds'         : MenuItem((u'✖', u'✓')[int(Globals.SETTINGS['sounds'])], 'in_game_sounds_switch', 'music_and_sound_switches', 1)})
+                for cell in self.objects['gamefield'].cells:
+                    if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
+                        self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
+                clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
+                Globals.TEMP_VARS['double_dices_count'] = 0
+                Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
+                for player in Globals.PLAYERS:
+                    player.speed_limit = 5
+            elif type == 'show_menu':
+                state = int(self.menuitems['show_menu'].text.symbols == u'↓')
+                self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])
+                if not state:
+                    state = -1
+                objects_to_move = [self.pics['gamebackground'], self.objects['gamefield'], self.objects['game_log']]
+                if 'trade_summary' in self.objects.keys():
+                    objects_to_move += [self.objects['trade_summary']]
+                elif 'prev_trade' in Globals.TEMP_VARS.keys():
+                    Globals.TEMP_VARS['prev_trade'].change_new_pos((0, state*100))
+                objects_to_move += [cell for cell in self.menuitems.values() if cell.group == 'onboard_select_cell']
+                objects_to_move += [cell.step_indicator for cell in self.objects['gamefield'].cells]
+                objects_to_move += [cell.a_little_number for cell in self.objects['gamefield'].cells]
+                objects_to_move += [self.menuitems[key] for key in ('exit', 'show_menu', 'volume_level', 'music', 'sounds', 'show_prev_trades') if key in self.menuitems.keys()]
+                objects_to_move += [self.labels[key] for key in ('volume_level', 'music', 'sounds', 'prev_trade') if key in self.labels.keys()]
+                for obj in objects_to_move:
+                    obj.change_new_pos((0, state*100))
+            elif type == 'music_and_sound_switches':
+                offset = None
+                if not Globals.SETTINGS['music'] and not Globals.SETTINGS['sounds']:
+                    offset = (0, -33)
+                elif self.labels['volume_level'].new_pos[1] < 0:
+                    offset = (0, 33)
+                if offset:
+                    keys = ('volume_level', 'music', 'sounds')
+                    for obj in [self.labels[key] for key in keys] + [self.menuitems[key] for key in keys]:
+                        obj.change_new_pos(offset)
+            elif type == 'main_main' and 'show_menu' in self.menuitems.keys() and self.menuitems['show_menu'].text.symbols == u'↓':
+                return None
+            elif type and type[:16] == 'ingame_continue_':
+                self.ask_to_end_turn()
+            elif type:
+                self.switch_screen(type, key)
+                self.cursor.screen_switched(self.menuitems, type)
     def return_to_game_from_trading(self, type):
         self.restore_step_indicators_state()
         self.cancel_prop_manage()
@@ -1066,6 +1057,10 @@ class MainScreen():
         if menuitem_key in self.menuitems.keys():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
+    def error_msg_money_limits(self, key):
+        condition = self.cursor and self.cursor.uCOLOR == 'red27' and key in ('buy_a_cell', 'ingame_continue_tax', 'auction_up_bet')
+        if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
+        return condition
     def check_doubles_for_players(self):
         for i in range(len(Globals.PLAYERS)-1):
             for j in range(i+1, len(Globals.PLAYERS)):

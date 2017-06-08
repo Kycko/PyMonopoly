@@ -455,12 +455,12 @@ class MainCursor(Cursor):
     def RErender(self):
         if self.surf_color.a != 104:
             self.surf_color.a += 8
-        COLOR = self.underline_conditions()
-        if COLOR:
+        self.uCOLOR = self.underline_conditions()
+        if self.uCOLOR:
             if self.u_length < self.rect.w/2-15:
                 self.u_length += 10
                 self.draw_rect()
-                pygame.draw.line(self.surf, Globals.COLORS[COLOR], (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
+                pygame.draw.line(self.surf, Globals.COLORS[self.uCOLOR], (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
         else:
             self.u_length = 0
             self.draw_rect()
