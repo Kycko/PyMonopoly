@@ -450,19 +450,24 @@ class MainCursor(Cursor):
             self.update_cords(menuitems)
             self.change_new_cords()
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 5, 15)
+        self.RErender()
+        Cursor.render(self)
+    def RErender(self):
         if self.surf_color.a != 104:
             self.surf_color.a += 8
-            self.draw_rect()
-        if self.active_key == 'buy_a_cell':
+        COLOR = self.underline_conditions()
+        if COLOR:
             if self.u_length < self.rect.w/2-15:
                 self.u_length += 10
                 self.draw_rect()
-                COLOR = ('light_green', 'light_red')[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money < Globals.TEMP_VARS['MUST_PAY']]
                 pygame.draw.line(self.surf, Globals.COLORS[COLOR], (self.rect.w/2-self.u_length, self.rect.h-1), (self.rect.w/2+self.u_length, self.rect.h-1), 1)
-        elif self.u_length != 0:
+        else:
             self.u_length = 0
             self.draw_rect()
-        Cursor.render(self)
+    def underline_conditions(self):
+        if self.active_key == 'buy_a_cell':
+            return ('light_green', 'light_red')[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money < Globals.TEMP_VARS['MUST_PAY']]
+                #   KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type == 'ingame_continue_tax')
 class OwnCursor(Cursor):
     def __init__(self, color, rect):
         self.u_color = Globals.COLORS[color]
