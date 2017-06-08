@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -288,13 +288,13 @@ class MainScreen():
             self.new_turn()
         elif type == 'ingame_buy_a_cell':
             player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
-            if player.money >= Globals.TEMP_VARS['MUST_PAY']:
+            if player.money < Globals.TEMP_VARS['MUST_PAY']:
+                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
+            else:
                 self.change_owner_for_a_cell(player)
                 self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message(type)
                 self.ask_to_end_turn()
-            else:
-                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         elif type == 'ingame_cell_to_an_auction':
             self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
             self.save_step_indicators_state()
@@ -320,9 +320,13 @@ class MainScreen():
             Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
             self.auction_next_player()
         elif type in ('ingame_continue_tax', 'ingame_continue_income'):
-            self.objects['game_log'].add_message(type)
-            self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
-            self.ask_to_end_turn()
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            if player.money < -Globals.TEMP_VARS['MUST_PAY']:
+                self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
+            else:
+                self.objects['game_log'].add_message(type)
+                self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
+                self.ask_to_end_turn()
         elif type == 'ingame_continue_PAY_RENT':
             cur_turn = Globals.TEMP_VARS['cur_turn']
             player = Globals.PLAYERS[cur_turn]

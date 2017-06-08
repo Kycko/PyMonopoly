@@ -465,9 +465,16 @@ class MainCursor(Cursor):
             self.u_length = 0
             self.draw_rect()
     def underline_conditions(self):
-        if self.active_key == 'buy_a_cell':
-            return ('light_green', 'light_red')[Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money < Globals.TEMP_VARS['MUST_PAY']]
-                #   KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type == 'ingame_continue_tax')
+        KEY = self.active_key
+        if KEY == 'buy_a_cell':
+            cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+            MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
+        elif KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type == 'ingame_continue_tax':
+            cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+            MUST_PAY = -Globals.TEMP_VARS['MUST_PAY']
+        else: return None
+        if not cur_money < MUST_PAY and cur_money <= 2*MUST_PAY: return 'orange'
+        return ('light_green', 'light_red')[cur_money < MUST_PAY]
 class OwnCursor(Cursor):
     def __init__(self, color, rect):
         self.u_color = Globals.COLORS[color]
