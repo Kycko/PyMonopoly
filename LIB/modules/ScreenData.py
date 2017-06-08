@@ -492,7 +492,7 @@ class MainScreen():
             if 'error' in self.labels.keys():
                 self.labels.pop('error')
             check_trading = check_substring_in_dict_keys(self.labels, 'trading_input')
-            if check_trading:
+            if check_trading in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money'):
                 self.return_into_main_trading_menu(check_trading)
             elif 'state_selector' in self.menuitems.keys():
                 self.return_into_prop_manage_choose_field()
@@ -501,15 +501,15 @@ class MainScreen():
                     self.objects.pop('trade_summary')
                     if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
                 if 'auction' in Globals.TEMP_VARS.keys():
+                    self.disable_step_indicators()
                     key = 'target_cell_trading_info'
                     if key in self.labels.keys(): self.labels.pop(key)
                     key = 'text_cursor'
-                    if key in self.objects.keys(): self.objects.pop(key)
                     self.cancel_prop_manage()
                     for key in ('trading', 'property', 'prop_manage_CHANGED'):
                         if key in Globals.TEMP_VARS.keys():
                             Globals.TEMP_VARS.pop(key)
-                    self.return_to_auction_main(type)
+                    self.return_to_auction_main('return_auction_main')
                 else:
                     self.return_to_game_from_trading(type)
         elif type in ('trading_input_fields', 'trading_input_offer_money', 'trading_input_ask_for_money', 'trading_input_auction_bet'):
@@ -753,9 +753,11 @@ class MainScreen():
                 cell.owner = Globals.TEMP_VARS.pop('xxx')
     def return_to_auction_main(self, type):
         if type == 'return_auction_main':
+            Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
+            Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
             for key in ('target_cell_trading_info', 'trading_input_auction_bet'):
-                self.labels.pop(key)
-            self.objects.pop('text_cursor')
+                if key in self.labels.keys(): self.labels.pop(key)
+            if 'text_cursor' in self.objects.keys(): self.objects.pop('text_cursor')
         self.auction_next_player()
     def return_into_prop_manage_choose_field(self):
         self.labels['property_management_input'] = self.labels.pop('property_management_input_ready')
