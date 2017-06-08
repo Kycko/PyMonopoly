@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -245,7 +245,7 @@ class MainScreen():
     #--- Menu actions
     def action_call(self, key):
         # self.DEBUGGER_show_TEMP_VARS_keys()
-        if not self.error_msg_money_limits(key):
+        if not self.error_msg_money_limits(self.menuitems[key].type):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
                 self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -288,8 +288,9 @@ class MainScreen():
                 self.objects['game_log'].add_message(type)
                 self.new_turn()
             elif type == 'ingame_buy_a_cell':
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
                 self.change_owner_for_a_cell(player)
-                self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], -Globals.TEMP_VARS['MUST_PAY'])
+                self.change_player_money(player, -Globals.TEMP_VARS['MUST_PAY'])
                 self.objects['game_log'].add_message(type)
                 self.ask_to_end_turn()
             elif type == 'ingame_cell_to_an_auction':
@@ -1057,8 +1058,8 @@ class MainScreen():
         if menuitem_key in self.menuitems.keys():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
-    def error_msg_money_limits(self, key):
-        condition = self.cursor and self.cursor.uCOLOR == 'red27' and key in ('buy_a_cell', 'ingame_continue_tax', 'auction_up_bet')
+    def error_msg_money_limits(self, type):
+        condition = self.cursor and self.cursor.uCOLOR == 'red27' and type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
