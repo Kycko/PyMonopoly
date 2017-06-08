@@ -478,6 +478,9 @@ class MainCursor(Cursor):
         elif KEY == 'ingame_continue' and Globals.main_scr.menuitems[KEY].type == 'ingame_continue_PAY_RENT':
             cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
             MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
+        elif KEY == 'pay_money_to_exit_jail':
+            cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+            MUST_PAY = 50
         else: return None
         if not cur_money < MUST_PAY and cur_money <= 2*MUST_PAY: return 'orange'
         return ('light_green', 'red27')[cur_money < MUST_PAY]

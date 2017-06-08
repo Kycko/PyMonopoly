@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (100, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -252,6 +252,8 @@ class MainScreen():
                 player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
                 points = Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']
                 if type == 'roll_the_dice_to_exit_jail' and Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2']:
+                    if 'error' in self.labels.keys():
+                        self.labels.pop('error')
                     self.clear_main_menu_entries()
                     player.exit_jail_attempts -= 1
                     self.objects['game_log'].add_message('roll_the_dice_to_exit_jail')
@@ -1059,7 +1061,7 @@ class MainScreen():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
     def error_msg_money_limits(self, type):
-        condition = self.cursor and self.cursor.uCOLOR == 'red27' and type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet')
+        condition = self.cursor and self.cursor.uCOLOR == 'red27' and type in ('ingame_buy_a_cell', 'ingame_continue_tax', 'ingame_continue_PAY_RENT', 'trading_input_auction_bet', 'pay_money_to_exit_jail')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
