@@ -364,9 +364,10 @@ class MainScreen():
                     self.ask_to_end_turn()
                     return None
                 elif obj[0].type == 'repair':
-                    Globals.TEMP_VARS['MUST_PAY'] = - Globals.TEMP_VARS.pop('repair_cost_SAVE')
-                    self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
-                    self.objects['game_log'].add_message('chest_income')
+                    if Globals.TEMP_VARS.pop('repair_cost_SAVE'):
+                        Globals.TEMP_VARS['MUST_PAY'] = - Globals.TEMP_VARS.pop('repair_cost_SAVE')
+                        self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
+                        self.objects['game_log'].add_message('chest_income')
                     self.ask_to_end_turn()
                 elif obj[0].type == 'birthday':
                     self.disable_central_labels()
@@ -1179,12 +1180,6 @@ class MainScreen():
         if cell.group in ('jail', 'skip', 'gotojail', 'start', 'income', 'tax', 'chest', 'chance'):
             self.show_special_cell_info(cell)
             group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
-            if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
-                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
-                obj = self.objects['gamefield'].chests_and_chances[group + 's']
-                obj.append(obj.pop(0))
-            else:
-                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_'+group, 'ingame_main', 5)
             property_management_number = 6
             if cell.group in ('chest', 'chance'):
                 obj = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0]
@@ -1199,6 +1194,15 @@ class MainScreen():
                 property_management_condition = (obj.type == 'income' and obj.modifier[0] < 0) or obj.type == 'pay_each'
             else:
                 property_management_condition = cell.group == 'tax'
+            if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], 'ingame_continue_gotojail', 'ingame_main', 5)
+                obj = self.objects['gamefield'].chests_and_chances[group + 's']
+                obj.append(obj.pop(0))
+            else:
+                addition = ''
+                if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'repair':
+                    addition = ' (' + str(Globals.TEMP_VARS['repair_cost_SAVE']) + ')'
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
         else:
             if cell.owner:

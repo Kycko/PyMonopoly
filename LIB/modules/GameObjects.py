@@ -234,7 +234,7 @@ class GameLog(InfoWindow):
     def add_message(self, type):
         if type in ('roll_the_dice', 'chest_goto'):
             text = Globals.GAMELOG_TRANSLATION[(2, 10)[type == 'chest_goto']].replace('%', str(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field))
-            if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']:
+            if Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2'] and type == 'roll_the_dice':
                 text += Globals.GAMELOG_TRANSLATION[23]
         elif type == 'change_player':
             text = Globals.GAMELOG_TRANSLATION[1].replace('%', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
