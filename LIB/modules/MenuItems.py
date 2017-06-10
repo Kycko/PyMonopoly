@@ -491,9 +491,15 @@ class MainCursor(Cursor):
             elif obj[0].type == 'repair':
                 cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
                 MUST_PAY = Globals.TEMP_VARS['repair_cost_SAVE']
+            elif obj[0].type == 'pay_each':
+                cur_money = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].money
+                MUST_PAY = obj[0].modifier[0] * (len(Globals.PLAYERS)-1)
             else:
                 self.uCondition = False
                 return None
+        elif KEY == 'roll_the_dice' and Globals.main_scr.menuitems[KEY].type[:12] == 'pay_birthday':
+            cur_money = Globals.TEMP_VARS['pay_birthday'][0].money
+            MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
         else:
             self.uCondition = False
             return None

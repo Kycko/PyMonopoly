@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (200, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
