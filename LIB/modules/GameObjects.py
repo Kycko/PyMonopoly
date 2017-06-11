@@ -382,6 +382,43 @@ class TradeSummary(InfoWindow):
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
         return y_pos + (14, 15)[key == 'splitter']
+class PropManageSummary(InfoWindow):
+    def __init__(self):
+        self.text = {}
+        self.make_header()
+        pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
+        new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
+        InfoWindow.__init__(self, pos, new_pos)
+    def make_header(self):
+        obj = self.text
+        for key in ('info', 'splitter'):
+            if key == 'info':
+                text = check_cur_prop_management()
+                text = text.name
+                text_type = 'prop_manage_summary_name'
+            else:
+                text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
+                text_type = 'prop_manage_summary_splitter'
+            obj[key] = AlphaText(text, text_type)
+            obj[key].rect.topleft = (100, 14*(key == 'splitter'))
+            obj[key].new_pos = (0, obj[key].rect.y)
+    def render(self):
+        InfoWindow.RErender(self)
+        obj = self.text
+        y_pos = 0
+        for key in ('info', 'splitter'):
+            y_pos = self.render_element(y_pos, obj, key)
+        for i in sorted(obj):
+            if i not in ('info', 'splitter') and obj[i].symbols:
+                y_pos = self.render_element(y_pos, obj, i)
+        InfoWindow.render(self)
+    def render_element(self, y_pos, obj, key):
+        if obj[key].alpha == 15:
+            obj[key].rect.y = y_pos
+        obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
+        obj[key].move_text()
+        self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
+        return y_pos + (14, 15)[key == 'splitter']
 class ChestOrChance():
     def __init__(self, type, text):
         self.modifier = type.split()[1:]

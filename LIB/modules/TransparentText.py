@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
-from GlobalFuncs import slight_animation_count_pos
+from GlobalFuncs import check_cur_prop_management, slight_animation_count_pos
 from pygame import Rect, Surface
 
 class AlphaText():
@@ -18,7 +18,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'prop_manage_summary_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -28,7 +28,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_24']
         elif self.group == 'stats_common':
             self.font = Globals.FONTS['ubuntu_20']
-        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name', 'auction_cur_bet') or 'stats_table' in self.group or 'ERROR' in self.group:
+        elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name', 'prop_manage_summary_name', 'auction_cur_bet') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'music_and_sound_switches':
             self.font = Globals.FONTS['ume_16']
@@ -60,6 +60,9 @@ class AlphaText():
             #     self.color = Globals.TEMP_VARS['auction']['player'].color
             # else:
             self.color = Globals.COLORS['grey63']
+        elif self.group == 'prop_manage_summary_name':
+            player = check_cur_prop_management()
+            self.color = player.color
         elif self.group in ('trade_summary_trader_name', 'trade_summary_tradingwith_name'):
             self.color = Globals.TEMP_VARS['trading'][self.group.split('_')[2]]['info'].color
         elif self.group in ('authors', 'stats_switch', 'from_game_return_to_menu', 'show_menu', 'show_prev_trades', 'pl_money_info'):
@@ -92,7 +95,7 @@ class AlphaText():
         if self.group[:16] == 'gamelog_message_':
             self.x = 0
             self.rect = Rect((0, 0+18*number), (0, 0))
-        elif self.group[:14] == 'trade_summary_':
+        elif self.group[:14] in ('trade_summary_', 'prop_manage_su'):
             self.x = 0
             self.rect = Rect((0, 0), (0, 0))
         elif self.group == 'last_trade_info':

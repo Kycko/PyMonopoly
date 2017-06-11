@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FieldCellsData, GameMechanics, Globals, pygame, random
-from GameObjects import GameField, GameLog, TradeSummary
+from GameObjects import GameField, GameLog, PropManageSummary, TradeSummary
 from GlobalFuncs import *
 from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
@@ -408,6 +408,7 @@ class MainScreen():
                     if cell.owner == player.name:
                         Globals.TEMP_VARS['property'][cell.number] = cell.buildings
                 Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
+                self.objects['prop_manage_summary'] = PropManageSummary()
                 self.entering_property_menu()
                 self.clear_main_menu_entries(('return'))
                 self.objects['gamefield'].render_cell_numbers('prop_manage')
@@ -504,6 +505,8 @@ class MainScreen():
                     if 'trade_summary' in self.objects.keys():
                         self.objects.pop('trade_summary')
                         if 'prev_trade' in self.labels.keys(): self.labels.pop('prev_trade')
+                    elif 'prop_manage_summary' in self.objects.keys():
+                        self.objects.pop('prop_manage_summary')
                     if 'auction' in Globals.TEMP_VARS.keys():
                         self.disable_step_indicators()
                         key = 'target_cell_trading_info'
