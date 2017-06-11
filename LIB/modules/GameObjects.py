@@ -385,6 +385,7 @@ class TradeSummary(InfoWindow):
 class PropManageSummary(InfoWindow):
     def __init__(self):
         self.text = {}
+        self.storage = {}
         self.make_header()
         pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].pos[1])
         new_pos = (Globals.RESOLUTION[0]-290, Globals.main_scr.objects['game_log'].new_pos[1])
@@ -413,32 +414,43 @@ class PropManageSummary(InfoWindow):
             #     self.rm_field(i)
     def add_field(self, num):
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED'][num]
+        self.storage[num] = temp_var
         pics = prop_manage_pictures().replace(u'●', u'X')
-        text = str(num)
-        state = {}
+        state = []
         for i in range(2):
             if Globals.main_scr.objects['gamefield'].cells[num].group in ('railroad', 'service') and temp_var[i] > -1:
-                state[i] = pics[1]
+                state.append(pics[1])
             else:
-                state[i] = pics[temp_var[i]+1]
-        text += ' '*2*(len(text) == 1) + ':   ' + state[0] + ' -> ' + state[1] + 7*' ' + ('', '+')[temp_var[2]>0] + str(temp_var[2])
-        self.text[num] = AlphaText(text, 'prop_manage_summary_fields')
+                state.append(pics[temp_var[i]+1])
+        self.text[num] = [AlphaText(str(num), 'prop_manage_summary_fields'),
+                          AlphaText(':', 'prop_manage_summary_fields'),
+                          AlphaText(state[0] + ' -> ' + state[1], 'prop_manage_summary_fields'),
+                          AlphaText(str(temp_var[2]), 'prop_manage_summary_fields')]
     def render(self):
         InfoWindow.RErender(self)
         obj = self.text
         y_pos = 0
         for key in ('info', 'splitter'):
-            y_pos = self.render_element(y_pos, obj, key)
-        for i in sorted(obj):
-            if i not in ('info', 'splitter') and obj[i].symbols:
-                y_pos = self.render_element(y_pos, obj, i)
+            y_pos = self.render_header(y_pos, obj, key)
+        for key in sorted(obj):
+            if key not in ('info', 'splitter'):
+                y_pos = self.render_element(y_pos, obj, key)
         InfoWindow.render(self)
-    def render_element(self, y_pos, obj, key):
+    def render_header(self, y_pos, obj, key):
         if obj[key].alpha == 15:
             obj[key].rect.y = y_pos
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
+        return y_pos + 15
+    def render_element(self, y_pos, obj, key):
+        for i in range(len(obj[key])):
+            if obj[key][i].alpha == 15:
+                obj[key][i].rect.y = y_pos
+            obj[key][i].change_new_pos((0, y_pos - obj[key][i].rect.y))
+            obj[key][i].move_text()
+            Xpos = (0, 20, 40, 100)[i]
+            self.surf.blit(obj[key][i].set_alpha(), (Xpos, obj[key][i].rect.y))
         return y_pos + 15
 class ChestOrChance():
     def __init__(self, type, text):
