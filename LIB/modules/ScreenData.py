@@ -407,7 +407,7 @@ class MainScreen():
                 for cell in self.objects['gamefield'].cells:
                     if cell.owner == player.name:
                         Globals.TEMP_VARS['property'][cell.number] = cell.buildings
-                Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
+                Globals.TEMP_VARS['prop_manage_CHANGED'] = {'TOTAL' : 0}
                 self.objects['prop_manage_summary'] = PropManageSummary()
                 self.entering_property_menu()
                 self.clear_main_menu_entries(('return'))

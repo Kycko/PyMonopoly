@@ -392,13 +392,16 @@ class PropManageSummary(InfoWindow):
         InfoWindow.__init__(self, pos, new_pos)
     def make_header(self):
         obj = self.text
-        for key in ('info', 'splitter1', 'splitter2', 'total'):
+        for key in ('info', 'splitter1', 'splitter2', 'total', 'totalmoney'):
             if key == 'info':
                 text = check_cur_prop_management()
                 text = text.name
                 text_type = 'prop_manage_summary_name'
             elif key == 'total':
                 text = 'TOTAL:'
+                text_type = 'prop_manage_summary_fields'
+            elif key == 'totalmoney':
+                text = str(Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL'])
                 text_type = 'prop_manage_summary_fields'
             else:
                 text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
@@ -416,19 +419,20 @@ class PropManageSummary(InfoWindow):
             # elif i in self.text.keys():
             #     self.rm_field(i)
     def add_field(self, num):
-        temp_var = Globals.TEMP_VARS['prop_manage_CHANGED'][num]
-        self.storage[num] = temp_var
+        temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
+        self.storage[num] = temp_var[num]
         pics = prop_manage_pictures().replace(u'●', u'X')
         state = []
         for i in range(2):
-            if Globals.main_scr.objects['gamefield'].cells[num].group in ('railroad', 'service') and temp_var[i] > -1:
+            if Globals.main_scr.objects['gamefield'].cells[num].group in ('railroad', 'service') and temp_var[num][i] > -1:
                 state.append(pics[1])
             else:
-                state.append(pics[temp_var[i]+1])
+                state.append(pics[temp_var[num][i]+1])
         self.text[num] = [AlphaText(str(num), 'prop_manage_summary_fields'),
                           AlphaText(':', 'prop_manage_summary_fields'),
                           AlphaText(state[0] + ' -> ' + state[1], 'prop_manage_summary_fields'),
-                          AlphaText(('', '+')[temp_var[2]>0] + str(temp_var[2]), 'prop_manage_summary_fields')]
+                          AlphaText(('', '+')[temp_var[num][2]>0] + str(temp_var[num][2]), 'prop_manage_summary_fields')]
+        self.text['totalmoney'].update_text(('', '+')[temp_var['TOTAL']>0] + str(temp_var['TOTAL']))
     def render(self):
         InfoWindow.RErender(self)
         obj = self.text
@@ -438,8 +442,9 @@ class PropManageSummary(InfoWindow):
         for key in sorted(obj):
             if key in range(40):
                 y_pos = self.render_element(y_pos, obj, key)
-        if len(self.text) < 5: y_pos -= 15
-        for key in ('splitter2', 'total'):
+        if len(self.text) < 6: y_pos -= 15
+        for key in ('splitter2', 'total', 'totalmoney'):
+            if key == 'totalmoney': y_pos -= 15
             y_pos = self.render_header(y_pos, obj, key)
         InfoWindow.render(self)
     def render_header(self, y_pos, obj, key):
@@ -447,7 +452,9 @@ class PropManageSummary(InfoWindow):
             obj[key].rect.y = y_pos
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
-        self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
+        if key == 'totalmoney': Xpos = 160-obj[key].rect.w
+        else: Xpos = 0
+        self.surf.blit(obj[key].set_alpha(), (Xpos, obj[key].rect.y))
         return y_pos + 15
     def render_element(self, y_pos, obj, key):
         for i in range(len(obj[key])):
