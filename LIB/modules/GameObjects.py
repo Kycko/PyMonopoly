@@ -407,8 +407,10 @@ class PropManageSummary(InfoWindow):
                 text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
                 text_type = 'prop_manage_summary_splitter'
             obj[key] = AlphaText(text, text_type)
-            obj[key].rect.topleft = (100, 0)
-            obj[key].new_pos = (0, 0)
+            if key == 'totalmoney': Xpos = 160 - obj[key].rect.w
+            else: Xpos = 0
+            obj[key].rect.topleft = (Xpos + 100, 0)
+            obj[key].new_pos = (Xpos, 0)
     def recheck(self):
         for i in Globals.TEMP_VARS['property'].keys():
             if i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
@@ -416,8 +418,9 @@ class PropManageSummary(InfoWindow):
                     self.add_field(i)
             #     elif self.text[i] != Globals.TEMP_VARS['prop_manage_CHANGED'][i]:
             #         self.upd_field(i)
-            # elif i in self.text.keys():
-            #     self.rm_field(i)
+            elif i in self.text.keys():
+                self.storage.pop(i)
+                self.text.pop(i)
     def add_field(self, num):
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
         self.storage[num] = temp_var[num]
@@ -432,7 +435,9 @@ class PropManageSummary(InfoWindow):
                           AlphaText(':', 'prop_manage_summary_fields'),
                           AlphaText(state[0] + ' -> ' + state[1], 'prop_manage_summary_fields'),
                           AlphaText(('', '+')[temp_var[num][2]>0] + str(temp_var[num][2]), 'prop_manage_summary_fields')]
+        TMP = self.text['totalmoney'].rect.w
         self.text['totalmoney'].update_text(('', '+')[temp_var['TOTAL']>0] + str(temp_var['TOTAL']))
+        self.text['totalmoney'].change_new_pos((TMP - self.text['totalmoney'].rect.w, 0))
     def render(self):
         InfoWindow.RErender(self)
         obj = self.text
@@ -452,9 +457,7 @@ class PropManageSummary(InfoWindow):
             obj[key].rect.y = y_pos
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
-        if key == 'totalmoney': Xpos = 160-obj[key].rect.w
-        else: Xpos = 0
-        self.surf.blit(obj[key].set_alpha(), (Xpos, obj[key].rect.y))
+        self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
         return y_pos + 15
     def render_element(self, y_pos, obj, key):
         for i in range(len(obj[key])):
