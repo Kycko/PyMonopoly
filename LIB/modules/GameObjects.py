@@ -425,7 +425,7 @@ class PropManageSummary(InfoWindow):
         self.text[num] = [AlphaText(str(num), 'prop_manage_summary_fields'),
                           AlphaText(':', 'prop_manage_summary_fields'),
                           AlphaText(state[0] + ' -> ' + state[1], 'prop_manage_summary_fields'),
-                          AlphaText(str(temp_var[2]), 'prop_manage_summary_fields')]
+                          AlphaText(('', '+')[temp_var[2]>0] + str(temp_var[2]), 'prop_manage_summary_fields')]
     def render(self):
         InfoWindow.RErender(self)
         obj = self.text
@@ -449,7 +449,7 @@ class PropManageSummary(InfoWindow):
                 obj[key][i].rect.y = y_pos
             obj[key][i].change_new_pos((0, y_pos - obj[key][i].rect.y))
             obj[key][i].move_text()
-            Xpos = (0, 20, 40, 100)[i]
+            Xpos = (0, 20, 40, 160-obj[key][i].rect.w)[i]
             self.surf.blit(obj[key][i].set_alpha(), (Xpos, obj[key][i].rect.y))
         return y_pos + 15
 class ChestOrChance():
