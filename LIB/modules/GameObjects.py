@@ -392,17 +392,20 @@ class PropManageSummary(InfoWindow):
         InfoWindow.__init__(self, pos, new_pos)
     def make_header(self):
         obj = self.text
-        for key in ('info', 'splitter'):
+        for key in ('info', 'splitter1', 'splitter2', 'total'):
             if key == 'info':
                 text = check_cur_prop_management()
                 text = text.name
                 text_type = 'prop_manage_summary_name'
+            elif key == 'total':
+                text = 'TOTAL:'
+                text_type = 'prop_manage_summary_fields'
             else:
                 text = '- - - - - - - - - - - - - - - - - - - - - - - - -'
                 text_type = 'prop_manage_summary_splitter'
             obj[key] = AlphaText(text, text_type)
-            obj[key].rect.topleft = (100, 14*(key == 'splitter'))
-            obj[key].new_pos = (0, obj[key].rect.y)
+            obj[key].rect.topleft = (100, 0)
+            obj[key].new_pos = (0, 0)
     def recheck(self):
         for i in Globals.TEMP_VARS['property'].keys():
             if i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
@@ -430,11 +433,14 @@ class PropManageSummary(InfoWindow):
         InfoWindow.RErender(self)
         obj = self.text
         y_pos = 0
-        for key in ('info', 'splitter'):
+        for key in ('info', 'splitter1'):
             y_pos = self.render_header(y_pos, obj, key)
         for key in sorted(obj):
-            if key not in ('info', 'splitter'):
+            if key in range(40):
                 y_pos = self.render_element(y_pos, obj, key)
+        if len(self.text) < 5: y_pos -= 15
+        for key in ('splitter2', 'total'):
+            y_pos = self.render_header(y_pos, obj, key)
         InfoWindow.render(self)
     def render_header(self, y_pos, obj, key):
         if obj[key].alpha == 15:
