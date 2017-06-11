@@ -10,7 +10,7 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 #--- Game version and resolution
-VERSION = '0.6.0-dev'
+VERSION = '0.7.0-dev'
 RESOLUTION = check_user_monitor(1200, 700)
 #--- Colors, directories, files, fonts, pictures and languages
 COLORS = {'black'               : pygame.Color('black'),
@@ -27,7 +27,7 @@ COLORS = {'black'               : pygame.Color('black'),
           'grey22'              : pygame.Color(200, 200, 200),
           'grey63'              : pygame.Color(95, 95, 95),
           'magenta'             : pygame.Color('magenta'),
-          'light_magenta'        : pygame.Color(210, 71, 140),
+          'light_magenta'       : pygame.Color(210, 71, 140),
           'deep_magenta'        : pygame.Color(210, 59, 128),
           'orange'              : pygame.Color(223, 138, 55),
           'pink'                : pygame.Color(254, 126, 185),
