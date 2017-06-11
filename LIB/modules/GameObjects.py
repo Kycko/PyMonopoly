@@ -421,6 +421,7 @@ class PropManageSummary(InfoWindow):
             elif i in self.text.keys():
                 self.storage.pop(i)
                 self.text.pop(i)
+                self.upd_TOTAL()
     def add_field(self, num):
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
         self.storage[num] = temp_var[num]
@@ -435,8 +436,11 @@ class PropManageSummary(InfoWindow):
                           AlphaText(':', 'prop_manage_summary_fields'),
                           AlphaText(state[0] + ' -> ' + state[1], 'prop_manage_summary_fields'),
                           AlphaText(('', '+')[temp_var[num][2]>0] + str(temp_var[num][2]), 'prop_manage_summary_fields')]
+        self.upd_TOTAL()
+    def upd_TOTAL(self):
         TMP = self.text['totalmoney'].rect.w
-        self.text['totalmoney'].update_text(('', '+')[temp_var['TOTAL']>0] + str(temp_var['TOTAL']))
+        temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL']
+        self.text['totalmoney'].update_text(('', '+')[temp_var > 0] + str(temp_var))
         self.text['totalmoney'].change_new_pos((TMP - self.text['totalmoney'].rect.w, 0))
     def render(self):
         InfoWindow.RErender(self)
