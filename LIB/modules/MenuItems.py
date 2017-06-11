@@ -273,7 +273,7 @@ class MenuSelector():
             self.active = gamefield.cells[num].buildings + 1
             if group in ('railroad', 'service') and self.active > 0:
                 self.active = 1
-            text = (u'●○➊➋➌➍❖          ', u'●○➊➋➌❖          ')[Globals.TEMP_VARS['cur_game']]
+            text = prop_manage_pictures()
         self.items = [AlphaText(text[i], type, i) for i in range(itemcount_start, itemcount_end)]
         self.cursor_inflate = (10, 16)
         self.rects = [pygame.Rect(item.rect.inflate(self.cursor_inflate)) for item in self.items]

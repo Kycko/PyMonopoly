@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (200, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -441,6 +441,8 @@ class MainScreen():
                     if key in self.labels.keys():
                         self.labels.pop(key)
                 self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
+                if 'prop_manage_summary' in self.objects.keys():
+                    self.objects.pop('prop_manage_summary')
                 self.return_to_game_from_trading(self.menuitems['return'].type)
             elif type == 'cell_state_SELECTOR':
                 CELL = int(self.labels['property_management_input_ready'].symbols)
@@ -1131,6 +1133,7 @@ class MainScreen():
                     temp_var.pop(i)
                     CELL.step_indicator_visible = False
                 temp_var['TOTAL'] += MONEY
+        self.objects['prop_manage_summary'].recheck()
         self.DEBUGGER_prop_management_money_changes()
     #--- Game mechanics
     def ask_to_end_turn(self):

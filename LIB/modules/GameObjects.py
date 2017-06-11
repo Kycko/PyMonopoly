@@ -402,6 +402,27 @@ class PropManageSummary(InfoWindow):
             obj[key] = AlphaText(text, text_type)
             obj[key].rect.topleft = (100, 14*(key == 'splitter'))
             obj[key].new_pos = (0, obj[key].rect.y)
+    def recheck(self):
+        for i in Globals.TEMP_VARS['property'].keys():
+            if i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
+                if i not in self.text.keys():
+                    self.add_field(i)
+            #     elif self.text[i] != Globals.TEMP_VARS['prop_manage_CHANGED'][i]:
+            #         self.upd_field(i)
+            # elif i in self.text.keys():
+            #     self.rm_field(i)
+    def add_field(self, num):
+        temp_var = Globals.TEMP_VARS['prop_manage_CHANGED'][num]
+        pics = prop_manage_pictures().replace(u'●', u'X')
+        text = str(num)
+        state = {}
+        for i in range(2):
+            if Globals.main_scr.objects['gamefield'].cells[num].group in ('railroad', 'service') and temp_var[i] > -1:
+                state[i] = pics[1]
+            else:
+                state[i] = pics[temp_var[i]+1]
+        text += ' '*2*(len(text) == 1) + ':   ' + state[0] + ' -> ' + state[1] + 7*' ' + ('', '+')[temp_var[2]>0] + str(temp_var[2])
+        self.text[num] = AlphaText(text, 'prop_manage_summary_fields')
     def render(self):
         InfoWindow.RErender(self)
         obj = self.text
@@ -418,7 +439,7 @@ class PropManageSummary(InfoWindow):
         obj[key].change_new_pos((0, y_pos - obj[key].rect.y))
         obj[key].move_text()
         self.surf.blit(obj[key].set_alpha(), obj[key].rect.topleft)
-        return y_pos + (14, 15)[key == 'splitter']
+        return y_pos + 15
 class ChestOrChance():
     def __init__(self, type, text):
         self.modifier = type.split()[1:]

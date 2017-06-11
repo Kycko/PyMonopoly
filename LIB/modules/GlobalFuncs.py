@@ -116,6 +116,8 @@ def check_cur_prop_management():
         return Globals.TEMP_VARS['pay_birthday'][0]
     else:
         return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+def prop_manage_pictures():
+    return (u'●○➊➋➌➍❖          ', u'●○➊➋➌❖          ')[Globals.TEMP_VARS['cur_game']]
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:
