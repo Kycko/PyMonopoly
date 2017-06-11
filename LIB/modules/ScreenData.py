@@ -1070,7 +1070,10 @@ class MainScreen():
             self.menuitems[menuitem_key].text.color = Globals.COLORS[('white', 'grey63')[SHOW]]
             self.menuitems[menuitem_key].text.RErender()
     def error_msg_money_limits(self, key):
-        condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail')
+        if key == 'accept_all_prop_management':
+            condition = self.objects['prop_manage_summary'].text['total'].color == Globals.COLORS['light_red']
+        else:
+            condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
