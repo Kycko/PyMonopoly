@@ -414,10 +414,8 @@ class PropManageSummary(InfoWindow):
     def recheck(self):
         for i in Globals.TEMP_VARS['property'].keys():
             if i in Globals.TEMP_VARS['prop_manage_CHANGED'].keys():
-                if i not in self.text.keys():
+                if i not in self.text.keys() or self.storage[i] != Globals.TEMP_VARS['prop_manage_CHANGED'][i]:
                     self.add_field(i)
-            #     elif self.text[i] != Globals.TEMP_VARS['prop_manage_CHANGED'][i]:
-            #         self.upd_field(i)
             elif i in self.text.keys():
                 self.storage.pop(i)
                 self.text.pop(i)
