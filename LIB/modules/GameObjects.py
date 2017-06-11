@@ -439,6 +439,12 @@ class PropManageSummary(InfoWindow):
         TMP = self.text['totalmoney'].rect.w
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']['TOTAL']
         self.text['totalmoney'].update_text(('', '+')[temp_var > 0] + str(temp_var))
+        if temp_var > 0: color = 'light_green'
+        elif temp_var == 0: color = 'white'
+        elif check_cur_prop_management().money < -temp_var: color = 'light_red'
+        else: color = 'orange'
+        self.text['total'].change_color(Globals.COLORS[color])
+        self.text['totalmoney'].change_color(Globals.COLORS[color])
         self.text['totalmoney'].change_new_pos((TMP - self.text['totalmoney'].rect.w, 0))
     def render(self):
         InfoWindow.RErender(self)
