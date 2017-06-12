@@ -257,6 +257,8 @@ class MainScreen():
                     if cell.buildings > 0 and cell.group not in ('railroad', 'service'):
                         MON += cell.buildings * cell.build_cost / 2
                         cell.buildings = 0
+                    if cell.buildings > -1:
+                        MON += cell.buy_cost / 2
             self.change_player_money(CUR, MON)
             if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
                 for i in range(len(Globals.PLAYERS)):
@@ -354,6 +356,8 @@ class MainScreen():
                 self.change_player_money(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']], Globals.TEMP_VARS['MUST_PAY'])
                 self.ask_to_end_turn()
             elif type == 'ingame_continue_PAY_RENT':
+                if 'double_rails' in Globals.TEMP_VARS.keys():
+                    Globals.TEMP_VARS.pop('double_rails')
                 cur_turn = Globals.TEMP_VARS['cur_turn']
                 player = Globals.PLAYERS[cur_turn]
                 cell = self.objects['gamefield'].cells[player.cur_field]
@@ -781,17 +785,21 @@ class MainScreen():
         elif type == 'return_new_turn':
             self.new_turn()
         elif type == 'return_player_on_a_new_cell':
-            self.disable_central_labels()
-            self.labels['dices'] = GameMechanics.show_dices_picture()
-            if cell.owner and 'cur_field_owner' in Globals.TEMP_VARS.keys() and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
-                Globals.TEMP_VARS['xxx'] = cell.owner
-                cell.owner = Globals.TEMP_VARS['cur_field_owner']
-            if 'auction' in Globals.TEMP_VARS.keys():
-                self.labels.pop('dices')
-                self.auction_next_player()
-            else: self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
-            if 'xxx' in Globals.TEMP_VARS.keys():
-                cell.owner = Globals.TEMP_VARS.pop('xxx')
+            player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+            if player.cur_field == 10 and player.exit_jail_attempts != None:
+                self.new_turn()
+            else:
+                self.disable_central_labels()
+                self.labels['dices'] = GameMechanics.show_dices_picture()
+                if cell.owner and 'cur_field_owner' in Globals.TEMP_VARS.keys() and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
+                    Globals.TEMP_VARS['xxx'] = cell.owner
+                    cell.owner = Globals.TEMP_VARS['cur_field_owner']
+                if 'auction' in Globals.TEMP_VARS.keys():
+                    self.labels.pop('dices')
+                    self.auction_next_player()
+                else: self.player_on_a_new_cell(self.objects['gamefield'].cells[field_num])
+                if 'xxx' in Globals.TEMP_VARS.keys():
+                    cell.owner = Globals.TEMP_VARS.pop('xxx')
     def return_to_auction_main(self, type):
         if type == 'return_auction_main':
             Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
@@ -1212,7 +1220,6 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        print(self.objects['gamefield'].cells[39].buildings)
         self.DEBUGGER_chests_and_chances()
         PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.clear_main_menu_entries()
@@ -1265,8 +1272,10 @@ class MainScreen():
                             Globals.TEMP_VARS['MUST_PAY'] = (Globals.TEMP_VARS['dice1'] + Globals.TEMP_VARS['dice2']) * state
                         else:
                             Globals.TEMP_VARS['MUST_PAY'] = cell.rent_costs[cell.buildings]
-                            if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type != 'goto' and self.objects['gamefield'].chests_and_chances['chances'][0].modifier != [5]):
+                            if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and 'double_rails' in Globals.TEMP_VARS.keys()) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type != 'goto' and self.objects['gamefield'].chests_and_chances['chances'][0].modifier != [5]):
                                 Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
+                                if cell.group == 'railroad':
+                                    Globals.TEMP_VARS['double_rails'] = True
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
                     if PLAYER.money < Globals.TEMP_VARS['MUST_PAY'] and check_bankrupt(PLAYER):
                         addition = Globals.TRANSLATION[100]
