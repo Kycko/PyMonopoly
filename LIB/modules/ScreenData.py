@@ -1117,7 +1117,7 @@ class MainScreen():
         for cell in self.objects['gamefield'].cells:
             if cell.group == group:
                 counter += 1
-                if cell.owner == player:
+                if cell.owner == player and not (cell.group in ('railroad', 'service') and cell.buildings == -1):
                     data.append(cell)
         self.objects['gamefield'].groups_monopolies[group] = ('', player)[counter == len(data)]
         return data
@@ -1293,7 +1293,7 @@ class MainScreen():
             cell.color = Globals.COLORS['grey22']
             cells = self.check_group_owners(cell.group, '')
         for group_cell in cells:
-            if group_cell.group in ('service', 'railroad'):
+            if group_cell.group in ('service', 'railroad') and group_cell.buildings != -1:
                 group_cell.buildings = len(cells) - 1
             self.objects['gamefield'].RErender_a_cell(group_cell.number)
             self.menuitems['fieldcell_'+str(group_cell.number)].tooltip.RErender(group_cell.buildings+1)
