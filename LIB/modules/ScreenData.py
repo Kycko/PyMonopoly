@@ -1182,6 +1182,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
+        PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.DEBUGGER_chests_and_chances()
         self.clear_main_menu_entries()
         if cell.NAME:
@@ -1195,12 +1196,12 @@ class MainScreen():
                 if obj.type == 'repair' and 'repair_cost_SAVE' not in Globals.TEMP_VARS.keys():
                     Globals.TEMP_VARS['repair_cost_SAVE'] = 0
                     for i in self.objects['gamefield'].cells:
-                        if i.group in range(9) and i.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name and i.buildings > 0:
+                        if i.group in range(9) and i.owner == PLAYER.name and i.buildings > 0:
                             if i.buildings == 5 - Globals.TEMP_VARS['cur_game']:
                                 Globals.TEMP_VARS['repair_cost_SAVE'] += obj.modifier[1]
                             else:
                                 Globals.TEMP_VARS['repair_cost_SAVE'] += i.buildings * obj.modifier[0]
-                property_management_condition = (obj.type == 'income' and obj.modifier[0] < 0) or obj.type == 'pay_each'
+                property_management_condition = (obj.type == 'income' and obj.modifier[0] < 0) or obj.type in ('pay_each', 'repair')
             else:
                 property_management_condition = cell.group == 'tax'
             if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'goto_jail':
@@ -1210,13 +1211,14 @@ class MainScreen():
             else:
                 addition = ''
                 if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'repair':
-                    addition = ' (' + str(Globals.TEMP_VARS['repair_cost_SAVE']) + ')'
+                    addition = ' ($' + str(Globals.TEMP_VARS['repair_cost_SAVE']) + ')'
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
         else:
             if cell.owner:
+                addition = ''
                 text = Globals.TRANSLATION[45] + cell.owner
-                if cell.buildings < 0 or cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name:
+                if cell.buildings < 0 or cell.owner == PLAYER.name:
                     type = 'ingame_continue_NO'
                     if cell.buildings < 0:
                         self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[96], 'target_cell_info', 2)
@@ -1234,14 +1236,16 @@ class MainScreen():
                             if (not cell.buildings and self.objects['gamefield'].groups_monopolies[cell.group]) or (cell.group == 'railroad' and not cell.step_indicator_visible and self.objects['gamefield'].chests_and_chances['chances'][0].type != 'goto' and self.objects['gamefield'].chests_and_chances['chances'][0].modifier != [5]):
                                 Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['MUST_PAY'] * 2
                     self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[50] + str(Globals.TEMP_VARS['MUST_PAY']), 'target_cell_info', 2)
-                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49], type, 'ingame_main', 6)
+                    if PLAYER.money < Globals.TEMP_VARS['MUST_PAY'] and check_bankrupt(PLAYER):
+                        addition = Globals.TRANSLATION[100]
+                self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49]+addition, type, 'ingame_main', 6)
             else:
                 text = Globals.TRANSLATION[45] + Globals.TRANSLATION[46]
                 Globals.TEMP_VARS['MUST_PAY'] = cell.buy_cost
                 self.menuitems.update({'buy_a_cell'         : MenuItem(Globals.TRANSLATION[47] + str(cell.buy_cost)+')', 'ingame_buy_a_cell', 'ingame_main', 5),
                                        'cell_to_an_auction' : MenuItem(Globals.TRANSLATION[48], 'ingame_cell_to_an_auction', 'ingame_main', 6)})
             property_management_number = 7
-            property_management_condition = not(cell.buildings < 0 or cell.owner == Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
+            property_management_condition = not(cell.buildings < 0 or cell.owner == PLAYER.name)
             self.labels['target_cell_owner'] = AlphaText(text, 'target_cell_owner', 1)
         self.show_property_management_menuitems(property_management_number, property_management_condition)
         self.cursor.screen_switched(self.menuitems, ('ingame_buy_or_auction', 'ingame_continue')['ingame_continue' in self.menuitems.keys()])
