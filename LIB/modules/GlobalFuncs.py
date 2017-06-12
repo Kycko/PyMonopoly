@@ -71,6 +71,12 @@ def add_new_player(human):
                                   human))
 def create_players_list():
     Globals.PLAYERS = [Player(Globals.SETTINGS['pl_name'], Globals.SETTINGS['pl_color'], True)]
+def rm_player():
+    player = check_cur_prop_management()
+    for i in range(len(Globals.PLAYERS)):
+        if player.name == Globals.PLAYERS[i].name:
+            Globals.PLAYERS.pop(i)
+            return True
 def get_gamename():
     return ('monopoly', 'manager')[Globals.TEMP_VARS['cur_game']]
 def check_if_anybody_can_trade():

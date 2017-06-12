@@ -244,8 +244,38 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        self.DEBUGGER_show_TEMP_VARS_keys()
-        if not self.error_msg_money_limits(key):
+        # self.DEBUGGER_show_TEMP_VARS_keys()
+        if key == 'ingame_continue' and Globals.TRANSLATION[100] in self.menuitems['ingame_continue'].text.symbols:
+            print(len(Globals.PLAYERS))
+            CELLS = self.objects['gamefield'].cells
+            CUR = check_cur_prop_management()
+            MON = 0
+            Globals.TEMP_VARS['bankruptcy_fields_changing'] = []
+            for cell in CELLS:
+                if cell.owner == CUR.name:
+                    Globals.TEMP_VARS['bankruptcy_fields_changing'].append(cell.number)
+                    if cell.buildings > 0 and cell.group not in ('railroad', 'service'):
+                        MON += cell.buildings * cell.build_cost / 2
+                        cell.buildings = 0
+            self.change_player_money(CUR, MON)
+            if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
+                for i in range(len(Globals.PLAYERS)):
+                    if Globals.PLAYERS[i].name == CELLS[CUR.cur_field].owner:
+                        RECIPIENT = Globals.PLAYERS[i]
+                self.change_player_money(RECIPIENT, CUR.money)
+                if CUR.free_jail_cards:
+                    for i in range(len(CUR.free_jail_cards)):
+                        RECIPIENT.free_jail_cards.append(CUR.free_jail_cards.pop(0))
+            else:
+                if CUR.free_jail_cards:
+                    for i in range(len(CUR.free_jail_cards)):
+                        vid = CUR.free_jail_cards.pop(0)
+                        self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
+            self.menuitems['fieldcell_10'].tooltip.RErender()
+            rm_player()
+            print(len(Globals.PLAYERS))
+            self.change_player(True)
+        elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
                 self.labels['dices'] = GameMechanics.roll_the_dice()
@@ -364,7 +394,7 @@ class MainScreen():
                     self.ask_to_end_turn()
                     return None
                 elif obj[0].type == 'repair':
-                    if Globals.TEMP_VARS.pop('repair_cost_SAVE'):
+                    if Globals.TEMP_VARS['repair_cost_SAVE']:
                         Globals.TEMP_VARS['MUST_PAY'] = - Globals.TEMP_VARS.pop('repair_cost_SAVE')
                         self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                         self.objects['game_log'].add_message('chest_income')
@@ -1152,8 +1182,8 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, 'ingame_end_turn')
         else:
             self.new_turn()
-    def change_player(self):
-        GameMechanics.change_player()
+    def change_player(self, bankrupt=None):
+        GameMechanics.change_player(bankrupt)
         self.objects['cur_turn_highlighter'].move()
         self.objects['game_log'].add_message('change_player')
         self.new_turn()
@@ -1182,8 +1212,9 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+        print(self.objects['gamefield'].cells[39].buildings)
         self.DEBUGGER_chests_and_chances()
+        PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.clear_main_menu_entries()
         if cell.NAME:
             self.labels['target_cell_name'] = AlphaText(cell.NAME, 'target_cell_name', 0)
@@ -1191,12 +1222,13 @@ class MainScreen():
             self.show_special_cell_info(cell)
             group = (cell.group, 'chance')[Globals.TEMP_VARS['take_chance_when_player_is_on_chest']]
             property_management_number = 6
-            if cell.group in ('chest', 'chance'):
-                obj = self.objects['gamefield'].chests_and_chances[cell.group + 's'][0]
+            if group in ('chest', 'chance'):
+                obj = self.objects['gamefield'].chests_and_chances[group + 's'][0]
                 if obj.type == 'repair' and 'repair_cost_SAVE' not in Globals.TEMP_VARS.keys():
                     Globals.TEMP_VARS['repair_cost_SAVE'] = 0
                     for i in self.objects['gamefield'].cells:
-                        if i.group in range(9) and i.owner == PLAYER.name and i.buildings > 0:
+                        print(i.group)
+                        if str(i.group) in ('12345678') and i.owner == PLAYER.name and i.buildings > 0:
                             if i.buildings == 5 - Globals.TEMP_VARS['cur_game']:
                                 Globals.TEMP_VARS['repair_cost_SAVE'] += obj.modifier[1]
                             else:
@@ -1252,9 +1284,14 @@ class MainScreen():
     def change_owner_for_a_cell(self, player, cell=None):
         if not cell:
             cell = self.objects['gamefield'].cells[player.cur_field]
-        cell.owner = player.name
-        cell.color = player.color
-        cells = self.check_group_owners(cell.group, player.name)
+        if player:
+            cell.owner = player.name
+            cell.color = player.color
+            cells = self.check_group_owners(cell.group, player.name)
+        else:
+            cell.owner = None
+            cell.color = Globals.COLORS['grey22']
+            cells = self.check_group_owners(cell.group, '')
         for group_cell in cells:
             if group_cell.group in ('service', 'railroad'):
                 group_cell.buildings = len(cells) - 1
