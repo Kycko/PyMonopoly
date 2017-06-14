@@ -18,7 +18,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'prop_manage_summary_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'target_cell_bankrupt_buyout', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'prop_manage_summary_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -89,6 +89,8 @@ class AlphaText():
             self.color = Globals.COLORS['light_red']
         elif self.group == 'target_cell_info' and 'auction' in Globals.TEMP_VARS.keys():
             self.color = Globals.TEMP_VARS['auction']['order'][0].color
+        elif self.group == 'target_cell_bankrupt_buyout':
+            self.color = Globals.TEMP_VARS['bankruptcy_RECIPIENT'].color
         else:
             self.color = Globals.COLORS['white']
         #--- Position

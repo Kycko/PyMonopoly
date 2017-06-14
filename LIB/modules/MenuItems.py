@@ -367,6 +367,7 @@ class MainCursor(Cursor):
         first_rect = self.screen_switched(menuitems, type)
         Cursor.__init__(self, 0, first_rect)
     def screen_switched(self, menuitems, type):
+        self.u_length = 0
         self.make_keys(type)
         first_rect = self.update_cords(menuitems)
         self.change_pos(self.keys[0])
@@ -442,6 +443,7 @@ class MainCursor(Cursor):
         else:
             self.change_pos(self.keys[self.active_num - 1])
     def change_pos(self, key):
+        self.u_length = 0
         self.active_key = key
         self.active_num = self.keys.index(key)
         self.change_new_cords()
@@ -502,6 +504,16 @@ class MainCursor(Cursor):
         elif KEY == 'roll_the_dice' and Globals.main_scr.menuitems[KEY].type[:12] == 'pay_birthday':
             cur_money = Globals.TEMP_VARS['pay_birthday'][0].money
             MUST_PAY = Globals.TEMP_VARS['MUST_PAY']
+        elif KEY == 'ingame_bankruptcy_10':
+            temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing'][0]
+            CELL = Globals.main_scr.objects['gamefield'].cells[temp_var]
+            cur_money = Globals.TEMP_VARS['bankruptcy_RECIPIENT'].money
+            MUST_PAY = CELL.buy_cost/10
+        elif KEY == 'ingame_bankruptcy_110':
+            temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing'][0]
+            CELL = Globals.main_scr.objects['gamefield'].cells[temp_var]
+            cur_money = Globals.TEMP_VARS['bankruptcy_RECIPIENT'].money
+            MUST_PAY = int(CELL.buy_cost*1.1)
         else:
             self.uCondition = False
             return None

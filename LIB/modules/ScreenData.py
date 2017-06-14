@@ -262,22 +262,22 @@ class MainScreen():
             if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
                 for i in range(len(Globals.PLAYERS)):
                     if Globals.PLAYERS[i].name == CELLS[CUR.cur_field].owner:
-                        RECIPIENT = Globals.PLAYERS[i]
-                self.change_player_money(RECIPIENT, CUR.money)
+                        Globals.TEMP_VARS['bankruptcy_RECIPIENT'] = Globals.PLAYERS[i]
+                self.change_player_money(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], CUR.money)
                 if CUR.free_jail_cards:
                     for i in range(len(CUR.free_jail_cards)):
-                        RECIPIENT.free_jail_cards.append(CUR.free_jail_cards.pop(0))
+                        Globals.TEMP_VARS['bankruptcy_RECIPIENT'].free_jail_cards.append(CUR.free_jail_cards.pop(0))
             else:
                 if CUR.free_jail_cards:
                     for i in range(len(CUR.free_jail_cards)):
                         vid = CUR.free_jail_cards.pop(0)
                         self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             self.menuitems['fieldcell_10'].tooltip.RErender()
+            self.objects['game_log'].add_message('bankrupt_player')
             rm_player()
             self.menuitems['player_' + CUR.name].update_text(u'✖')
             self.labels['money_player_' + CUR.name].update_text('game over')
-            self.objects['game_log'].add_message('bankrupt_player')
-            self.bankruptcy_fields_buyout(RECIPIENT)
+            self.bankruptcy_fields_buyout()
         elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -1221,7 +1221,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        self.DEBUGGER_chests_and_chances()
+        # self.DEBUGGER_chests_and_chances()
         PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.clear_main_menu_entries()
         if cell.NAME:
@@ -1377,7 +1377,7 @@ class MainScreen():
             for i in range(len(change_from['jail'])):
                 change_to['info'].free_jail_cards.append(change_from['info'].free_jail_cards.pop(0))
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-    def bankruptcy_fields_buyout(self, player):
+    def bankruptcy_fields_buyout(self):
         temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
         if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
             CELL = self.objects['gamefield'].cells[temp_var[0]]
@@ -1385,6 +1385,7 @@ class MainScreen():
             self.disable_central_labels()
             self.disable_step_indicators()
             CELL.step_indicator_visible = True
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', Globals.TEMP_VARS['bankruptcy_RECIPIENT'].name), 'target_cell_bankrupt_buyout', -2)
             self.labels['target_cell_info'] = AlphaText(CELL.NAME, 'target_cell_info', -1)
             self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/10), 'ingame_bankruptcy_10', 'ingame_main', 3)
             self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int(CELL.buy_cost*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
