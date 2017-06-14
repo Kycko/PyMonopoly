@@ -246,7 +246,6 @@ class MainScreen():
     def action_call(self, key):
         # self.DEBUGGER_show_TEMP_VARS_keys()
         if key == 'ingame_continue' and Globals.TRANSLATION[100] in self.menuitems['ingame_continue'].text.symbols:
-            print(len(Globals.PLAYERS))
             CELLS = self.objects['gamefield'].cells
             CUR = check_cur_prop_management()
             MON = 0
@@ -275,8 +274,7 @@ class MainScreen():
                         self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             self.menuitems['fieldcell_10'].tooltip.RErender()
             rm_player()
-            print(len(Globals.PLAYERS))
-            self.change_player(True)
+            self.bankruptcy_fields_buyout(RECIPIENT)
         elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -1251,6 +1249,10 @@ class MainScreen():
                 addition = ''
                 if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'repair':
                     addition = ' ($' + str(Globals.TEMP_VARS['repair_cost_SAVE']) + ')'
+                    if check_bankrupt(PLAYER):
+                        addition += Globals.TRANSLATION[100]
+                elif group == 'income' and check_bankrupt(PLAYER):
+                    addition += Globals.TRANSLATION[100]
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
         else:
@@ -1348,8 +1350,12 @@ class MainScreen():
                 self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
                 self.change_player_money(temp_var['player'], -temp_var['bet'])
             self.objects['game_log'].add_message('auction_end')
-            type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']]
-            self.return_to_game_from_trading(type)
+            if 'bankruptcy_fields_changing' in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS['bankruptcy_fields_changing'].pop(0)
+                self.next_bankruptcy_field()
+            else:
+                type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']]
+                self.return_to_game_from_trading(type)
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
         for i in range(2):
@@ -1368,6 +1374,39 @@ class MainScreen():
             for i in range(len(change_from['jail'])):
                 change_to['info'].free_jail_cards.append(change_from['info'].free_jail_cards.pop(0))
                 self.menuitems['fieldcell_10'].tooltip.RErender()
+    def bankruptcy_fields_buyout(self, player):
+        temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
+        if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
+            CELL = self.objects['gamefield'].cells[temp_var[0]]
+            self.clear_main_menu_entries()
+            self.disable_central_labels()
+            self.disable_step_indicators()
+            CELL.step_indicator_visible = True
+            self.labels['target_cell_info'] = AlphaText(CELL.NAME, 'target_cell_info', -1)
+            self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/10), 'ingame_bankruptcy_10', 'ingame_main', 3)
+            self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int(CELL.buy_cost*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
+            self.cursor.screen_switched(self.menuitems, 'bankruptcy_buyout')
+        else:
+            self.next_bankruptcy_field()
+    def next_bankruptcy_field(self):
+        if Globals.TEMP_VARS['bankruptcy_fields_changing']:
+            field = Globals.TEMP_VARS['bankruptcy_fields_changing'][0]
+            if Globals.TEMP_VARS['cur_turn'] == len(Globals.PLAYERS):
+                temp_range = range(len(Globals.PLAYERS))
+            elif Globals.TEMP_VARS['cur_turn']:
+                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + range(Globals.TEMP_VARS['cur_turn']+1)
+            else:
+                temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
+            Globals.TEMP_VARS['auction'] = {'bet'       : 0,
+                                            'field'     : self.objects['gamefield'].cells[field],
+                                            'order'     : [Globals.PLAYERS[i] for i in temp_range],
+                                            'player'    : None}
+            Globals.TEMP_VARS['auction']['field'].step_indicator.change_color(Globals.COLORS['white'])
+            Globals.TEMP_VARS['auction']['field'].step_indicator_visible = True
+            self.auction_next_player()
+        else:
+            Globals.TEMP_VARS.pop('bankruptcy_fields_changing')
+            self.change_player(True)
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
         DEBUG = self.objects['gamefield'].chests_and_chances

@@ -416,6 +416,8 @@ class MainCursor(Cursor):
                 self.keys.insert(0, 'game')
         elif type == 'game_start':
             self.keys = ['start_game', 'exit']
+        elif type == 'bankruptcy_buyout':
+            self.keys = ['ingame_bankruptcy_10', 'ingame_bankruptcy_110']
     def keys_generator(self, keys):
         self.keys = [key for key in keys if key in Globals.main_scr.menuitems.keys()]
     def add_rm_keys(self, add, key, index=None, cords=None):
