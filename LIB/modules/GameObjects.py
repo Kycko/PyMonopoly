@@ -287,6 +287,9 @@ class GameLog(InfoWindow):
                 text = text.replace('@', str(temp_var['bet']))
             else:
                 text = Globals.GAMELOG_TRANSLATION[16]
+        elif type == 'bankrupt_player':
+            player = check_cur_prop_management()
+            text = player.name + Globals.GAMELOG_TRANSLATION[24]
         elif type in ('birthday', 'pay_each'):
             text = Globals.GAMELOG_TRANSLATION[11 + (type == 'pay_each')].replace('%', str(Globals.TEMP_VARS['MUST_PAY']))
         ATtype = ('gamelog_message_common', 'gamelog_message_player_switched')[type == 'change_player']

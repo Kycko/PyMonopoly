@@ -274,6 +274,9 @@ class MainScreen():
                         self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             self.menuitems['fieldcell_10'].tooltip.RErender()
             rm_player()
+            self.menuitems['player_' + CUR.name].update_text(u'✖')
+            self.labels['money_player_' + CUR.name].update_text('game over')
+            self.objects['game_log'].add_message('bankrupt_player')
             self.bankruptcy_fields_buyout(RECIPIENT)
         elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
