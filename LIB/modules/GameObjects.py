@@ -287,6 +287,16 @@ class GameLog(InfoWindow):
                 text = text.replace('@', str(temp_var['bet']))
             else:
                 text = Globals.GAMELOG_TRANSLATION[16]
+        elif type[:16] == 'bankruptcy_field':
+            temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing'][0]
+            CELL = Globals.main_scr.objects['gamefield'].cells[temp_var]
+            money = CELL.buy_cost / 20
+            if type == 'bankruptcy_field_10':
+                num = 25
+            else:
+                num = 20
+                money += CELL.buy_cost / 2
+            text = Globals.GAMELOG_TRANSLATION[num].replace('%', str(CELL.number)) + str(money)
         elif type == 'bankrupt_player':
             player = check_cur_prop_management()
             text = '- ' + player.name + Globals.GAMELOG_TRANSLATION[24]

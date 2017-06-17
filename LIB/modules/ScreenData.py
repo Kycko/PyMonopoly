@@ -607,6 +607,33 @@ class MainScreen():
                     self.labels.pop('error')
                 Globals.TEMP_VARS['auction']['order'].pop(0)
                 self.auction_next_player()
+            elif type and 'ingame_bankruptcy' in type:
+                RECIPIENT = Globals.TEMP_VARS['bankruptcy_RECIPIENT']
+                temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
+                CELL = self.objects['gamefield'].cells[temp_var[0]]
+                MON = -CELL.buy_cost / 20
+                if type == 'ingame_bankruptcy_110':
+                    MON -= CELL.buy_cost / 2
+                    CELL.buildings = 0
+                    self.objects['game_log'].add_message('bankruptcy_field_110')
+                else:
+                    self.objects['game_log'].add_message('bankruptcy_field_10')
+                self.change_player_money(RECIPIENT, MON)
+                self.change_owner_for_a_cell(RECIPIENT, CELL)
+                Globals.TEMP_VARS['RErender_groups'] = [CELL.group]
+                self.objects['gamefield'].RErender_fieldcell_groups()
+                temp_var.pop(0)
+                CELL.step_indicator_visible = False
+                if temp_var:
+                    CELL = self.objects['gamefield'].cells[temp_var[0]]
+                    CELL.step_indicator_visible = True
+                    self.labels['target_cell_info'].update_text(CELL.NAME)
+                    self.menuitems['ingame_bankruptcy_10'].update_text(Globals.TRANSLATION[101]+str(CELL.buy_cost/20))
+                    self.menuitems['ingame_bankruptcy_110'].update_text(Globals.TRANSLATION[102]+str(int((CELL.buy_cost/2)*1.1)))
+                else:
+                    for key in ('bankruptcy_fields_changing', 'bankruptcy_RECIPIENT'):
+                        Globals.TEMP_VARS.pop(key)
+                    self.change_player(True)
             elif type and 'onboard_select_cell' in type:
                 if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                     status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
@@ -1176,7 +1203,7 @@ class MainScreen():
                     CELL.step_indicator_visible = False
                 temp_var['TOTAL'] += MONEY
         self.objects['prop_manage_summary'].recheck()
-        self.DEBUGGER_prop_management_money_changes()
+        # self.DEBUGGER_prop_management_money_changes()
     #--- Game mechanics
     def ask_to_end_turn(self):
         self.disable_central_labels()
@@ -1235,7 +1262,6 @@ class MainScreen():
                 if obj.type == 'repair' and 'repair_cost_SAVE' not in Globals.TEMP_VARS.keys():
                     Globals.TEMP_VARS['repair_cost_SAVE'] = 0
                     for i in self.objects['gamefield'].cells:
-                        print(i.group)
                         if str(i.group) in ('12345678') and i.owner == PLAYER.name and i.buildings > 0:
                             if i.buildings == 5 - Globals.TEMP_VARS['cur_game']:
                                 Globals.TEMP_VARS['repair_cost_SAVE'] += obj.modifier[1]
@@ -1387,8 +1413,8 @@ class MainScreen():
             CELL.step_indicator_visible = True
             self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', Globals.TEMP_VARS['bankruptcy_RECIPIENT'].name), 'target_cell_bankrupt_buyout', -2)
             self.labels['target_cell_info'] = AlphaText(CELL.NAME, 'target_cell_info', -1)
-            self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/10), 'ingame_bankruptcy_10', 'ingame_main', 3)
-            self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int(CELL.buy_cost*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
+            self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/20), 'ingame_bankruptcy_10', 'ingame_main', 3)
+            self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int((CELL.buy_cost/2)*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
             self.cursor.screen_switched(self.menuitems, 'bankruptcy_buyout')
         else:
             self.next_bankruptcy_field()
