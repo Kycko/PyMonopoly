@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (0, 0)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -276,6 +276,10 @@ class MainScreen():
             rm_player()
             self.menuitems['player_' + CUR.name].update_text(u'✖')
             self.labels['money_player_' + CUR.name].update_text('game over')
+            type = self.menuitems['ingame_continue'].type
+            if type in ('ingame_continue_chest', 'ingame_continue_chance'):
+                obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
+                obj.append(obj.pop(0))
             self.bankruptcy_fields_buyout()
             for player in Globals.PLAYERS:
                 print(player.name)
@@ -970,7 +974,10 @@ class MainScreen():
                 group = 'chances'
             else:
                 group = cell.group + 's'
-            text = self.objects['gamefield'].chests_and_chances[group][0].text
+            obj = self.objects['gamefield'].chests_and_chances[group][0]
+            text = obj.text
+            if obj.type == 'income' and obj.modifier[0] < 0:
+                Globals.TEMP_VARS['MUST_PAY'] = -obj.modifier[0]
         elif cell.group == 'jail':
             text = Globals.TRANSLATION[51]
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -1286,7 +1293,7 @@ class MainScreen():
                     Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['repair_cost_SAVE']
                     if check_bankrupt(PLAYER):
                         addition += Globals.TRANSLATION[100]
-                elif (group == 'tax' and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])) or (group in ('chest', 'chance') and obj.type == 'income' and obj.modifier[0] < 0 and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])):
+                elif (group == 'tax' and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])) or (group in ('chest', 'chance') and obj.type == 'income' and obj.modifier[0] < 0 and check_bankrupt(PLAYER)):
                     addition += Globals.TRANSLATION[100]
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
