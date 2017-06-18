@@ -549,6 +549,10 @@ class CurTurnHighlighter(Cursor):
         self.new_cords = (self.rect.x-1820, self.rect.y)
     def change_new_pos(self, offset):
         self.new_cords = count_new_pos(self.new_cords, offset)
+    def rm_player(self, name):
+        for i in range(len(Globals.PLAYERS)):
+            if Globals.PLAYERS[i].name == name:
+                self.verts.pop(i)
     def move(self):
         self.new_cords = (self.new_cords[0], self.verts[Globals.TEMP_VARS['cur_turn']])
     def render(self):

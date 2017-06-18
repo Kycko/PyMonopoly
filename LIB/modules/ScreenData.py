@@ -256,8 +256,6 @@ class MainScreen():
                     if cell.buildings > 0 and cell.group not in ('railroad', 'service'):
                         MON += cell.buildings * cell.build_cost / 2
                         cell.buildings = 0
-                    if cell.buildings > -1:
-                        MON += cell.buy_cost / 2
             self.change_player_money(CUR, MON)
             if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
                 for i in range(len(Globals.PLAYERS)):
@@ -274,10 +272,14 @@ class MainScreen():
                         self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             self.menuitems['fieldcell_10'].tooltip.RErender()
             self.objects['game_log'].add_message('bankrupt_player')
+            self.objects['cur_turn_highlighter'].rm_player(CUR.name)
             rm_player()
             self.menuitems['player_' + CUR.name].update_text(u'✖')
             self.labels['money_player_' + CUR.name].update_text('game over')
             self.bankruptcy_fields_buyout()
+            for player in Globals.PLAYERS:
+                print(player.name)
+            print('')
         elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -309,6 +311,9 @@ class MainScreen():
                         self.player_on_a_new_cell(self.objects['gamefield'].cells[player.cur_field])
                         self.objects['game_log'].add_message('roll_the_dice')
             elif type == 'ingame_end_turn':
+                player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
+                if player.cur_field != 10:
+                    player.exit_jail_attempts = None
                 self.change_player()
             elif type in ('pay_money_to_exit_jail', 'use_card_to_exit_jail'):
                 player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
@@ -403,6 +408,8 @@ class MainScreen():
                         Globals.TEMP_VARS['MUST_PAY'] = - Globals.TEMP_VARS.pop('repair_cost_SAVE')
                         self.change_player_money(player, Globals.TEMP_VARS['MUST_PAY'])
                         self.objects['game_log'].add_message('chest_income')
+                    else:
+                        Globals.TEMP_VARS.pop('repair_cost_SAVE')
                     self.ask_to_end_turn()
                 elif obj[0].type == 'birthday':
                     self.disable_central_labels()
@@ -1209,8 +1216,6 @@ class MainScreen():
         self.disable_central_labels()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         if Globals.TEMP_VARS['dice1'] != Globals.TEMP_VARS['dice2'] or player.exit_jail_attempts != None:
-            if player.cur_field != 10:
-                player.exit_jail_attempts = None
             self.show_step_indicator_under_player()
             self.clear_main_menu_entries()
             self.menuitems['end_turn'] = MenuItem(Globals.TRANSLATION[61], 'ingame_end_turn', 'ingame_main', 0)
@@ -1248,7 +1253,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        # self.DEBUGGER_chests_and_chances()
+        self.DEBUGGER_chests_and_chances()
         PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.clear_main_menu_entries()
         if cell.NAME:
@@ -1278,9 +1283,10 @@ class MainScreen():
                 addition = ''
                 if group in ('chest', 'chance') and self.objects['gamefield'].chests_and_chances[group + 's'][0].type == 'repair':
                     addition = ' ($' + str(Globals.TEMP_VARS['repair_cost_SAVE']) + ')'
+                    Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['repair_cost_SAVE']
                     if check_bankrupt(PLAYER):
                         addition += Globals.TRANSLATION[100]
-                elif group == 'income' and check_bankrupt(PLAYER):
+                elif (group == 'tax' and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])) or (group in ('chest', 'chance') and obj.type == 'income' and obj.modifier[0] < 0 and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])):
                     addition += Globals.TRANSLATION[100]
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
@@ -1331,7 +1337,7 @@ class MainScreen():
         else:
             cell.owner = None
             cell.color = Globals.COLORS['grey22']
-            cells = self.check_group_owners(cell.group, '')
+            cells = self.check_group_owners(cell.group, None)
         for group_cell in cells:
             if group_cell.group in ('service', 'railroad') and group_cell.buildings != -1:
                 group_cell.buildings = len(cells) - 1
@@ -1375,15 +1381,15 @@ class MainScreen():
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
         else:
+            self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
             if temp_var['bet']:
-                self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
                 self.change_player_money(temp_var['player'], -temp_var['bet'])
             self.objects['game_log'].add_message('auction_end')
             if 'bankruptcy_fields_changing' in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS['bankruptcy_fields_changing'].pop(0)
                 self.next_bankruptcy_field()
             else:
-                type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2']]
+                type = ('return_end_turn', 'return_new_turn')[Globals.TEMP_VARS['dice1'] == Globals.TEMP_VARS['dice2'] and Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].exit_jail_attempts == None]
                 self.return_to_game_from_trading(type)
     def swap_property_to_finish_trading(self):
         Globals.TEMP_VARS['RErender_groups'] = []
@@ -1417,6 +1423,8 @@ class MainScreen():
             self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int((CELL.buy_cost/2)*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
             self.cursor.screen_switched(self.menuitems, 'bankruptcy_buyout')
         else:
+            self.disable_central_labels()
+            self.disable_step_indicators()
             self.next_bankruptcy_field()
     def next_bankruptcy_field(self):
         if Globals.TEMP_VARS['bankruptcy_fields_changing']:
@@ -1436,6 +1444,8 @@ class MainScreen():
             self.auction_next_player()
         else:
             Globals.TEMP_VARS.pop('bankruptcy_fields_changing')
+            if 'auction' in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS.pop('auction')
             self.change_player(True)
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
