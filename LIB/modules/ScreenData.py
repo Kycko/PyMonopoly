@@ -978,6 +978,8 @@ class MainScreen():
             text = obj.text
             if obj.type == 'income' and obj.modifier[0] < 0:
                 Globals.TEMP_VARS['MUST_PAY'] = -obj.modifier[0]
+            elif obj.type == 'pay_each':
+                Globals.TEMP_VARS['MUST_PAY'] = obj.modifier[0] * (len(Globals.PLAYERS)-1)
         elif cell.group == 'jail':
             text = Globals.TRANSLATION[51]
             self.menuitems['fieldcell_10'].tooltip.RErender()
@@ -1293,7 +1295,13 @@ class MainScreen():
                     Globals.TEMP_VARS['MUST_PAY'] = Globals.TEMP_VARS['repair_cost_SAVE']
                     if check_bankrupt(PLAYER):
                         addition += Globals.TRANSLATION[100]
-                elif (group == 'tax' and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY'])) or (group in ('chest', 'chance') and obj.type == 'income' and obj.modifier[0] < 0 and check_bankrupt(PLAYER)):
+                elif ((group == 'tax' and check_bankrupt(PLAYER, -Globals.TEMP_VARS['MUST_PAY']))
+                      or (group in ('chest', 'chance')
+                          and ((obj.type == 'income'
+                                and obj.modifier[0] < 0
+                                and check_bankrupt(PLAYER))
+                               or (obj.type == 'pay_each'
+                                   and check_bankrupt(PLAYER))))):
                     addition += Globals.TRANSLATION[100]
                 self.menuitems['ingame_continue'] = MenuItem(Globals.TRANSLATION[49] + addition, 'ingame_continue_'+group, 'ingame_main', 5)
             Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False

@@ -553,6 +553,7 @@ class CurTurnHighlighter(Cursor):
         for i in range(len(Globals.PLAYERS)):
             if Globals.PLAYERS[i].name == name:
                 self.verts.pop(i)
+                return True
     def move(self):
         self.new_cords = (self.new_cords[0], self.verts[Globals.TEMP_VARS['cur_turn']])
     def render(self):
