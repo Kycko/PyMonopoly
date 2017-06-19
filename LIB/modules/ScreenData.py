@@ -245,7 +245,7 @@ class MainScreen():
     #--- Menu actions
     def action_call(self, key):
         # self.DEBUGGER_show_TEMP_VARS_keys()
-        if key == 'ingame_continue' and Globals.TRANSLATION[100] in self.menuitems['ingame_continue'].text.symbols:
+        if Globals.TRANSLATION[100] in self.menuitems[key].text.symbols and ((key == 'ingame_continue') or (key == 'roll_the_dice' and 'pay_birthday' in self.menuitems['roll_the_dice'].type)):
             CELLS = self.objects['gamefield'].cells
             CUR = check_cur_prop_management()
             MON = 0
@@ -257,10 +257,13 @@ class MainScreen():
                         MON += cell.buildings * cell.build_cost / 2
                         cell.buildings = 0
             self.change_player_money(CUR, MON)
-            if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
-                for i in range(len(Globals.PLAYERS)):
-                    if Globals.PLAYERS[i].name == CELLS[CUR.cur_field].owner:
-                        Globals.TEMP_VARS['bankruptcy_RECIPIENT'] = Globals.PLAYERS[i]
+            if self.menuitems[key].type == 'ingame_continue_PAY_RENT' or 'pay_birthday' in self.menuitems[key].type:
+                if self.menuitems[key].type == 'ingame_continue_PAY_RENT':
+                    for i in range(len(Globals.PLAYERS)):
+                        if Globals.PLAYERS[i].name == CELLS[CUR.cur_field].owner:
+                            Globals.TEMP_VARS['bankruptcy_RECIPIENT'] = Globals.PLAYERS[i]
+                else:
+                    Globals.TEMP_VARS['bankruptcy_RECIPIENT'] = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
                 self.change_player_money(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], CUR.money)
                 if CUR.free_jail_cards:
                     for i in range(len(CUR.free_jail_cards)):
@@ -276,11 +279,16 @@ class MainScreen():
             rm_player()
             self.menuitems['player_' + CUR.name].update_text(u'✖')
             self.labels['money_player_' + CUR.name].update_text('game over')
-            type = self.menuitems['ingame_continue'].type
+            type = self.menuitems[key].type
             if type in ('ingame_continue_chest', 'ingame_continue_chance'):
                 obj = self.objects['gamefield'].chests_and_chances[type[16:] + 's']
                 obj.append(obj.pop(0))
-            self.bankruptcy_fields_buyout()
+            elif 'pay_birthday' in type:
+                Globals.TEMP_VARS['pay_birthday'].pop(0)
+            if Globals.TEMP_VARS['bankruptcy_fields_changing']:
+                self.bankruptcy_fields_buyout(key)
+            else:
+                self.next_bankruptcy_field()
             for player in Globals.PLAYERS:
                 print(player.name)
             print('')
@@ -644,7 +652,10 @@ class MainScreen():
                 else:
                     for key in ('bankruptcy_fields_changing', 'bankruptcy_RECIPIENT'):
                         Globals.TEMP_VARS.pop(key)
-                    self.change_player(True)
+                    if 'pay_birthday' in Globals.TEMP_VARS.keys():
+                        self.pay_birthday_next_player()
+                    else:
+                        self.change_player(True)
             elif type and 'onboard_select_cell' in type:
                 if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
                     status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
@@ -1363,13 +1374,16 @@ class MainScreen():
         self.labels['money_player_'+player.name].update_text(str(player.money))
     def pay_birthday_next_player(self):
         if Globals.TEMP_VARS['pay_birthday']:
-            player_name = Globals.TEMP_VARS['pay_birthday'][0].name
-            text = Globals.TRANSLATION[58].replace('%', player_name)
+            player = Globals.TEMP_VARS['pay_birthday'][0]
+            text = Globals.TRANSLATION[58].replace('%', player.name)
             text = text.replace('^', str(Globals.TEMP_VARS['MUST_PAY']))
             text = text.replace('@', Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].name)
             self.labels['target_cell_info'] = AlphaText(text, 'birthday_info')
             self.clear_main_menu_entries()
-            self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55]+str(Globals.TEMP_VARS['MUST_PAY']), 'pay_birthday_'+player_name, 'ingame_main', 3)})
+            addition = ''
+            if check_bankrupt(player):
+                addition = Globals.TRANSLATION[100]
+            self.menuitems.update({'roll_the_dice'  : MenuItem(Globals.TRANSLATION[55] + str(Globals.TEMP_VARS['MUST_PAY']) + addition, 'pay_birthday_'+player.name, 'ingame_main', 3)})
             self.show_property_management_menuitems(4)
             self.cursor.screen_switched(self.menuitems, 'ingame_main')
         else:
@@ -1424,9 +1438,9 @@ class MainScreen():
             for i in range(len(change_from['jail'])):
                 change_to['info'].free_jail_cards.append(change_from['info'].free_jail_cards.pop(0))
                 self.menuitems['fieldcell_10'].tooltip.RErender()
-    def bankruptcy_fields_buyout(self):
+    def bankruptcy_fields_buyout(self, key):
         temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
-        if self.menuitems['ingame_continue'].type == 'ingame_continue_PAY_RENT':
+        if self.menuitems[key].type == 'ingame_continue_PAY_RENT' or 'pay_birthday' in self.menuitems[key].type:
             CELL = self.objects['gamefield'].cells[temp_var[0]]
             self.clear_main_menu_entries()
             self.disable_central_labels()
@@ -1461,7 +1475,10 @@ class MainScreen():
             Globals.TEMP_VARS.pop('bankruptcy_fields_changing')
             if 'auction' in Globals.TEMP_VARS.keys():
                 Globals.TEMP_VARS.pop('auction')
-            self.change_player(True)
+            if 'pay_birthday' in Globals.TEMP_VARS.keys():
+                self.pay_birthday_next_player()
+            else:
+                self.change_player(True)
     #--- DEBUGGING
     def DEBUGGER_chests_and_chances(self):
         DEBUG = self.objects['gamefield'].chests_and_chances

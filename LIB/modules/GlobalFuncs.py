@@ -75,6 +75,10 @@ def rm_player():
     player = check_cur_prop_management()
     for i in range(len(Globals.PLAYERS)):
         if player.name == Globals.PLAYERS[i].name:
+            if 'pay_birthday' in Globals.TEMP_VARS.keys():
+                for y in range(len(Globals.PLAYERS)):
+                    if y == Globals.TEMP_VARS['cur_turn'] and i < y:
+                        Globals.TEMP_VARS['cur_turn'] -=1
             Globals.PLAYERS.pop(i)
             return True
 def get_gamename():
