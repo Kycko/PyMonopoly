@@ -2,7 +2,7 @@
 import FieldCellsData, GameMechanics, Globals, pygame, random
 from GameObjects import GameField, GameLog, PropManageSummary, TradeSummary
 from GlobalFuncs import *
-from MenuItems import CurTurnHighlighter, MainCursor, MenuItem
+from MenuItems import AuctionPlayerHighlighter, CurTurnHighlighter, MainCursor, MenuItem
 from Sprite import *
 from TransparentText import AlphaText
 from sys import exit as SYSEXIT
@@ -149,7 +149,7 @@ class MainScreen():
             self.objects = {'gamefield' : GameField()}
             for i in range(len(Globals.PLAYERS)):
                 Globals.PLAYERS[i].initialize_coords(i)
-                Globals.PLAYERS[i].money = (0, 0)[Globals.TEMP_VARS['cur_game']]
+                Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
             self.objects['gamefield'].change_new_pos((-1820, 0))
@@ -1394,6 +1394,7 @@ class MainScreen():
         temp_var = Globals.TEMP_VARS['auction']
         if len(temp_var['order']) > 1 or (len(temp_var['order']) and not temp_var['bet']):
             self.labels['target_cell_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', temp_var['order'][0].name), 'auction_info', -3)
+            self.objects['auction_pl_highlighter'] = AuctionPlayerHighlighter()
             self.clear_main_menu_entries()
             self.show_property_management_menuitems(2)
             number = 2 + ('trade' in self.menuitems.keys()) + ('manage_property' in self.menuitems.keys())
@@ -1410,6 +1411,7 @@ class MainScreen():
                                    'auction_refuse' : MenuItem(Globals.TRANSLATION[85], 'auction_refuse', 'ingame_main', number)})
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
         else:
+            self.objects.pop('auction_pl_highlighter')
             self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
             if temp_var['bet']:
                 self.change_player_money(temp_var['player'], -temp_var['bet'])

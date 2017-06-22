@@ -559,3 +559,14 @@ class CurTurnHighlighter(Cursor):
     def render(self):
         self.rect.topleft = slight_animation_count_pos(self.new_cords, self.rect.topleft, 10, 50)
         Cursor.render(self)
+class AuctionPlayerHighlighter():
+    def __init__(self):
+        self.list = []
+        for i in range(len(Globals.TEMP_VARS['auction']['order'])):
+            self.list.append(AlphaText(u'●', 'auction_player_order', i))
+    def change_new_pos(self, offset):
+        for dot in self.list:
+            dot.change_new_pos(offset)
+    def render(self):
+        for dot in self.list:
+            dot.render()

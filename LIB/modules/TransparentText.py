@@ -32,7 +32,7 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_16']
         elif self.group == 'music_and_sound_switches':
             self.font = Globals.FONTS['ume_16']
-        elif self.group in ('stats_latest', 'a_little_cell_number', 'prop_manage_summary_fields'):
+        elif self.group in ('stats_latest', 'a_little_cell_number', 'prop_manage_summary_fields', 'auction_player_order'):
             self.font = Globals.FONTS['ume_12']
         elif self.group in ('newgame_playertype', 'pl_money_info') or self.group[:14] == 'trade_summary_':
             self.font = Globals.FONTS['ubuntu_11']
@@ -60,6 +60,8 @@ class AlphaText():
             #     self.color = Globals.TEMP_VARS['auction']['player'].color
             # else:
             self.color = Globals.COLORS['grey63']
+        elif self.group == 'auction_player_order':
+            self.color = Globals.TEMP_VARS['auction']['order'][number].color
         elif self.group == 'prop_manage_summary_name':
             player = check_cur_prop_management()
             self.color = player.color
@@ -106,6 +108,11 @@ class AlphaText():
         elif self.group == 'onboard_select_cell':
             self.x = Globals.TEMP_VARS['cells_rects'][number].x
             self.rect = Globals.TEMP_VARS['cells_rects'][number]
+        elif self.group == 'auction_player_order':
+            self.x = 'center'
+            dotlength = len(Globals.TEMP_VARS['auction']['order'])
+            self.x_offset = number * 25 - (dotlength - 1) * 25 / 2
+            self.rect = Rect((0, 674), (0, 0))
         elif self.group == 'a_little_cell_number':
             if number in range(11)+range(20, 31):
                 self.x = Globals.TEMP_VARS['cells_rects'][number].centerx - 4
@@ -264,7 +271,7 @@ class AlphaText():
     def init_new_pos(self):
         if self.group[:12] in ('target_cell_', 'auction_info', 'auction_cur_'):
             self.new_pos = (self.rect.x, self.rect.y - 70)
-        elif self.group in ('trading_offer_request', 'birthday_info', 'cell_state_SELECTOR') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
+        elif self.group in ('trading_offer_request', 'birthday_info', 'cell_state_SELECTOR', 'auction_player_order') or self.group[:5] in ('main_', 'stats', 'setti', 'newga', 'ingam'):
             self.new_pos = (self.rect.x, self.rect.y - 100)
         elif 'ERROR' in self.group:
             self.new_pos = (self.rect.x + 25, self.rect.y - 50)
