@@ -285,13 +285,29 @@ class MainScreen():
                 obj.append(obj.pop(0))
             elif 'pay_birthday' in type:
                 Globals.TEMP_VARS['pay_birthday'].pop(0)
-            if Globals.TEMP_VARS['bankruptcy_fields_changing']:
+            temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
+            if temp_var and 'bankruptcy_RECIPIENT' in Globals.TEMP_VARS.keys():
+                Globals.TEMP_VARS['RErender_groups'] = []
+                del_list = []
+                for field in temp_var:
+                    cell = self.objects['gamefield'].cells[field]
+                    if not cell.buildings:
+                        del_list.append(field)
+                        self.change_owner_for_a_cell(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], cell)
+                        Globals.TEMP_VARS['RErender_groups'].append(cell.group)
+                for field in del_list:
+                    temp_var.remove(field)
+                if Globals.TEMP_VARS['RErender_groups']:
+                    self.objects['gamefield'].RErender_fieldcell_groups()
+                else:
+                    Globals.TEMP_VARS.pop('RErender_groups')
                 self.bankruptcy_fields_buyout(key)
             else:
+                self.disable_central_labels()
                 self.next_bankruptcy_field()
-            for player in Globals.PLAYERS:
-                print(player.name)
-            print('')
+            # for player in Globals.PLAYERS:
+            #     print(player.name)
+            # print('')
         elif not self.error_msg_money_limits(key):
             type = self.menuitems[key].action(key)
             if type in ('roll_the_dice', 'roll_the_dice_to_exit_jail'):
@@ -1166,7 +1182,7 @@ class MainScreen():
         if key == 'accept_all_prop_management':
             condition = self.objects['prop_manage_summary'].text['total'].color == Globals.COLORS['light_red']
         else:
-            condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail')
+            condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail', 'roll_the_dice')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
