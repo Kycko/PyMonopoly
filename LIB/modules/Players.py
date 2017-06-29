@@ -10,6 +10,7 @@ class Player():
         self.human = human
         self.exit_jail_attempts = None
         self.free_jail_cards = []
+        self.build_ability = 0
         self.cur_field = 0
         self.speed_limit = 50
     def initialize_coords(self, number):

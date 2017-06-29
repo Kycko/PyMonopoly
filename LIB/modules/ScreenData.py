@@ -304,6 +304,7 @@ class MainScreen():
                 self.bankruptcy_fields_buyout(key)
             else:
                 self.disable_central_labels()
+                self.disable_step_indicators()
                 self.next_bankruptcy_field()
             # for player in Globals.PLAYERS:
             #     print(player.name)
@@ -491,29 +492,38 @@ class MainScreen():
                 self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[num])
             elif type == 'prop_management_ACCEPT_ALL':
                 temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
-                for i in range(1, 40):
-                    if i in temp_var.keys():
-                        if temp_var[i][0] < 0 or temp_var[i][1] < 0:
-                            self.objects['game_log'].add_message('prop_manage_mortrage_'+str(i))
-                        if self.objects['gamefield'].cells[i].group not in ('railroad', 'service'):
-                            if temp_var[i][1] > temp_var[i][0] and temp_var[i][1] > 0:
-                                self.objects['game_log'].add_message('prop_manage_build_'+str(i))
-                            elif temp_var[i][0] > temp_var[i][1] and temp_var[i][0] > 0:
-                                self.objects['game_log'].add_message('prop_manage_debuild_'+str(i))
-                for cell in self.objects['gamefield'].cells:
-                    cell.a_little_number_visible = False
-                temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
-                if temp: self.labels.pop(temp)
-                for key in ('property_management_input',
-                            'property_management_input_ready',
-                            'target_cell_trading_info',
-                            'target_cell_trading_subinfo'):
-                    if key in self.labels.keys():
-                        self.labels.pop(key)
-                self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
-                if 'prop_manage_summary' in self.objects.keys():
-                    self.objects.pop('prop_manage_summary')
-                self.return_to_game_from_trading(self.menuitems['return'].type)
+                house_count = 0
+                for key in temp_var.keys():
+                    if key != 'TOTAL':
+                        house_count += temp_var[key][3]
+                curplayer = check_cur_prop_management()
+                if house_count + curplayer.build_ability > 3:
+                    self.show_or_rm_error_msg(True, 103, 'ERROR_ingame', 'accept_all_prop_management')
+                else:
+                    curplayer.build_ability += house_count
+                    for i in range(1, 40):
+                        if i in temp_var.keys():
+                            if temp_var[i][0] < 0 or temp_var[i][1] < 0:
+                                self.objects['game_log'].add_message('prop_manage_mortrage_'+str(i))
+                            if self.objects['gamefield'].cells[i].group not in ('railroad', 'service'):
+                                if temp_var[i][1] > temp_var[i][0] and temp_var[i][1] > 0:
+                                    self.objects['game_log'].add_message('prop_manage_build_'+str(i))
+                                elif temp_var[i][0] > temp_var[i][1] and temp_var[i][0] > 0:
+                                    self.objects['game_log'].add_message('prop_manage_debuild_'+str(i))
+                    for cell in self.objects['gamefield'].cells:
+                        cell.a_little_number_visible = False
+                    temp = check_substring_in_dict_keys(self.labels, 'property_management_input')
+                    if temp: self.labels.pop(temp)
+                    for key in ('property_management_input',
+                                'property_management_input_ready',
+                                'target_cell_trading_info',
+                                'target_cell_trading_subinfo'):
+                        if key in self.labels.keys():
+                            self.labels.pop(key)
+                    self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
+                    if 'prop_manage_summary' in self.objects.keys():
+                        self.objects.pop('prop_manage_summary')
+                    self.return_to_game_from_trading(self.menuitems['return'].type)
             elif type == 'cell_state_SELECTOR':
                 CELL = int(self.labels['property_management_input_ready'].symbols)
                 cell_obj = self.objects['gamefield'].cells[CELL]
@@ -660,6 +670,8 @@ class MainScreen():
                 temp_var.pop(0)
                 CELL.step_indicator_visible = False
                 if temp_var:
+                    if 'error' in self.labels.keys():
+                        self.labels.pop('error')
                     CELL = self.objects['gamefield'].cells[temp_var[0]]
                     CELL.step_indicator_visible = True
                     self.labels['target_cell_info'].update_text(CELL.NAME)
@@ -889,6 +901,17 @@ class MainScreen():
         elif KEY in self.menuitems.keys() and not CHANGES:
             self.menuitems.pop(KEY)
             self.cursor.add_rm_keys(False, KEY)
+        if KEY in self.menuitems.keys():
+            temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
+            house_count = 0
+            for key in temp_var.keys():
+                if key != 'TOTAL':
+                    house_count += temp_var[key][3]
+            curplayer = check_cur_prop_management()
+            if house_count + curplayer.build_ability > 3:
+                self.menuitems['accept_all_prop_management'].text.change_color(Globals.COLORS['grey63'])
+            else:
+                self.menuitems['accept_all_prop_management'].text.change_color(Globals.COLORS['white'])
     def entering_property_menu(self):
         self.save_step_indicators_state()
         if 'pay_birthday' in Globals.TEMP_VARS.keys():
@@ -1182,7 +1205,7 @@ class MainScreen():
         if key == 'accept_all_prop_management':
             condition = self.objects['prop_manage_summary'].text['total'].color == Globals.COLORS['light_red']
         else:
-            condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail', 'roll_the_dice')
+            condition = self.cursor and self.cursor.uCOLOR == 'red27' and self.cursor.uCondition and key in ('buy_a_cell', 'ingame_continue', 'auction_up_bet', 'pay_money_to_exit_jail', 'roll_the_dice', 'ingame_bankruptcy_10', 'ingame_bankruptcy_110')
         if condition: self.show_or_rm_error_msg(True, 99, 'ERROR_ingame', 'accept')
         return condition
     def check_doubles_for_players(self):
@@ -1232,6 +1255,7 @@ class MainScreen():
             if old_buildings != new_buildings:
                 temp_var[i] = (old_buildings, new_buildings)
                 MONEY = 0
+                house_count = 0
                 if old_buildings < 0:
                     MONEY -= int((CELL.buy_cost / 2) * 1.1)
                     old_buildings = 0
@@ -1240,7 +1264,9 @@ class MainScreen():
                     new_buildings = 0
                 if CELL.group in range(9):
                     MONEY += (old_buildings - new_buildings) * CELL.build_cost / (1 + 1 * int(new_buildings < old_buildings))
-                temp_var[i] += tuple([MONEY])
+                    if new_buildings > old_buildings:
+                        house_count += new_buildings - old_buildings
+                temp_var[i] += tuple([MONEY, house_count])
                 if not MONEY:
                     temp_var.pop(i)
                     CELL.step_indicator_visible = False
@@ -1261,6 +1287,7 @@ class MainScreen():
             self.new_turn()
     def change_player(self, bankrupt=None):
         GameMechanics.change_player(bankrupt)
+        Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].build_ability = 0
         self.objects['cur_turn_highlighter'].move()
         self.objects['game_log'].add_message('change_player')
         self.new_turn()
