@@ -251,7 +251,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        # self.DEBUGGER_show_TEMP_VARS_keys()
+        self.DEBUGGER_show_TEMP_VARS_keys()
         if Globals.TRANSLATION[100] in self.menuitems[key].text.symbols and ((key == 'ingame_continue') or (key == 'roll_the_dice' and 'pay_birthday' in self.menuitems['roll_the_dice'].type)):
             CELLS = self.objects['gamefield'].cells
             CUR = check_cur_prop_management()
@@ -298,7 +298,7 @@ class MainScreen():
                 del_list = []
                 for field in temp_var:
                     cell = self.objects['gamefield'].cells[field]
-                    if not cell.buildings:
+                    if not cell.buildings or (cell.group in ('railroad', 'service') and cell.buildings != -1):
                         del_list.append(field)
                         self.change_owner_for_a_cell(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], cell)
                         Globals.TEMP_VARS['RErender_groups'].append(cell.group)
@@ -473,6 +473,7 @@ class MainScreen():
                 self.objects['game_log'].add_message(type)
                 self.ask_to_end_turn()
             elif type == 'enter_the_property_management':
+                Globals.TEMP_VARS['bank_property_back'] = [Globals.TEMP_VARS['bank_property'][i] for i in range(2)]
                 self.show_or_rm_error_msg(False, 99, 'ERROR_ingame', 'accept')
                 if 'prev_trade' in self.labels.keys():
                     self.labels.pop('prev_trade')
@@ -530,6 +531,8 @@ class MainScreen():
                     self.change_player_money(check_cur_prop_management(), temp_var['TOTAL'])
                     if 'prop_manage_summary' in self.objects.keys():
                         self.objects.pop('prop_manage_summary')
+                    if 'bank_property_back' in Globals.TEMP_VARS.keys():
+                        Globals.TEMP_VARS.pop('bank_property_back')
                     self.return_to_game_from_trading(self.menuitems['return'].type)
             elif type == 'cell_state_SELECTOR':
                 CELL = int(self.labels['property_management_input_ready'].symbols)
@@ -806,7 +809,7 @@ class MainScreen():
                 for cell in self.objects['gamefield'].cells:
                     if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                         self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
-                clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels'))
+                clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels', 'bank_property'))
                 Globals.TEMP_VARS['double_dices_count'] = 0
                 Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
                 for player in Globals.PLAYERS:
@@ -963,6 +966,11 @@ class MainScreen():
                         Globals.TEMP_VARS['RErender_groups'].append(cell.group)
             self.RErender_fieldcell_tooltips_by_groups()
             self.objects['gamefield'].RErender_fieldcell_groups()
+            Globals.TEMP_VARS['bank_property'] = Globals.TEMP_VARS.pop('bank_property_back')
+            for i in range(2):
+                lbl = self.labels['bank_property' + str(3 + 2*(i))]
+                lbl.x = lbl.new_pos[0]
+                lbl.update_text(str(Globals.TEMP_VARS['bank_property'][i]))
     #--- Creating specific objects
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -1253,6 +1261,7 @@ class MainScreen():
         Globals.TEMP_VARS['prop_manage_CHANGED'] = {}
         temp_var = Globals.TEMP_VARS['prop_manage_CHANGED']
         temp_var['TOTAL'] = 0
+        BANKprop = [0, 0]
         for i in Globals.TEMP_VARS['property'].keys():
             CELL = self.objects['gamefield'].cells[i]
             old_buildings = Globals.TEMP_VARS['property'][i]
@@ -1273,11 +1282,24 @@ class MainScreen():
                     MONEY += (old_buildings - new_buildings) * CELL.build_cost / (1 + 1 * int(new_buildings < old_buildings))
                     if new_buildings > old_buildings:
                         house_count += new_buildings - old_buildings
+                    if old_buildings == 5 - Globals.TEMP_VARS['cur_game']:
+                        BANKprop[0] -= new_buildings
+                        BANKprop[1] += 1
+                    elif new_buildings == 5 - Globals.TEMP_VARS['cur_game']:
+                        BANKprop[0] += old_buildings
+                        BANKprop[1] -= 1
+                    else:
+                        BANKprop[0] += old_buildings - new_buildings
                 temp_var[i] += tuple([MONEY, house_count])
                 if not MONEY:
                     temp_var.pop(i)
                     CELL.step_indicator_visible = False
                 temp_var['TOTAL'] += MONEY
+        for i in range(2):
+            Globals.TEMP_VARS['bank_property'][i] = Globals.TEMP_VARS['bank_property_back'][i] + BANKprop[i]
+            lbl = self.labels['bank_property' + str(3 + 2*(i))]
+            lbl.x = lbl.new_pos[0]
+            lbl.update_text(str(Globals.TEMP_VARS['bank_property'][i]))
         self.objects['prop_manage_summary'].recheck()
         # self.DEBUGGER_prop_management_money_changes()
     #--- Game mechanics
