@@ -12,6 +12,7 @@ class MainScreen():
     def __init__(self):
         self.switch_screen('main_main', None)
     def switch_screen(self, type, key):
+        # self.DEBUGGER_show_TEMP_VARS_keys()
         if type in ('main_new_game', 'main_settings', 'main_stats') and 'gamebackground' in self.pics.keys():
             self.pics.pop('gamebackground')
             self.pics['order'].remove('gamebackground')
@@ -144,6 +145,7 @@ class MainScreen():
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             Globals.TEMP_VARS['cur_turn'] = 0
+            Globals.TEMP_VARS['bank_property'] = ([32, 12], [26, 12])[Globals.TEMP_VARS['cur_game']]
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield' : GameField()}
@@ -152,6 +154,11 @@ class MainScreen():
                 Globals.PLAYERS[i].money = (1500, 20000)[Globals.TEMP_VARS['cur_game']]
                 self.menuitems.update({'player_'+Globals.PLAYERS[i].name    : MenuItem(u'●', 'pl_info_tab_'+Globals.PLAYERS[i].name, 'pl_info_tab', i)})
                 self.labels.update({'money_player_'+Globals.PLAYERS[i].name : AlphaText(str(Globals.PLAYERS[i].money), 'pl_money_info', i)})
+            self.labels.update({'bank_property1'    : AlphaText(Globals.TRANSLATION[104], 'bank_property1'),
+                                'bank_property2'    : AlphaText(u'●', 'bank_property2'),
+                                'bank_property3'    : AlphaText(str(Globals.TEMP_VARS['bank_property'][0]), 'bank_property3'),
+                                'bank_property4'    : AlphaText(u'❖', 'bank_property4'),
+                                'bank_property5'    : AlphaText(str(Globals.TEMP_VARS['bank_property'][1]), 'bank_property5')})
             self.objects['gamefield'].change_new_pos((-1820, 0))
             self.objects['cur_turn_highlighter'] = CurTurnHighlighter(self.menuitems)
             self.pics.update({'gamebackground'  : Sprite((self.pics['background'].pos[0]+1820, -130), Globals.PICS['background'], 50),
@@ -784,7 +791,7 @@ class MainScreen():
                     self.pics.pop(string)
                     self.pics['order'].remove(string)
                 for lbl in self.labels.keys():
-                    if 'money_player' not in lbl:
+                    if 'money_player' not in lbl and 'bank_property' not in lbl:
                         self.labels.pop(lbl)
                 self.objects['game_log'] = GameLog()
                 self.labels.update({'volume_level'  : AlphaText(Globals.TRANSLATION[41], 'volume_in_game_lbl', 0),

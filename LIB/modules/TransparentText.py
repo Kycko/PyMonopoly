@@ -18,7 +18,7 @@ class AlphaText():
             self.font = Globals.FONTS['ume_16']
         elif self.group == 'step_indicator':
             self.font = Globals.FONTS['ume_8']
-        elif self.group in ('target_cell_owner', 'target_cell_info', 'target_cell_bankrupt_buyout', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'prop_manage_summary_splitter', 'trading_offer_request', 'last_trade_info') or 'gamelog_message' in self.group:
+        elif self.group in ('target_cell_owner', 'target_cell_info', 'target_cell_bankrupt_buyout', 'birthday_info', 'auction_info', 'trade_summary_trader_splitter', 'prop_manage_summary_splitter', 'trading_offer_request', 'last_trade_info', 'bank_property1') or 'gamelog_message' in self.group:
             self.font = Globals.FONTS['ubuntu_13']
         elif self.group in ('from_game_return_to_menu', 'show_menu', 'pl_info_tab'):
             self.font = Globals.FONTS['ume_32']
@@ -30,9 +30,9 @@ class AlphaText():
             self.font = Globals.FONTS['ubuntu_20']
         elif self.group in ('APPVERSION', 'authors', 'stats_switch', 'stats_bests', 'settings_left', 'volume_in_game_lbl', 'trade_summary_trader_name', 'trade_summary_tradingwith_name', 'prop_manage_summary_name', 'auction_cur_bet') or 'stats_table' in self.group or 'ERROR' in self.group:
             self.font = Globals.FONTS['ubuntu_16']
-        elif self.group == 'music_and_sound_switches':
+        elif self.group in ('music_and_sound_switches', 'bank_property3', 'bank_property4', 'bank_property5'):
             self.font = Globals.FONTS['ume_16']
-        elif self.group in ('stats_latest', 'a_little_cell_number', 'prop_manage_summary_fields', 'auction_player_order'):
+        elif self.group in ('stats_latest', 'a_little_cell_number', 'prop_manage_summary_fields', 'auction_player_order', 'bank_property2'):
             self.font = Globals.FONTS['ume_12']
         elif self.group in ('newgame_playertype', 'pl_money_info') or self.group[:14] == 'trade_summary_':
             self.font = Globals.FONTS['ubuntu_11']
@@ -255,6 +255,21 @@ class AlphaText():
         elif self.group == 'ERROR_ingame':
             self.x = Globals.RESOLUTION[0]/2 - 200
             self.rect = Rect((0, Globals.RESOLUTION[1]/2 + 50 - 90*number), (0, 0))
+        elif self.group == 'bank_property1':
+            self.x = Globals.RESOLUTION[0]/2 + 1600
+            self.rect = Rect((0, 15), (0, 0))
+        elif self.group == 'bank_property2':
+            self.x = Globals.RESOLUTION[0]/2 + 1710
+            self.rect = Rect((0, 18), (0, 0))
+        elif self.group == 'bank_property3':
+            self.x = Globals.RESOLUTION[0]/2 + 1728
+            self.rect = Rect((0, 16), (0, 0))
+        elif self.group == 'bank_property4':
+            self.x = Globals.RESOLUTION[0]/2 + 1760
+            self.rect = Rect((0, 16), (0, 0))
+        elif self.group == 'bank_property5':
+            self.x = Globals.RESOLUTION[0]/2 + 1780
+            self.rect = Rect((0, 16), (0, 0))
         elif self.group == 'authors':
             self.x = 'right'
             self.x_offset = 10
