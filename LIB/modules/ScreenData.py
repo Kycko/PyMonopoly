@@ -145,7 +145,7 @@ class MainScreen():
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             Globals.TEMP_VARS['cur_turn'] = 0
-            Globals.TEMP_VARS['bank_property'] = ([32, 12], [26, 12])[Globals.TEMP_VARS['cur_game']]
+            Globals.TEMP_VARS['bank_property'] = ([4, 2], [26, 12])[Globals.TEMP_VARS['cur_game']]
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield' : GameField()}
@@ -504,9 +504,15 @@ class MainScreen():
                 for key in temp_var.keys():
                     if key != 'TOTAL':
                         house_count += temp_var[key][3]
+                bank_prop_fault = False
+                for i in range(2):
+                    if Globals.TEMP_VARS['bank_property'][i] < 0:
+                        bank_prop_fault = True
                 curplayer = check_cur_prop_management()
                 if house_count + curplayer.build_ability > 3:
                     self.show_or_rm_error_msg(True, 103, 'ERROR_ingame', 'accept_all_prop_management')
+                elif bank_prop_fault:
+                    self.show_or_rm_error_msg(True, 105, 'ERROR_ingame', 'accept_all_prop_management')
                 else:
                     curplayer.build_ability += house_count
                     for i in range(1, 40):
@@ -917,8 +923,12 @@ class MainScreen():
             for key in temp_var.keys():
                 if key != 'TOTAL':
                     house_count += temp_var[key][3]
+            bank_prop_fault = False
+            for i in range(2):
+                if Globals.TEMP_VARS['bank_property'][i] < 0:
+                    bank_prop_fault = True
             curplayer = check_cur_prop_management()
-            if house_count + curplayer.build_ability > 3:
+            if bank_prop_fault or house_count + curplayer.build_ability > 3:
                 self.menuitems['accept_all_prop_management'].text.change_color(Globals.COLORS['grey63'])
             else:
                 self.menuitems['accept_all_prop_management'].text.change_color(Globals.COLORS['white'])
@@ -967,10 +977,7 @@ class MainScreen():
             self.RErender_fieldcell_tooltips_by_groups()
             self.objects['gamefield'].RErender_fieldcell_groups()
             Globals.TEMP_VARS['bank_property'] = Globals.TEMP_VARS.pop('bank_property_back')
-            for i in range(2):
-                lbl = self.labels['bank_property' + str(3 + 2*(i))]
-                lbl.x = lbl.new_pos[0]
-                lbl.update_text(str(Globals.TEMP_VARS['bank_property'][i]))
+            self.upd_bank_property_lbl()
     #--- Creating specific objects
     def make_stats_screen(self, current):
         self.clear_labels(('APPNAME', 'APPVERSION', 'resources', 'authors'))
@@ -1179,6 +1186,21 @@ class MainScreen():
             if 'state_selector' in self.menuitems.keys():
                 self.return_into_prop_manage_choose_field()
             self.show_or_rm_error_msg(True, 94, 'ERROR_ingame', 'accept')
+    def upd_bank_property_lbl(self):
+        for i in range(2):
+            lbl = self.labels['bank_property' + str(3 + 2*(i))]
+            pic_lbl = self.labels['bank_property' + str(2 + 2*(i))]
+            lbl.x = lbl.new_pos[0]
+            if Globals.TEMP_VARS['bank_property'][i] > 3:
+                lbl.color = Globals.COLORS['white']
+                pic_lbl.change_color(Globals.COLORS['white'])
+            elif Globals.TEMP_VARS['bank_property'][i] > 0:
+                lbl.color = Globals.COLORS['orange']
+                pic_lbl.change_color(Globals.COLORS['orange'])
+            else:
+                lbl.color = Globals.COLORS['red27']
+                pic_lbl.change_color(Globals.COLORS['red27'])
+            lbl.update_text(str(Globals.TEMP_VARS['bank_property'][i]))
     #--- Various verifications
     def check_error(self, type):
         if type == 'main_new_game':
@@ -1297,9 +1319,7 @@ class MainScreen():
                 temp_var['TOTAL'] += MONEY
         for i in range(2):
             Globals.TEMP_VARS['bank_property'][i] = Globals.TEMP_VARS['bank_property_back'][i] + BANKprop[i]
-            lbl = self.labels['bank_property' + str(3 + 2*(i))]
-            lbl.x = lbl.new_pos[0]
-            lbl.update_text(str(Globals.TEMP_VARS['bank_property'][i]))
+        self.upd_bank_property_lbl()
         self.objects['prop_manage_summary'].recheck()
         # self.DEBUGGER_prop_management_money_changes()
     #--- Game mechanics
