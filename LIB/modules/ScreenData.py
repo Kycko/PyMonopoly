@@ -145,7 +145,7 @@ class MainScreen():
             Globals.TEMP_VARS['cells_groups'] = FieldCellsData.make_groups()
             Globals.TEMP_VARS['cells_rent_costs'] = FieldCellsData.read_cells_rent_costs()
             Globals.TEMP_VARS['cur_turn'] = 0
-            Globals.TEMP_VARS['bank_property'] = ([4, 2], [26, 12])[Globals.TEMP_VARS['cur_game']]
+            Globals.TEMP_VARS['bank_property'] = ([32, 12], [26, 12])[Globals.TEMP_VARS['cur_game']]
             self.menuitems = {'start_game'      : MenuItem(Globals.TRANSLATION[34], 'ingame_start_game', 'ingame_start', 0),
                               'exit'            : MenuItem(Globals.TRANSLATION[35], 'main_main', 'ingame_start', 1)}
             self.objects = {'gamefield' : GameField()}
@@ -672,7 +672,8 @@ class MainScreen():
                 RECIPIENT = Globals.TEMP_VARS['bankruptcy_RECIPIENT']
                 temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
                 CELL = self.objects['gamefield'].cells[temp_var[0]]
-                MON = -CELL.buy_cost / 20
+                MON = CELL.buy_cost / 20
+                MON = -MON
                 if type == 'ingame_bankruptcy_110':
                     MON -= CELL.buy_cost / 2
                     CELL.buildings = 0
@@ -1534,7 +1535,7 @@ class MainScreen():
                 self.menuitems['fieldcell_10'].tooltip.RErender()
     def bankruptcy_fields_buyout(self, key):
         temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing']
-        if self.menuitems[key].type == 'ingame_continue_PAY_RENT' or 'pay_birthday' in self.menuitems[key].type:
+        if temp_var and self.menuitems[key].type == 'ingame_continue_PAY_RENT' or 'pay_birthday' in self.menuitems[key].type:
             CELL = self.objects['gamefield'].cells[temp_var[0]]
             self.clear_main_menu_entries()
             self.disable_central_labels()
