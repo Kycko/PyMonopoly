@@ -513,7 +513,7 @@ class MainCursor(Cursor):
             temp_var = Globals.TEMP_VARS['bankruptcy_fields_changing'][0]
             CELL = Globals.main_scr.objects['gamefield'].cells[temp_var]
             cur_money = Globals.TEMP_VARS['bankruptcy_RECIPIENT'].money
-            MUST_PAY = int(CELL.buy_cost*1.1)
+            MUST_PAY = int((CELL.buy_cost/2)*1.1)
         else:
             self.uCondition = False
             return None

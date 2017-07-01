@@ -1505,6 +1505,7 @@ class MainScreen():
             self.cursor.screen_switched(self.menuitems, 'auction_next_player')
         else:
             self.objects.pop('auction_pl_highlighter')
+            temp_var['field'].buildings = 0
             self.change_owner_for_a_cell(temp_var['player'], temp_var['field'])
             if temp_var['bet']:
                 self.change_player_money(temp_var['player'], -temp_var['bet'])
