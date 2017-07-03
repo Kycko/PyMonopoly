@@ -645,7 +645,11 @@ class MainScreen():
                     self.make_obj_for_enter_name('trading_input_fields')
                     self.create_trading_input_spec_objects('trading_input_fields')
                 else:
-                    self.show_or_rm_error_msg(True, 74, 'ERROR_ingame', 'accept')
+                    if cell_obj.owner not in (Globals.TEMP_VARS['trading']['trader']['info'].name, Globals.TEMP_VARS['trading']['tradingwith']['info'].name):
+                        NUM = 74
+                    else:
+                        NUM = 106
+                    self.show_or_rm_error_msg(True, NUM, 'ERROR_ingame', 'accept')
             elif type in ('trading_input_offer_money_ACCEPT', 'trading_input_ask_for_money_ACCEPT') and self.menuitems['accept'].text.color == Globals.COLORS['white']:
                 player = ('tradingwith', 'trader')['offer' in type]
                 money_lbl = check_substring_in_dict_keys(self.labels, 'trading_input')
@@ -703,8 +707,13 @@ class MainScreen():
                         self.change_player(True)
             elif type and 'onboard_select_cell' in type:
                 if 'trading' in Globals.TEMP_VARS.keys() and 'tradingwith' in Globals.TEMP_VARS['trading'].keys():
-                    status = self.objects['trade_summary'].add_rm_fields(self.objects['gamefield'].cells[int(type[20:])])
-                    self.show_or_rm_error_msg(not status, 74, 'ERROR_ingame', 'accept')
+                    cell_obj = self.objects['gamefield'].cells[int(type[20:])]
+                    status = self.objects['trade_summary'].add_rm_fields(cell_obj)
+                    if cell_obj.owner not in (Globals.TEMP_VARS['trading']['trader']['info'].name, Globals.TEMP_VARS['trading']['tradingwith']['info'].name):
+                        NUM = 74
+                    else:
+                        NUM = 106
+                    self.show_or_rm_error_msg(not status, NUM, 'ERROR_ingame', 'accept')
                     self.show_trading_OFFER_ALL_button(True)
                 elif 'property' in Globals.TEMP_VARS.keys():
                     self.create_prop_management_cell_state_objects(self.objects['gamefield'].cells[int(type[20:])])

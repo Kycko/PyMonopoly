@@ -76,7 +76,7 @@ class GameField():
         if type == 'trade':
             traders = (Globals.TEMP_VARS['trading']['trader']['info'].name,
                        Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
-            cells = [cell for cell in self.cells if cell.owner in traders]
+            cells = [cell for cell in self.cells if cell.owner in traders and (cell.group in ('railroad', 'service') or not cell.buildings)]
         elif type == 'prop_manage':
             player = check_cur_prop_management()
             cells = [cell for cell in self.cells if cell.owner == player.name]
@@ -346,7 +346,7 @@ class TradeSummary(InfoWindow):
     def add_rm_fields(self, cell):
         for key in ('trader', 'tradingwith'):
             player = Globals.TEMP_VARS['trading'][key]['info']
-            if cell.owner == player.name:
+            if cell.owner == player.name and (cell.group in ('railroad', 'service') or not cell.buildings):
                 temp_var = Globals.TEMP_VARS['trading'][key]['fields']
                 if self.append_or_remove_in_lists(temp_var, cell.number):
                     cell.step_indicator_visible = False
