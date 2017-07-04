@@ -71,10 +71,9 @@ def add_new_player(human):
                                   human))
 def create_players_list():
     Globals.PLAYERS = [Player(Globals.SETTINGS['pl_name'], Globals.SETTINGS['pl_color'], True)]
-def rm_player():
-    player = check_cur_prop_management()
+def rm_player(name):
     for i in range(len(Globals.PLAYERS)):
-        if player.name == Globals.PLAYERS[i].name:
+        if name == Globals.PLAYERS[i].name:
             if 'pay_birthday' in Globals.TEMP_VARS.keys():
                 for y in range(len(Globals.PLAYERS)):
                     if y == Globals.TEMP_VARS['cur_turn'] and i < y:
@@ -122,6 +121,8 @@ def check_group_monopoly(group):
 def check_cur_prop_management():
     if 'auction' in Globals.TEMP_VARS.keys():
         return Globals.TEMP_VARS['auction']['order'][0]
+    elif 'bankruptcy_RECIPIENT' in Globals.TEMP_VARS.keys():
+        return Globals.TEMP_VARS['bankruptcy_RECIPIENT']
     elif 'pay_birthday' in Globals.TEMP_VARS.keys():
         return Globals.TEMP_VARS['pay_birthday'][0]
     else:

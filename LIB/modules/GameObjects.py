@@ -76,7 +76,7 @@ class GameField():
         if type == 'trade':
             traders = (Globals.TEMP_VARS['trading']['trader']['info'].name,
                        Globals.TEMP_VARS['trading']['tradingwith']['info'].name)
-            cells = [cell for cell in self.cells if cell.owner in traders and (cell.group in ('railroad', 'service') or not cell.buildings)]
+            cells = [cell for cell in self.cells if cell.owner in traders and ((cell.group in ('railroad', 'service') and cell.buildings > -1) or not cell.buildings)]
         elif type == 'prop_manage':
             player = check_cur_prop_management()
             cells = [cell for cell in self.cells if cell.owner == player.name]

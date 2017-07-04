@@ -255,6 +255,8 @@ class MainScreen():
         if Globals.TRANSLATION[100] in self.menuitems[key].text.symbols and ((key == 'ingame_continue') or (key == 'roll_the_dice' and 'pay_birthday' in self.menuitems['roll_the_dice'].type)):
             CELLS = self.objects['gamefield'].cells
             CUR = check_cur_prop_management()
+            self.objects['game_log'].add_message('bankrupt_player')
+            self.objects['cur_turn_highlighter'].rm_player(CUR.name)
             MON = 0
             Globals.TEMP_VARS['bankruptcy_fields_changing'] = []
             for cell in CELLS:
@@ -281,9 +283,7 @@ class MainScreen():
                         vid = CUR.free_jail_cards.pop(0)
                         self.objects['gamefield'].chests_and_chances[vid+'s'].append(Globals.TEMP_VARS['free_jail_obj'])
             self.menuitems['fieldcell_10'].tooltip.RErender()
-            self.objects['game_log'].add_message('bankrupt_player')
-            self.objects['cur_turn_highlighter'].rm_player(CUR.name)
-            rm_player()
+            rm_player(CUR.name)
             self.menuitems['player_' + CUR.name].update_text(u'✖')
             self.labels['money_player_' + CUR.name].update_text('game over')
             type = self.menuitems[key].type
@@ -876,12 +876,22 @@ class MainScreen():
                 Globals.TEMP_VARS.pop('auction')
         if 'text_cursor' in self.objects.keys():
             self.objects.pop('text_cursor')
-        field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
-        cell = self.objects['gamefield'].cells[field_num]
         if type != 'return_player_on_a_new_cell' and 'cur_field_owner' in Globals.TEMP_VARS:
             Globals.TEMP_VARS.pop('cur_field_owner')
         if type == 'return_end_turn':
             self.ask_to_end_turn()
+        elif type == 'return_bankruptcy_buyout':
+            self.clear_main_menu_entries()
+            self.disable_central_labels()
+            self.disable_step_indicators()
+            CELL = self.objects['gamefield'].cells[Globals.TEMP_VARS['bankruptcy_fields_changing'][0]]
+            CELL.step_indicator_visible = True
+            self.labels['target_cell_trading_info'] = AlphaText(Globals.TRANSLATION[89].replace('%', Globals.TEMP_VARS['bankruptcy_RECIPIENT'].name), 'target_cell_bankrupt_buyout', -2)
+            self.labels['target_cell_info'] = AlphaText(CELL.NAME, 'target_cell_info', -1)
+            self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/20), 'ingame_bankruptcy_10', 'ingame_main', 3)
+            self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int((CELL.buy_cost/2)*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
+            self.show_property_management_menuitems(5)
+            self.cursor.screen_switched(self.menuitems, 'bankruptcy_buyout')
         elif type == 'return_pay_birthday':
             if 'target_cell_trading_info' in self.labels.keys():
                 self.labels.pop('target_cell_trading_info')
@@ -895,6 +905,8 @@ class MainScreen():
             else:
                 self.disable_central_labels()
                 self.labels['dices'] = GameMechanics.show_dices_picture()
+                field_num = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].cur_field
+                cell = self.objects['gamefield'].cells[field_num]
                 if cell.owner and 'cur_field_owner' in Globals.TEMP_VARS.keys() and Globals.TEMP_VARS['cur_field_owner'] != cell.owner:
                     Globals.TEMP_VARS['xxx'] = cell.owner
                     cell.owner = Globals.TEMP_VARS['cur_field_owner']
@@ -1096,6 +1108,8 @@ class MainScreen():
     def make_return_button_for_property_management(self):
         if 'end_turn' in self.menuitems.keys():
             back_type = 'return_end_turn'
+        elif 'bankruptcy_RECIPIENT' in Globals.TEMP_VARS.keys():
+            back_type = 'return_bankruptcy_buyout'
         elif 'pay_birthday' in Globals.TEMP_VARS.keys():
             back_type = 'return_pay_birthday'
         elif 'roll_the_dice' in self.menuitems.keys():
@@ -1275,6 +1289,8 @@ class MainScreen():
             return Globals.TEMP_VARS['pay_birthday'][0]
         elif 'auction' in Globals.TEMP_VARS.keys():
             return Globals.TEMP_VARS['auction']['order'][0]
+        elif 'bankruptcy_RECIPIENT' in Globals.TEMP_VARS.keys():
+            return Globals.TEMP_VARS['bankruptcy_RECIPIENT']
         else:
             return Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
     def check_trading_accept_ability(self, player):
@@ -1555,6 +1571,7 @@ class MainScreen():
             self.labels['target_cell_info'] = AlphaText(CELL.NAME, 'target_cell_info', -1)
             self.menuitems['ingame_bankruptcy_10'] = MenuItem(Globals.TRANSLATION[101]+str(CELL.buy_cost/20), 'ingame_bankruptcy_10', 'ingame_main', 3)
             self.menuitems['ingame_bankruptcy_110'] = MenuItem(Globals.TRANSLATION[102]+str(int((CELL.buy_cost/2)*1.1)), 'ingame_bankruptcy_110', 'ingame_main', 4)
+            self.show_property_management_menuitems(5)
             self.cursor.screen_switched(self.menuitems, 'bankruptcy_buyout')
         else:
             self.disable_central_labels()
