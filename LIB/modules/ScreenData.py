@@ -251,7 +251,7 @@ class MainScreen():
         self.make_obj_for_enter_name(KEY)
     #--- Menu actions
     def action_call(self, key):
-        self.DEBUGGER_show_TEMP_VARS_keys()
+        # self.DEBUGGER_show_TEMP_VARS_keys()
         if Globals.TRANSLATION[100] in self.menuitems[key].text.symbols and ((key == 'ingame_continue') or (key == 'roll_the_dice' and 'pay_birthday' in self.menuitems['roll_the_dice'].type)):
             CELLS = self.objects['gamefield'].cells
             CUR = check_cur_prop_management()
@@ -264,7 +264,12 @@ class MainScreen():
                     Globals.TEMP_VARS['bankruptcy_fields_changing'].append(cell.number)
                     if cell.buildings > 0 and cell.group not in ('railroad', 'service'):
                         MON += cell.buildings * cell.build_cost / 2
+                        Globals.TEMP_VARS['bank_property'][0] += cell.buildings
+                        if cell.buildings == 5 - Globals.TEMP_VARS['cur_game']:
+                            Globals.TEMP_VARS['bank_property'][0] -= 1
+                            Globals.TEMP_VARS['bank_property'][1] += 1
                         cell.buildings = 0
+            self.upd_bank_property_lbl()
             self.change_player_money(CUR, MON)
             if self.menuitems[key].type == 'ingame_continue_PAY_RENT' or 'pay_birthday' in self.menuitems[key].type:
                 if self.menuitems[key].type == 'ingame_continue_PAY_RENT':
@@ -1361,6 +1366,8 @@ class MainScreen():
         else:
             self.new_turn()
     def change_player(self, bankrupt=None):
+        if 'bankruptcy_RECIPIENT' in Globals.TEMP_VARS.keys():
+            Globals.TEMP_VARS.pop('bankruptcy_RECIPIENT')
         GameMechanics.change_player(bankrupt)
         Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].build_ability = 0
         self.objects['cur_turn_highlighter'].move()
@@ -1368,6 +1375,8 @@ class MainScreen():
         self.new_turn()
     def new_turn(self):
         # self.DEBUGGER_show_TEMP_VARS_keys()
+        if 'cur_field_owner' in Globals.TEMP_VARS.keys():
+            Globals.TEMP_VARS.pop('cur_field_owner')
         self.disable_central_labels()
         self.show_step_indicator_under_player()
         player = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
@@ -1391,7 +1400,7 @@ class MainScreen():
         elif self.cursor:
             self.disable_main_menu()
     def player_on_a_new_cell(self, cell):
-        self.DEBUGGER_chests_and_chances()
+        # self.DEBUGGER_chests_and_chances()
         PLAYER = Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']]
         self.clear_main_menu_entries()
         if cell.NAME:
