@@ -1319,7 +1319,7 @@ class MainScreen():
             CELL = self.objects['gamefield'].cells[i]
             old_buildings = Globals.TEMP_VARS['property'][i]
             new_buildings = CELL.buildings
-            CELL.step_indicator.change_color(Globals.PLAYERS[Globals.TEMP_VARS['cur_turn']].color)
+            CELL.step_indicator.change_color(check_cur_prop_management().color)
             CELL.step_indicator_visible = old_buildings != new_buildings
             if old_buildings != new_buildings:
                 temp_var[i] = (old_buildings, new_buildings)
@@ -1595,6 +1595,8 @@ class MainScreen():
                 temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + range(Globals.TEMP_VARS['cur_turn']+1)
             else:
                 temp_range = range(Globals.TEMP_VARS['cur_turn']+1, len(Globals.PLAYERS)) + [0]
+            if 'auction_cur_bet' in self.labels.keys():
+                self.labels.pop('auction_cur_bet')
             Globals.TEMP_VARS['auction'] = {'bet'       : 0,
                                             'field'     : self.objects['gamefield'].cells[field],
                                             'order'     : [Globals.PLAYERS[i] for i in temp_range],
