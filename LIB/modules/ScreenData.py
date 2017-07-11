@@ -838,6 +838,7 @@ class MainScreen():
                 Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
                 for player in Globals.PLAYERS:
                     player.speed_limit = 5
+                add_one_game()
             elif type == 'show_menu':
                 state = int(self.menuitems['show_menu'].text.symbols == u'↓')
                 self.menuitems['show_menu'].update_text((u'↓', u'↑')[state])

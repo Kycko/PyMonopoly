@@ -229,7 +229,6 @@ def write_stats():
     new_result = count_player_funds(Globals.PLAYERS[0])
     cur_stats = read_stats(Globals.TEMP_VARS['cur_game'])
     new_place = find_place_for_new_stats(cur_stats, new_result)
-    cur_stats[0] += 1
     cur_stats[1] += 1 * Globals.PLAYERS[0].human
     cur_stats[2] += new_result
     if new_place:
@@ -241,6 +240,10 @@ def write_stats():
                 'recent'    : True}
         cur_stats.pop()
         cur_stats.insert(new_place, DATA)
+    save_stats_to_file(cur_stats)
+def add_one_game():
+    cur_stats = read_stats(Globals.TEMP_VARS['cur_game'])
+    cur_stats[0] += 1
     save_stats_to_file(cur_stats)
 def save_stats_to_file(cur_stats):
     array = read_file(Globals.FILES['stats'])
