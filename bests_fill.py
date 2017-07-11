@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+#!/usr/bin/python3
 import random
 
 def write_to_file(file, data, method='w'):

@@ -869,6 +869,11 @@ class MainScreen():
                 return None
             elif type and type[:16] == 'ingame_continue_':
                 self.ask_to_end_turn()
+            elif type == 'ingame_winner':
+                if Globals.PLAYERS[0].human:
+                    write_stats()
+                self.switch_screen('main_main', 'exit')
+                self.cursor.screen_switched(self.menuitems, 'main_main')
             elif type:
                 self.switch_screen(type, key)
                 self.cursor.screen_switched(self.menuitems, type)
@@ -1018,7 +1023,7 @@ class MainScreen():
         self.labels.update({'game_name' : AlphaText(Globals.TRANSLATION[5+new], 'stats_game_name'),
                             'total'     : AlphaText(Globals.TRANSLATION[8] + str(data[0]), 'stats_common', 0),
                             'wins'      : AlphaText(Globals.TRANSLATION[9] + str(data[1]), 'stats_common', 1),
-                            'profit'    : AlphaText(Globals.TRANSLATION[10] + '$ ' + str(data[2]), 'stats_common', 2),
+                            'profit'    : AlphaText(Globals.TRANSLATION[10] + str(data[2]), 'stats_common', 2),
                             'bestslbl'  : AlphaText(Globals.TRANSLATION[7], 'stats_bests', 3)})
         if data[3]['score']:
             for i in range(3, len(data)):
@@ -1604,7 +1609,7 @@ class MainScreen():
                 Globals.TEMP_VARS['RErender_groups'] = []
                 for cell in temp_var:
                     CELL = self.objects['gamefield'].cells[cell]
-                    self.change_player_money(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], CELL.buy_cost / 20)
+                    self.change_player_money(Globals.TEMP_VARS['bankruptcy_RECIPIENT'], -CELL.buy_cost / 20)
                     if CELL.group not in Globals.TEMP_VARS['RErender_groups']:
                         Globals.TEMP_VARS['RErender_groups'].append(CELL.group)
                 self.objects['gamefield'].RErender_fieldcell_groups()

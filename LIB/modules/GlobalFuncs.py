@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import Globals
+from datetime import datetime
 from locale import getdefaultlocale
 from os import listdir, mkdir
 from Players import Player
@@ -216,11 +217,47 @@ def read_stats(game):
             array[i] = int(array[i])
         else:
             temp = array[i].split()
+            while len(temp) > 4:
+                temp[0] += ' ' + temp[1]
+                temp.pop(1)
             array[i] = {'name'      : temp[0],
                         'score'     : int(temp[1]),
                         'date'      : temp[2],
                         'recent'    : bool(int(temp[3]))}
     return array[line:line+10]
+def write_stats():
+    new_result = count_player_funds(Globals.PLAYERS[0])
+    cur_stats = read_stats(Globals.TEMP_VARS['cur_game'])
+    new_place = find_place_for_new_stats(cur_stats, new_result)
+    cur_stats[0] += 1
+    cur_stats[1] += 1 * Globals.PLAYERS[0].human
+    cur_stats[2] += new_result
+    if new_place:
+        for i in range(3, 10):
+            cur_stats[i]['recent'] = False
+        DATA = {'name'      : Globals.PLAYERS[0].name,
+                'score'     : new_result,
+                'date'      : datetime.now().strftime("%d.%m.%y"),
+                'recent'    : True}
+        cur_stats.pop()
+        cur_stats.insert(new_place, DATA)
+    save_stats_to_file(cur_stats)
+def save_stats_to_file(cur_stats):
+    array = read_file(Globals.FILES['stats'])
+    line = 10*Globals.TEMP_VARS['cur_game']
+    CHANGED = range(line, line + 10)
+    for i in range(20):
+        if i in CHANGED:
+            if i % 10 < 3:
+                array[i] = str(cur_stats[i % 10])
+            else:
+                array[i] = cur_stats[i%10]['name']+' '+str(cur_stats[i%10]['score'])+' '+cur_stats[i%10]['date']+' '+str(int(cur_stats[i%10]['recent']))
+        array[i] += '\n'
+    write_to_file(Globals.FILES['stats'], array)
+def find_place_for_new_stats(cur_stats, new_result):
+    for i in range(3, 10):
+        if new_result >= cur_stats[i]['score']:
+            return i
 def save_last_game_settings():
     data = [('AI\n', 'human\n')[Globals.PLAYERS[i].human] for i in range(1, len(Globals.PLAYERS))]
     write_to_file(Globals.FILES['last_game_settings'], data)
