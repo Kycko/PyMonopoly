@@ -833,7 +833,7 @@ class MainScreen():
                 for cell in self.objects['gamefield'].cells:
                     if cell.group in range(1, 9) + ['jail', 'railroad', 'service', 'skip']:
                         self.menuitems['fieldcell_' + str(cell.number)] = MenuItem('', 'onboard_select_cell_' + str(cell.number), 'onboard_select_cell', cell.number)
-                clear_TEMP_VARS(('cur_game', 'cur_turn', 'rentlabels', 'bank_property'))
+                clear_TEMP_VARS(('build_style', 'cur_game', 'cur_turn', 'rentlabels', 'bank_property'))
                 Globals.TEMP_VARS['double_dices_count'] = 0
                 Globals.TEMP_VARS['take_chance_when_player_is_on_chest'] = False
                 for player in Globals.PLAYERS:
