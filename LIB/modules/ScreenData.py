@@ -115,14 +115,17 @@ class MainScreen():
             else:
                 self.move_APPINFO((300, 0))
                 Globals.TEMP_VARS['cur_game'] = Globals.SETTINGS['fav_game']
+                Globals.TEMP_VARS['build_style'] = Globals.SETTINGS['build_style']
                 LGS = read_file(Globals.FILES['last_game_settings'])
                 for string in LGS:
                     add_new_player(string == 'human')
-            self.menuitems = {'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
+            self.menuitems = {'uniform_build'   : MenuItem(u'‹ '+Globals.TRANSLATION[18-int(Globals.TEMP_VARS['build_style'])]+u' ›', 'main_new_uniform_build', 'main_settings_left_MI', 0),
+                              'total'           : MenuItem('', 'main_new_total_SELECTOR', 'main_settings_left_MI', 1),
                               'humans'          : MenuItem('', 'main_new_humans_SELECTOR', 'main_settings_left_MI', 2),
                               'start'           : MenuItem(Globals.TRANSLATION[33], 'game_start', 'main_settings_player_exit', 1),
                               'exit'            : MenuItem(Globals.TRANSLATION[11], 'main_main', 'main_settings_player_exit')}
-            self.labels.update({'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
+            self.labels.update({'uniform_build' : AlphaText(Globals.TRANSLATION[98], 'settings_left', 0),
+                                'total'         : AlphaText(Globals.TRANSLATION[28], 'settings_left', 1),
                                 'inactive_MI'   : AlphaText(u'●', 'main_new_total_SELECTOR', 0),
                                 'humans'        : AlphaText(Globals.TRANSLATION[30], 'settings_left', 2),
                                 'players'       : AlphaText(Globals.TRANSLATION[31], 'settings_left', 3)})

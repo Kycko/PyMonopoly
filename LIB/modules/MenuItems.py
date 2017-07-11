@@ -127,9 +127,13 @@ class MenuItem():
                 save_last_game_settings()
             else:
                 return None
-        elif self.type == 'main_new_game_switch':
-            Globals.TEMP_VARS['cur_game'] = int(not(Globals.TEMP_VARS['cur_game']))
-            self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS['cur_game'])]+u' ›')
+        elif self.type in ('main_new_game_switch', 'main_new_uniform_build'):
+            key = ('cur_game', 'build_style')['build' in self.type]
+            Globals.TEMP_VARS[key] = int(not(Globals.TEMP_VARS[key]))
+            if key == 'cur_game':
+                self.update_text(u'‹ '+Globals.TRANSLATION[5+int(Globals.TEMP_VARS[key])]+u' ›')
+            else:
+                self.update_text(u'‹ '+Globals.TRANSLATION[18-int(Globals.TEMP_VARS[key])]+u' ›')
             return None
         elif key != 'exit' and 'main_new_edit_player' in self.type:
             Globals.TEMP_VARS['edit_player'] = int(self.type[len(self.type)-1])
@@ -410,7 +414,7 @@ class MainCursor(Cursor):
         elif 'main_new_edit_player' in type or type == 'main_settings_player':
             self.keys = ['name', 'color', 'exit']
         elif type == 'main_new_game':
-            self.keys = ['total', 'humans', 'start', 'exit']
+            self.keys = ['uniform_build', 'total', 'humans', 'start', 'exit']
             for i in range(len(Globals.PLAYERS)):
                 self.keys.insert(len(self.keys)-2, 'player'+str(i))
             if not Globals.SETTINGS['block']:
