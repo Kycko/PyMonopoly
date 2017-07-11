@@ -205,19 +205,19 @@ class AlphaText():
             self.rect = Rect((0, 413), (0, 0))
         elif self.group == 'main_new_humans_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.rect = Rect((0, 358), (0, 0))
+            self.rect = Rect((0, 413), (0, 0))
         elif self.group == 'main_new_total_SELECTOR':
             self.x = Globals.RESOLUTION[0]/4 - 50 + 25*number
-            self.rect = Rect((0, 303), (0, 0))
+            self.rect = Rect((0, 358), (0, 0))
         elif self.group == 'main_new_playerlist':
             self.x = Globals.RESOLUTION[0]/4 - 50
-            self.rect = Rect((0, 407 + 30*number), (0, 0))
+            self.rect = Rect((0, 462 + 30*number), (0, 0))
         elif self.group == 'settings_left':
             self.x = Globals.RESOLUTION[0]/5 - 80
             self.rect = Rect((0, 275 + 55*number), (0, 0))
         elif self.group == 'newgame_playertype':
             self.x = Globals.RESOLUTION[0]/4 - 48 + Globals.FONTS['ubuntu_24'].size(Globals.PLAYERS[number].name)[0]
-            self.rect = Rect((0, 410 + 30*number), (0, 0))
+            self.rect = Rect((0, 465 + 30*number), (0, 0))
         elif self.group == 'main_settings_left_MI':
             self.x = Globals.RESOLUTION[0]/4 - 50
             self.rect = Rect((0, 297 + 55*number), (0, 0))
