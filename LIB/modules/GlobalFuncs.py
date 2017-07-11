@@ -130,14 +130,17 @@ def check_cur_prop_management():
 def prop_manage_pictures():
     return (u'●○➊➋➌➍❖          ', u'●○➊➋➌❖          ')[Globals.TEMP_VARS['cur_game']]
 def check_bankrupt(player, money=None):
+    PROP = count_player_funds(player)
+    if money: return PROP < money
+    else: return PROP < Globals.TEMP_VARS['MUST_PAY']
+def count_player_funds(player):
     PROP = player.money
     for cell in Globals.main_scr.objects['gamefield'].cells:
         if cell.owner == player.name and cell.buildings != -1:
             PROP += cell.buy_cost / 2
             if cell.group not in ('railroad', 'service'):
                 PROP += cell.buildings * cell.build_cost / 2
-    if money: return PROP < money
-    else: return PROP < Globals.TEMP_VARS['MUST_PAY']
+    return PROP
 #--- Hardware related
 def check_user_monitor(x, y):
     if display.Info().current_w-70 < x or display.Info().current_h-60 < y:

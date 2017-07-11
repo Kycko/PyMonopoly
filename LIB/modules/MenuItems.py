@@ -419,6 +419,8 @@ class MainCursor(Cursor):
                 self.keys.insert(len(self.keys)-2, 'player'+str(i))
             if not Globals.SETTINGS['block']:
                 self.keys.insert(0, 'game')
+        elif type == 'ingame_winner':
+            self.keys = ['ingame_continue']
         elif type == 'game_start':
             self.keys = ['start_game', 'exit']
         elif type == 'bankruptcy_buyout':
