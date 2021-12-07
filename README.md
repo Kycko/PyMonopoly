@@ -1,18 +1,16 @@
 # PyMonopoly
-Famous monopoly board game. For now you can play with another players without AI (AI is currently in progress)
+Famous monopoly board game. For now you can play with another players without AI (~~AI is currently in progress~~ *discontinued*)
 
 Key features
 -----------
 
-- Multiplatform (Windows, Linux, OS X(**?**))
+- Multiplatform (Windows, Linux, ~~OS X(**?**)~~ *discontinued*)
 - Multilingual (English, Russian; feel free to add another languages)
-- Two games available (Monopoly and russian variation "Manager")(**?**)
+- Two games available (Monopoly and russian variation "Manager")
 - Up to six players in one game
-- Well-designed AI
+- ~~Well-designed AI~~ *discontinued*
 - Ability to use mouse and/or keyboard controls
 - Player's statistics
-
-and more...
 
 Screenshots
 -----------
